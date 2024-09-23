@@ -5,7 +5,9 @@ const end = require('./end');
 const list = require('./list');
 const kick = require('./kick');
 const tagall = require('./tagall');
-const ai = require('./ai');
+// const ai = require('./ai');
+
+const ADMIN_COMMANDS = ['end', 'kick', 'tagall'];
 
 module.exports = {
     menu,
@@ -15,5 +17,6 @@ module.exports = {
     list,
     kick,
     tagall,
-    ai
+    ai,
+    ADMIN_COMMANDS
 };
