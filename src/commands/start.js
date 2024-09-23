@@ -10,7 +10,7 @@ const start = async (message, args) => {
     const [team1, team2, reward] = args;
     predictionManager.startMatch(team1, team2, reward);
 
-    let announcementText = `Kuis Tebak Skor ${team1} VS ${team2} reward pemenang ${reward}\n\n`;
+    let announcementText = `Kuis Tebak Skor ${team1} VS ${team2} \n\nreward pemenang ${reward}\n\n`;
     await message.reply(announcementText);
 
     const chat = await message.getChat();

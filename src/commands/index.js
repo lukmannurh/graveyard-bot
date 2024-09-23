@@ -5,6 +5,7 @@ const end = require('./end');
 const list = require('./list');
 const kick = require('./kick');
 const tagall = require('./tagall');
+const ai = require('./ai');
 
 module.exports = {
     menu,
@@ -13,5 +14,6 @@ module.exports = {
     end,
     list,
     kick,
-    tagall
+    tagall,
+    ai
 };

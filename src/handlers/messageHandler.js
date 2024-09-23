@@ -1,6 +1,6 @@
-const { PREFIX } = require('../config');
 const commands = require('../commands');
 const { isAdmin } = require('../utils/adminChecker');
+const { PREFIX } = require('../config');
 
 const messageHandler = async (message) => {
     const chat = await message.getChat();

@@ -1,13 +1,14 @@
 {
   "name": "graveyard-bot",
   "version": "1.0.0",
-  "description": "graveyard bot for prediction games",
+  "description": "WhatsApp bot for prediction games with AI capability",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "dotenv": "^10.0.0",
     "qrcode-terminal": "^0.12.0",
     "whatsapp-web.js": "^1.16.6"
