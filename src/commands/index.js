@@ -17,6 +17,5 @@ module.exports = {
     list,
     kick,
     tagall,
-    ai,
     ADMIN_COMMANDS
 };
