@@ -21,7 +21,7 @@ Bot WhatsApp untuk permainan prediksi skor pertandingan sepak bola dalam grup.
 
 1. Clone repositori ini:
    ```
-   git clone https://github.com/username/whatsapp-prediction-bot.git
+   git clone https://github.com/lukmannurh/graveyard-bot.git
    cd whatsapp-prediction-bot
    ```
 
@@ -53,36 +53,6 @@ Setelah bot terhubung, Anda dapat menggunakan perintah-perintah berikut di grup 
 - `.end` - Mengakhiri sesi tebak skor (hanya admin)
 - `.tagall` - Menandai semua anggota grup (hanya admin)
 - `.kick @user` - Mengeluarkan anggota dari grup (hanya admin)
-
-## Struktur Proyek
-
-```
-whatsapp-bot/
-│
-├── src/
-│   ├── commands/
-│   │   ├── menu.js
-│   │   ├── start.js
-│   │   ├── tebak.js
-│   │   ├── end.js
-│   │   ├── list.js
-│   │   ├── kick.js
-│   │   └── tagall.js
-│   │
-│   ├── handlers/
-│   │   └── messageHandler.js
-│   │
-│   ├── utils/
-│   │   ├── predictionManager.js
-│   │   └── adminChecker.js
-│   │
-│   └── config.js
-│
-├── .env
-├── .gitignore
-├── package.json
-└── index.js
-```
 
 ## Konfigurasi
 
