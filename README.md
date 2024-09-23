@@ -22,7 +22,7 @@ Bot WhatsApp untuk permainan prediksi skor pertandingan sepak bola dalam grup.
 1. Clone repositori ini:
    ```
    git clone https://github.com/lukmannurh/graveyard-bot.git
-   cd whatsapp-prediction-bot
+   cd graveyard-bot
    ```
 
 2. Instal dependensi:
