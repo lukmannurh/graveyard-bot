@@ -1,0 +1,18 @@
+{
+  "name": "graveyard-bot",
+  "version": "1.0.0",
+  "description": "graveyard bot for prediction games",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.16.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
