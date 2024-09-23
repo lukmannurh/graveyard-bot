@@ -4,19 +4,19 @@ const qrcode = require('qrcode-terminal');
 const messageHandler = require('./src/handlers/messageHandler');
 
 const client = new Client({
-    authStrategy: new LocalAuth({ clientId: "prediction-bot" }),
+    authStrategy: new LocalAuth(),
     puppeteer: {
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
     }
 });
 
 client.on('qr', (qr) => {
-    qrcode.generate(qr, {small: true});
     console.log('QR RECEIVED', qr);
+    qrcode.generate(qr, {small: true});
 });
 
 client.on('ready', () => {
-    console.log('Prediction Bot is ready!');
+    console.log('Client is ready!');
 });
 
 client.on('message', messageHandler);
