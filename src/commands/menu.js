@@ -5,6 +5,7 @@ const menu = async (message) => {
     menuText += "• .start [tim1] [tim2] [hadiah] - Memulai sesi tebak skor\n";
     menuText += "• .tebak [skor] - Menebak skor pertandingan (contoh: .tebak 1-0)\n";
     menuText += "• .list - Melihat daftar tebakan peserta\n";
+    menuText += "• .ai [pertanyaan] - Bertanya kepada AI\n\n";
     // menuText += "• .ai [pertanyaan] - Bertanya kepada AI\n\n";
     menuText += "\n===============================\n\n";
     menuText += "*Perintah khusus admin:*\n";

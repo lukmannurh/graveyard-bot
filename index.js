@@ -1,3 +1,8 @@
+require('dotenv').config();
+const { Client, LocalAuth } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
+const messageHandler = require('./src/handlers/messageHandler');
+
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
@@ -16,9 +21,22 @@ const client = new Client({
     qrMaxRetries: 5,
 });
 
+client.on('qr', (qr) => {
+    console.log('QR RECEIVED', qr);
+    qrcode.generate(qr, {small: true});
+});
+
+client.on('ready', () => {
+    console.log('Client is ready!');
+});
+
+client.on('message', messageHandler);
+
 client.on('disconnected', (reason) => {
     console.log('Client was disconnected', reason);
 });
+
+client.initialize();
 
 process.on('unhandledRejection', (reason, p) => {
     console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
