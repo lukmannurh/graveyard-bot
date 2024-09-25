@@ -6,8 +6,10 @@ const list = require('./list');
 const kick = require('./kick');
 const tagall = require('./tagall');
 const ai = require('./ai');
+// const authorizeGroup = require('./authorizeGroup');
 
 const ADMIN_COMMANDS = ['end', 'kick', 'tagall'];
+// const OWNER_COMMANDS = ['authorize'];
 
 module.exports = {
     menu,
@@ -18,5 +20,7 @@ module.exports = {
     kick,
     tagall,
     ai,
-    ADMIN_COMMANDS
+    // authorize: authorizeGroup,
+    ADMIN_COMMANDS,
+    // OWNER_COMMANDS
 };
