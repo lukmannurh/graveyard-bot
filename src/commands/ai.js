@@ -14,7 +14,7 @@ async function mediaToGenerativePart(media) {
 
 async function run(textPrompt, mediaPart) {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         
         let prompt = [{ text: textPrompt }];
         if (mediaPart) {
