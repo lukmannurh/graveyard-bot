@@ -7,6 +7,7 @@ const menu = async (message) => {
     menuText += "• .list - Melihat daftar tebakan peserta\n";
     menuText += "• .ai [pertanyaan/perintah] - Bertanya atau meminta AI untuk melakukan sesuatu\n";
     menuText += "• Kirim gambar dengan caption .ai [pertanyaan/perintah] - AI akan menganalisis gambar\n";
+    menuText += "• .random [jumlah tim] [nama1] [nama2] ... - Membuat tim acak (minimal 2 tim dan 2 nama)\n";
     menuText += "\n===========================\n";
     menuText += "*Perintah khusus admin:*\n";
     menuText += "• .end - Mengakhiri sesi tebak skor\n";

@@ -62,9 +62,21 @@ const messageHandler = async (message) => {
                 await message.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
                 return;
             }
-            await commandFunction(message, args);
+            try {
+                await commandFunction(message, args);
+            } catch (error) {
+                console.error(`Error executing command ${commandName}:`, error);
+                await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}.`);
+            }
         } else if (commandName === 'ai') {
             await ai(message, args);
+        } else if (commandName === 'random') {
+            try {
+                await commands.random(message, args);
+            } catch (error) {
+                console.error("Error handling random command:", error);
+                await message.reply("Terjadi kesalahan saat menjalankan perintah random.");
+            }
         }
     }
 };

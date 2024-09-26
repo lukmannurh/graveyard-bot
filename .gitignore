@@ -3,4 +3,5 @@ node_modules/
 .wwebjs_auth/
 .wwebjs_cache/
 authorizedGroups.json
+package-lock.json
 *.log

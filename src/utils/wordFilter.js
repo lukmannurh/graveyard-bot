@@ -1,6 +1,6 @@
 const forbiddenWords = ['goblok', 'tolol', 'idiot', 'memek', 'kontol', 'asu', 'jancuk'
-    ,'jokowi', 'mulyono', 'owi', 'goblog', 'jancok', 'anj', 'anjing', 'babi', 'nigga',
-    'nigger', 'tempik','tempek', 'heunceut', 'kanjut', 'itil', 'ngentot', 'ngentod'
+    ,'jokowi', 'mulyono', 'owi', 'goblog', 'jancok', 'anjing', 'babi', 'nigga',
+    'nigger', 'kanjut', 'itil', 'ngentot', 'ngentod'
 ];
 
 function containsForbiddenWord(message) {
