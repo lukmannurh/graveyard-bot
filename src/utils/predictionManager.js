@@ -37,7 +37,7 @@ const predictionManager = {
         return predictions.find(p => p.score === score);
     },
 
-    getActiveMatch: () => activeMatch,
+    getActiveMatch: () => activeMatch || { team1: 'Unknown', team2: 'Unknown', reward: 'Unknown' },
     getPredictions: () => predictions,
     isSessionActive: () => isSessionOpen
 };
