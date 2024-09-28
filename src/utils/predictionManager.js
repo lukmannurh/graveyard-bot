@@ -13,9 +13,9 @@ const predictionManager = {
         isSessionOpen = false;
     },
 
-    addPrediction: (userId, score, timestamp) => {
+    addPrediction: (userId, score, timestamp, manualName = null) => {
         if (isSessionOpen && !predictions.some(p => p.userId === userId)) {
-            predictions.push({ userId, score, timestamp });
+            predictions.push({ userId, score, timestamp, manualName });
             return true;
         }
         return false;
