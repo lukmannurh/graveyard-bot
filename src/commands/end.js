@@ -27,11 +27,17 @@ const sendPredictionList = async (message) => {
         
         for (const prediction of predictions) {
             try {
-                const contact = await message.client.getContactById(prediction.userId);
-                response += `${contact.pushname || 'Unknown'}: ${prediction.score}\n`;
+                let name;
+                if (prediction.manualName) {
+                    name = prediction.manualName;
+                } else {
+                    const contact = await message.client.getContactById(prediction.userId);
+                    name = contact.pushname || 'Unknown';
+                }
+                response += `${name}: ${prediction.score}\n`;
             } catch (contactError) {
                 console.error(`Error getting contact for ${prediction.userId}:`, contactError);
-                response += `Unknown User: ${prediction.score}\n`;
+                response += `${prediction.manualName || 'Unknown User'}: ${prediction.score}\n`;
             }
         }
         await message.reply(response);
