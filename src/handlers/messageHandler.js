@@ -17,29 +17,26 @@ const messageHandler = async (message) => {
 
     console.log('Message received from:', userId);
     console.log('OWNER_NUMBER in messageHandler:', OWNER_NUMBER);
-    console.log('Is owner?', userId === OWNER_NUMBER);
+    console.log('Group ID:', groupId);
 
     const cleanUserId = userId.replace('@c.us', '');
-
-console.log('Cleaned userId:', cleanUserId);
-console.log('Is owner?', cleanUserId === OWNER_NUMBER);
-
+    console.log('Cleaned userId:', cleanUserId);
+    console.log('Is owner?', cleanUserId === OWNER_NUMBER);
 
     // Owner bypass
-    if (userId === OWNER_NUMBER) {
-      logger.info(`Owner message received: ${message.body}`);
-      // Process commands for owner without any restrictions
-      const [command, ...args] = message.body.split(' ');
-      if (command.startsWith(PREFIX)) {
-        const commandName = command.slice(PREFIX.length).toLowerCase();
-        const commandFunction = commands[commandName];
-        if (commandFunction) {
-          await commandFunction(message, args);
-        }
+    if (cleanUserId === OWNER_NUMBER) {
+      console.log('Owner detected, processing command...');
+      // ... (kode untuk memproses perintah owner)
+    } else {
+      // Periksa otorisasi grup jika bukan owner
+      const isAuthorized = await isGroupAuthorized(groupId);
+      console.log('Is group authorized?', isAuthorized);
+      
+      if (!isAuthorized) {
+        console.log('Unauthorized group, ignoring message');
+        return;
       }
-      return;
     }
-
     // Check if user is banned
     if (isUserBanned(groupId, userId)) {
       logger.info(`Banned user ${sender.id.user} attempted to send a message in group ${chat.name}`);

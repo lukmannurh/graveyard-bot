@@ -27,8 +27,8 @@ async function saveAuthorizedGroups(groups) {
 export async function isGroupAuthorized(groupId) {
   try {
     const authorizedGroups = await loadAuthorizedGroups();
-    logger.debug('Authorized Groups:', authorizedGroups);
-    logger.debug('Checking authorization for group:', groupId);
+    console.log('Checking authorization for group:', groupId);
+    console.log('Current authorized groups:', authorizedGroups);
     return authorizedGroups.includes(groupId);
   } catch (error) {
     logger.error('Error checking group authorization:', error);
@@ -59,13 +59,15 @@ export async function addAuthorizedGroup(groupId) {
 export async function removeAuthorizedGroup(groupId) {
   try {
     let authorizedGroups = await loadAuthorizedGroups();
+    console.log('Removing group:', groupId);
+    console.log('Current authorized groups:', authorizedGroups);
     if (authorizedGroups.includes(groupId)) {
       authorizedGroups = authorizedGroups.filter(id => id !== groupId);
       await saveAuthorizedGroups(authorizedGroups);
-      logger.info('Removed authorized group:', groupId);
+      console.log('Updated authorized groups:', authorizedGroups);
       return true;
     } else {
-      logger.info('Group not found in authorized list:', groupId);
+      console.log('Group not found in authorized list');
       return false;
     }
   } catch (error) {

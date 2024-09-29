@@ -4,16 +4,17 @@ import logger from '../utils/logger.js';
 
 async function authorizeGroup(message, args) {
     try {
+        console.log('Authorize command received with args:', args);
+        
         const chat = await message.getChat();
         const sender = await message.getContact();
         const cleanSenderId = sender.id.user.replace('@c.us', '');
+        const groupId = chat.id._serialized;
 
-        console.log('Authorize command received');
+        console.log('Group ID:', groupId);
         console.log('Sender ID:', sender.id.user);
         console.log('Cleaned Sender ID:', cleanSenderId);
-        console.log('OWNER_NUMBER in authorizeGroup:', OWNER_NUMBER);
-        console.log('Is sender owner?', cleanSenderId === OWNER_NUMBER);
-        console.log('Arguments:', args);
+        console.log('OWNER_NUMBER:', OWNER_NUMBER);
 
         if (!chat.isGroup) {
             await message.reply('Perintah ini hanya bisa digunakan di dalam grup.');
@@ -25,29 +26,20 @@ async function authorizeGroup(message, args) {
             return;
         }
 
-        const groupId = chat.id._serialized;
-
         if (args[0] === 'add') {
             const result = await addAuthorizedGroup(groupId);
-            if (result) {
-                await message.reply('Grup ini telah diotorisasi untuk menggunakan bot.');
-            } else {
-                await message.reply('Grup ini sudah diotorisasi sebelumnya.');
-            }
+            console.log('Add result:', result);
+            await message.reply(result ? 'Grup ini telah diotorisasi untuk menggunakan bot.' : 'Grup ini sudah diotorisasi sebelumnya.');
         } else if (args[0] === 'remove') {
             const result = await removeAuthorizedGroup(groupId);
-            if (result) {
-                await message.reply('Otorisasi grup ini untuk menggunakan bot telah dicabut.');
-            } else {
-                await message.reply('Grup ini tidak dalam daftar grup yang diotorisasi.');
-            }
+            console.log('Remove result:', result);
+            await message.reply(result ? 'Otorisasi grup ini untuk menggunakan bot telah dicabut.' : 'Grup ini tidak dalam daftar grup yang diotorisasi.');
         } else {
             await message.reply('Penggunaan: .authorize add/remove');
         }
 
-        // Log status otorisasi grup setelah operasi
         const isAuthorized = await isGroupAuthorized(groupId);
-        console.log(`Group ${groupId} authorization status: ${isAuthorized}`);
+        console.log(`Group ${groupId} authorization status after operation: ${isAuthorized}`);
 
     } catch (error) {
         logger.error('Error in authorizeGroup command:', error);
