@@ -8,11 +8,12 @@ async function authorizeGroup(message, args) {
         
         const chat = await message.getChat();
         const sender = await message.getContact();
+        const cleanSenderId = sender.id.user.replace('@c.us', '');
         
         console.log('Sender ID:', sender.id.user);
+        console.log('Cleaned Sender ID:', cleanSenderId);
         console.log('OWNER_NUMBER in authorizeGroup:', OWNER_NUMBER);
-        console.log('Is sender owner?', sender.id.user === OWNER_NUMBER);
-
+        console.log('Is sender owner?', cleanSenderId === OWNER_NUMBER);
         if (!chat.isGroup) {
             await message.reply('Perintah ini hanya bisa digunakan di dalam grup.');
             return;

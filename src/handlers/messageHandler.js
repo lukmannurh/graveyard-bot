@@ -19,6 +19,11 @@ const messageHandler = async (message) => {
     console.log('OWNER_NUMBER in messageHandler:', OWNER_NUMBER);
     console.log('Is owner?', userId === OWNER_NUMBER);
 
+    const cleanUserId = userId.replace('@c.us', '');
+
+console.log('Cleaned userId:', cleanUserId);
+console.log('Is owner?', cleanUserId === OWNER_NUMBER);
+
 
     // Owner bypass
     if (userId === OWNER_NUMBER) {
