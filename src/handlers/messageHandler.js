@@ -92,6 +92,8 @@ const messageHandler = async (message) => {
   } catch (error) {
     logger.error('Error in messageHandler:', error);
   }
+
+  logger.info(`Message from ${userId}, OWNER_NUMBER is ${OWNER_NUMBER}, isOwner: ${userId === OWNER_NUMBER}`);
 };
 
 export default messageHandler;
