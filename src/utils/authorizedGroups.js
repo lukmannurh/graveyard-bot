@@ -1,44 +1,65 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import logger from './logger.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const authorizedGroupsFile = path.join(__dirname, '../../authorizedGroups.json');
 
-function loadAuthorizedGroups() {
-    if (fs.existsSync(authorizedGroupsFile)) {
-        const data = fs.readFileSync(authorizedGroupsFile, 'utf8');
-        return JSON.parse(data);
+async function loadAuthorizedGroups() {
+  try {
+    const data = await fs.readFile(authorizedGroupsFile, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return [];
     }
-    return [];
+    throw error;
+  }
 }
 
-function saveAuthorizedGroups(groups) {
-    fs.writeFileSync(authorizedGroupsFile, JSON.stringify(groups, null, 2));
+async function saveAuthorizedGroups(groups) {
+  await fs.writeFile(authorizedGroupsFile, JSON.stringify(groups, null, 2));
 }
 
-function isGroupAuthorized(groupId) {
-    const authorizedGroups = loadAuthorizedGroups();
-    console.log('Authorized Groups:', authorizedGroups);
-    console.log('Checking authorization for group:', groupId);
+export async function isGroupAuthorized(groupId) {
+  try {
+    const authorizedGroups = await loadAuthorizedGroups();
+    logger.debug('Authorized Groups:', authorizedGroups);
+    logger.debug('Checking authorization for group:', groupId);
     return authorizedGroups.includes(groupId);
+  } catch (error) {
+    logger.error('Error checking group authorization:', error);
+    return false;
+  }
 }
 
-function addAuthorizedGroup(groupId) {
-    const authorizedGroups = loadAuthorizedGroups();
-    console.log('Current Authorized Groups:', authorizedGroups);
+export async function addAuthorizedGroup(groupId) {
+  try {
+    const authorizedGroups = await loadAuthorizedGroups();
+    logger.debug('Current Authorized Groups:', authorizedGroups);
     if (!authorizedGroups.includes(groupId)) {
-        authorizedGroups.push(groupId);
-        saveAuthorizedGroups(authorizedGroups);
-        console.log('Added new group:', groupId);
-        console.log('Updated Authorized Groups:', authorizedGroups);
+      authorizedGroups.push(groupId);
+      await saveAuthorizedGroups(authorizedGroups);
+      logger.info('Added new group:', groupId);
+      logger.debug('Updated Authorized Groups:', authorizedGroups);
     } else {
-        console.log('Group already authorized:', groupId);
+      logger.info('Group already authorized:', groupId);
     }
+  } catch (error) {
+    logger.error('Error adding authorized group:', error);
+  }
 }
 
-function removeAuthorizedGroup(groupId) {
-    let authorizedGroups = loadAuthorizedGroups();
+export async function removeAuthorizedGroup(groupId) {
+  try {
+    let authorizedGroups = await loadAuthorizedGroups();
     authorizedGroups = authorizedGroups.filter(id => id !== groupId);
-    saveAuthorizedGroups(authorizedGroups);
+    await saveAuthorizedGroups(authorizedGroups);
+    logger.info('Removed authorized group:', groupId);
+  } catch (error) {
+    logger.error('Error removing authorized group:', error);
+  }
 }
-
-module.exports = { isGroupAuthorized, addAuthorizedGroup, removeAuthorizedGroup };

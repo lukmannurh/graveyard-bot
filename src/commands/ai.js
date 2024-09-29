@@ -1,5 +1,8 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-require('dotenv').config();
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import dotenv from 'dotenv';
+import logger from '../utils/logger.js';
+
+dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
@@ -26,14 +29,14 @@ async function run(textPrompt, mediaPart) {
         const text = response.text();
 
         if (text) {
-            console.log("Generated Text:", text);
+            logger.info("Generated Text:", text);
             return text;
         } else {
-            console.error("This problem is related to Model Limitations and API Rate Limits");
+            logger.error("This problem is related to Model Limitations and API Rate Limits");
             return "Maaf, terjadi masalah dalam menghasilkan respons. Silakan coba lagi nanti.";
         }
     } catch (error) {
-        console.error("Error in run function:", error);
+        logger.error("Error in run function:", error);
         if (error.message.includes("model is not supported")) {
             return "Maaf, fitur ini sedang dalam pemeliharaan. Silakan coba lagi nanti.";
         }
@@ -64,9 +67,9 @@ async function ai(message, args) {
         responseText = formatResponse(responseText);
         await message.reply(responseText);
     } catch (error) {
-        console.error("Error in AI function:", error);
+        logger.error("Error in AI function:", error);
         await message.reply("Terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi nanti.");
     }
 }
 
-module.exports = ai;
+export default ai;

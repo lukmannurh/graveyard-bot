@@ -1,15 +1,22 @@
+import logger from '../utils/logger.js';
+
 const kick = async (message) => {
-    const chat = await message.getChat();
-    const mentionedIds = await message.getMentions();
-    
-    if (mentionedIds.length > 0) {
-        for (let participant of mentionedIds) {
-            await chat.removeParticipants([participant.id._serialized]);
+    try {
+        const chat = await message.getChat();
+        const mentionedIds = await message.getMentions();
+        
+        if (mentionedIds.length > 0) {
+            for (let participant of mentionedIds) {
+                await chat.removeParticipants([participant.id._serialized]);
+            }
+            await message.reply("Orang ini adalah haters owi dan owo");
+        } else {
+            await message.reply("Mention pengguna yang ingin dikeluarkan.");
         }
-        await message.reply("Orang ini adalah haters owi dan owo");
-    } else {
-        await message.reply("Mention pengguna yang ingin dikeluarkan.");
+    } catch (error) {
+        logger.error("Error in kick command:", error);
+        await message.reply("Terjadi kesalahan saat mengeluarkan anggota. Mohon coba lagi.");
     }
 };
 
-module.exports = kick;
+export default kick;

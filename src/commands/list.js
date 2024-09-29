@@ -1,4 +1,5 @@
-const predictionManager = require('../utils/predictionManager');
+import predictionManager from '../utils/predictionManager.js';
+import logger from '../utils/logger.js';
 
 const list = async (message) => {
     try {
@@ -30,15 +31,15 @@ const list = async (message) => {
                 }
                 response += `${name}: ${prediction.score}\n`;
             } catch (error) {
-                console.error(`Error getting contact for ${prediction.userId}:`, error);
+                logger.error(`Error getting contact for ${prediction.userId}:`, error);
                 response += `${prediction.manualName || 'Unknown User'}: ${prediction.score}\n`;
             }
         }
         await message.reply(response);
     } catch (error) {
-        console.error("Error in list command:", error);
+        logger.error("Error in list command:", error);
         await message.reply("Terjadi kesalahan saat menampilkan daftar tebakan. Mohon coba lagi.");
     }
 };
 
-module.exports = list;
+export default list;

@@ -1,4 +1,5 @@
-const predictionManager = require('../utils/predictionManager');
+import predictionManager from '../utils/predictionManager.js';
+import logger from '../utils/logger.js';
 
 const end = async (message) => {
     try {
@@ -11,7 +12,7 @@ const end = async (message) => {
         await sendPredictionList(message);
         await message.reply("Sesi tebak skor telah ditutup.");
     } catch (error) {
-        console.error("Error in end command:", error);
+        logger.error("Error in end command:", error);
         await message.reply("Terjadi kesalahan saat mengakhiri sesi tebak skor. Mohon coba lagi.");
     }
 };
@@ -36,15 +37,15 @@ const sendPredictionList = async (message) => {
                 }
                 response += `${name}: ${prediction.score}\n`;
             } catch (contactError) {
-                console.error(`Error getting contact for ${prediction.userId}:`, contactError);
+                logger.error(`Error getting contact for ${prediction.userId}:`, contactError);
                 response += `${prediction.manualName || 'Unknown User'}: ${prediction.score}\n`;
             }
         }
         await message.reply(response);
     } catch (error) {
-        console.error("Error in sendPredictionList:", error);
+        logger.error("Error in sendPredictionList:", error);
         await message.reply("Terjadi kesalahan saat menampilkan daftar prediksi.");
     }
 };
 
-module.exports = end;
+export default end;

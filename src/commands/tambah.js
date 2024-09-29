@@ -1,4 +1,5 @@
-const predictionManager = require('../utils/predictionManager');
+import predictionManager from '../utils/predictionManager.js';
+import logger from '../utils/logger.js';
 
 const tambah = async (message, args) => {
     try {
@@ -35,24 +36,29 @@ const tambah = async (message, args) => {
             await message.reply("Terjadi kesalahan saat menambahkan prediksi. Silakan coba lagi.");
         }
     } catch (error) {
-        console.error("Error in tambah command:", error);
+        logger.error("Error in tambah command:", error);
         await message.reply("Terjadi kesalahan saat menambahkan tebakan manual. Silakan coba lagi.");
     }
 };
 
 const sendPredictionList = async (message) => {
-    const activeMatch = predictionManager.getActiveMatch();
-    const predictions = predictionManager.getPredictions();
+    try {
+        const activeMatch = predictionManager.getActiveMatch();
+        const predictions = predictionManager.getPredictions();
 
-    let response = `*Daftar Tebakan*\n`;
-    response += `Pertandingan: ${activeMatch.team1} VS ${activeMatch.team2}\n`;
-    response += `Hadiah: ${activeMatch.reward}\n\n`;
-    
-    for (const prediction of predictions) {
-        const name = prediction.manualName || (await message.client.getContactById(prediction.userId)).pushname;
-        response += `${name}: ${prediction.score}\n`;
+        let response = `*Daftar Tebakan*\n`;
+        response += `Pertandingan: ${activeMatch.team1} VS ${activeMatch.team2}\n`;
+        response += `Hadiah: ${activeMatch.reward}\n\n`;
+        
+        for (const prediction of predictions) {
+            const name = prediction.manualName || (await message.client.getContactById(prediction.userId)).pushname;
+            response += `${name}: ${prediction.score}\n`;
+        }
+        await message.reply(response);
+    } catch (error) {
+        logger.error("Error in sendPredictionList:", error);
+        await message.reply("Terjadi kesalahan saat menampilkan daftar prediksi.");
     }
-    await message.reply(response);
 };
 
-module.exports = tambah;
+export default tambah;

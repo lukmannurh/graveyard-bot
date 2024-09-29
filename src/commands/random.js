@@ -1,9 +1,10 @@
-const { createCanvas } = require('canvas');
-const { MessageMedia } = require('whatsapp-web.js');
+import { createCanvas } from 'canvas';
+import { MessageMedia } from 'whatsapp-web.js';
+import logger from '../utils/logger.js';
 
 async function generateRandomTeams(message, args) {
     try {
-        console.log("Perintah random dipanggil dengan argumen:", args);
+        logger.info("Random command called with arguments:", args);
 
         if (args.length < 3) {
             await message.reply('Format: .random [jumlah tim] [nama1] [nama2] ... (minimal 2 nama)');
@@ -40,7 +41,7 @@ async function generateRandomTeams(message, args) {
 
         // Mengirim hasil sebagai teks
         await message.reply(resultText);
-        console.log("Hasil teks berhasil dikirim");
+        logger.info("Text result sent successfully");
 
         // Membuat gambar
         const canvasWidth = 800;
@@ -138,12 +139,12 @@ async function generateRandomTeams(message, args) {
 
         // Kirim gambar
         await message.reply(media, message.from, { caption: 'Visualisasi Tim Acak' });
-        console.log("Gambar berhasil dikirim");
+        logger.info("Image sent successfully");
 
     } catch (error) {
-        console.error("Error in generateRandomTeams:", error);
+        logger.error("Error in generateRandomTeams:", error);
         await message.reply("Terjadi kesalahan saat membuat tim acak. Mohon coba lagi.");
     }
 }
 
-module.exports = generateRandomTeams;
+export default generateRandomTeams;

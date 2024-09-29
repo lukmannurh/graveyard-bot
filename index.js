@@ -1,34 +1,35 @@
-require('dotenv').config();
-const express = require('express');
-const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
-const messageHandler = require('./src/handlers/messageHandler');
+import 'dotenv/config';
+import express from 'express';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import { startBot } from './src/bot.js';
+import logger from './src/utils/logger.js';
+import { PORT } from './src/config/index.js';
 
 const app = express();
+
+// Middleware
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const port = 5000;
-
-const whatsappClient = new Client({
-    authStrategy: new LocalAuth(),
-    puppeteer: {
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    },
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
 });
+app.use(limiter);
 
-whatsappClient.on('qr', (qr) => {
-    qrcode.generate(qr, { small: true });
-    console.log('QR Code received, scan with your phone.');
+// Start the bot
+startBot();
+
+// Start the server
+const server = app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    logger.info('HTTP server closed');
+  });
 });
-
-whatsappClient.on('ready', () => {
-    console.log('WhatsApp Web client is ready!');
-    setWhatsAppClient(whatsappClient);
-});
-
-whatsappClient.on('message', messageHandler);
-
-whatsappClient.initialize();
-
-app.listen(port, () => console.log(`Express app running on port ${port}!`));
