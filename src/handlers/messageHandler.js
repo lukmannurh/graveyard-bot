@@ -25,7 +25,20 @@ const messageHandler = async (message) => {
 
     if (cleanUserId === OWNER_NUMBER) {
       console.log('Owner detected, processing command...');
-      // Process owner commands
+      const [command, ...args] = message.body.split(' ');
+      if (command.startsWith(PREFIX)) {
+        const commandName = command.slice(PREFIX.length).toLowerCase();
+        console.log('Command received:', commandName);
+        if (commandName === 'authorize') {
+          console.log('Authorize command detected, args:', args);
+          await commands.authorizeGroup(message, args);
+        } else {
+          const commandFunction = commands[commandName];
+          if (commandFunction) {
+            await commandFunction(message, args);
+          }
+        }
+      }
     } else {
       const isAuthorized = await isGroupAuthorized(groupId);
       console.log('Is group authorized?', isAuthorized);
@@ -34,71 +47,63 @@ const messageHandler = async (message) => {
         console.log('Unauthorized group, ignoring message');
         return;
       }
-    }
 
-    // Check if user is banned
-    if (isUserBanned(groupId, userId)) {
-      logger.info(`Banned user ${sender.id.user} attempted to send a message in group ${chat.name}`);
-      await logViolation(groupId, userId, "Attempted to send message while banned");
-      
-      try {
-        await message.delete(true);
-        logger.info(`Deleted message from banned user ${sender.id.user} in group ${chat.name}`);
-      } catch (deleteError) {
-        logger.error('Failed to delete message from banned user:', deleteError);
-      }
-
-      await sender.sendMessage("Anda sedang dalam status ban di grup ini. Pesan Anda telah dihapus. Ban akan berakhir dalam 1 jam.");
-      return;
-    }
-
-    logger.info(`Received message in group: ${chat.name}, ID: ${groupId}`);
-
-    const userStatus = await checkUserStatus(groupId, userId);
-
-    const [command, ...args] = message.body.split(' ');
-    if (!command.startsWith(PREFIX)) {
-      // Check for forbidden words in non-command messages
-      const forbiddenCheck = checkForbiddenWord(message.body, userId);
-      if (forbiddenCheck.found) {
-        const updatedStatus = await warnUser(groupId, userId);
-        await message.reply(getForbiddenWordResponse(forbiddenCheck.word, forbiddenCheck.lowercaseWord));
+      // Check if user is banned
+      if (isUserBanned(groupId, userId)) {
+        logger.info(`Banned user ${sender.id.user} attempted to send a message in group ${chat.name}`);
+        await logViolation(groupId, userId, "Attempted to send message while banned");
         
-        if (updatedStatus.banned) {
-          await message.reply("Anda telah mencapai batas peringatan dan sekarang di-ban dari grup ini selama 1 jam.");
-          await logViolation(groupId, userId, `Banned due to repeated use of forbidden word: ${forbiddenCheck.word}`);
-        } else {
-          await message.reply(`Peringatan ${updatedStatus.warnings}/5. Hati-hati dalam penggunaan kata-kata.`);
-          await logViolation(groupId, userId, `Warned for using forbidden word: ${forbiddenCheck.word}`);
+        try {
+          await message.delete(true);
+          logger.info(`Deleted message from banned user ${sender.id.user} in group ${chat.name}`);
+        } catch (deleteError) {
+          logger.error('Failed to delete message from banned user:', deleteError);
         }
-        
+
+        await sender.sendMessage("Anda sedang dalam status ban di grup ini. Pesan Anda telah dihapus. Ban akan berakhir dalam 1 jam.");
         return;
       }
-      return; // Exit if it's not a command and no forbidden words
-    }
 
-    const commandName = command.slice(PREFIX.length).toLowerCase();
+      logger.info(`Received message in group: ${chat.name}, ID: ${groupId}`);
 
-    // Check if the group is authorized for other commands
-    // Di dalam fungsi messageHandler
-const isAuthorized = await isGroupAuthorized(chat.id._serialized);
-if (!isAuthorized) {
-  logger.warn(`Unauthorized access attempt in group: ${chat.name}, ID: ${chat.id._serialized}`);
-  return;
-}
+      const userStatus = await checkUserStatus(groupId, userId);
 
-  
-    // Handle commands
-    const commandFunction = commands[commandName];
-    if (commandFunction) {
-      if ((ADMIN_COMMANDS.includes(commandName) && !isAdmin(chat, sender)) ||
-          (OWNER_COMMANDS.includes(commandName) && sender.id.user !== OWNER_NUMBER)) {
-        await message.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
-        return;
+      const [command, ...args] = message.body.split(' ');
+      if (!command.startsWith(PREFIX)) {
+        // Check for forbidden words in non-command messages
+        const forbiddenCheck = checkForbiddenWord(message.body, userId);
+        if (forbiddenCheck.found) {
+          const updatedStatus = await warnUser(groupId, userId);
+          await message.reply(getForbiddenWordResponse(forbiddenCheck.word, forbiddenCheck.lowercaseWord));
+          
+          if (updatedStatus.banned) {
+            await message.reply("Anda telah mencapai batas peringatan dan sekarang di-ban dari grup ini selama 1 jam.");
+            await logViolation(groupId, userId, `Banned due to repeated use of forbidden word: ${forbiddenCheck.word}`);
+          } else {
+            await message.reply(`Peringatan ${updatedStatus.warnings}/5. Hati-hati dalam penggunaan kata-kata.`);
+            await logViolation(groupId, userId, `Warned for using forbidden word: ${forbiddenCheck.word}`);
+          }
+          
+          return;
+        }
+        return; // Exit if it's not a command and no forbidden words
       }
-      await commandFunction(message, args);
+
+      const commandName = command.slice(PREFIX.length).toLowerCase();
+
+      // Handle commands
+      const commandFunction = commands[commandName];
+      if (commandFunction) {
+        if ((ADMIN_COMMANDS.includes(commandName) && !isAdmin(chat, sender)) ||
+            (OWNER_COMMANDS.includes(commandName) && sender.id.user !== OWNER_NUMBER)) {
+          await message.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
+          return;
+        }
+        await commandFunction(message, args);
+      }
     }
   } catch (error) {
+    console.error('Error in messageHandler:', error);
     logger.error('Error in messageHandler:', error);
   }
 };

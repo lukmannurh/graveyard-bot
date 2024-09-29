@@ -3,9 +3,8 @@ import { OWNER_NUMBER } from '../config/index.js';
 import logger from '../utils/logger.js';
 
 async function authorizeGroup(message, args) {
+    console.log('authorizeGroup function called with args:', args);
     try {
-        console.log('Authorize command received with args:', args);
-        
         const chat = await message.getChat();
         const sender = await message.getContact();
         const cleanSenderId = sender.id.user.replace('@c.us', '');
