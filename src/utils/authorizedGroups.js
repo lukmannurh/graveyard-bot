@@ -29,9 +29,7 @@ export async function isGroupAuthorized(groupId) {
     const authorizedGroups = await loadAuthorizedGroups();
     logger.debug('Authorized Groups:', authorizedGroups);
     logger.debug('Checking authorization for group:', groupId);
-    const isAuthorized = authorizedGroups.includes(groupId);
-    logger.debug(`Group ${groupId} is ${isAuthorized ? 'authorized' : 'not authorized'}`);
-    return isAuthorized;
+    return authorizedGroups.includes(groupId);
   } catch (error) {
     logger.error('Error checking group authorization:', error);
     return false;

@@ -10,6 +10,8 @@ dotenv.config({
   path: resolve(__dirname, '../../.env')
 });
 
+console.log('OWNER_NUMBER loaded from env:', process.env.OWNER_NUMBER);
+
 export const PORT = process.env.PORT || 5000;
 export const NODE_ENV = process.env.NODE_ENV || 'production';
 export const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;

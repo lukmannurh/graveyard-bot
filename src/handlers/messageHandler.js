@@ -6,6 +6,10 @@ import { isGroupAuthorized } from '../utils/authorizedGroups.js';
 import { isUserBanned, checkUserStatus, warnUser, logViolation } from '../utils/enhancedModerationSystem.js';
 import logger from '../utils/logger.js';
 
+console.log('Message received from:', userId);
+console.log('OWNER_NUMBER in messageHandler:', OWNER_NUMBER);
+console.log('Is owner?', userId === OWNER_NUMBER);
+
 const messageHandler = async (message) => {
   try {
     const chat = await message.getChat();
@@ -79,6 +83,7 @@ const messageHandler = async (message) => {
       return;
     }
 
+  
     // Handle commands
     const commandFunction = commands[commandName];
     if (commandFunction) {
@@ -92,8 +97,6 @@ const messageHandler = async (message) => {
   } catch (error) {
     logger.error('Error in messageHandler:', error);
   }
-
-  logger.info(`Message from ${userId}, OWNER_NUMBER is ${OWNER_NUMBER}, isOwner: ${userId === OWNER_NUMBER}`);
 };
 
 export default messageHandler;
