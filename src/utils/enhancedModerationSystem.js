@@ -1,5 +1,3 @@
-// enhancedModerationSystem.js
-
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -52,13 +50,13 @@ async function saveModerationData(data) {
 }
 
 export async function warnUser(groupId, userId) {
-  const data = await loadModerationData();
-  if (!data[groupId]) data[groupId] = {};
-  if (!data[groupId][userId]) data[groupId][userId] = { warnings: 0, banned: false, banEndTime: null };
-
   if (userId === OWNER_NUMBER) {
     return { warnings: 0, banned: false };
   }
+
+  const data = await loadModerationData();
+  if (!data[groupId]) data[groupId] = {};
+  if (!data[groupId][userId]) data[groupId][userId] = { warnings: 0, banned: false, banEndTime: null };
 
   data[groupId][userId].warnings++;
   
@@ -99,6 +97,8 @@ export async function unbanUser(groupId, userId) {
 }
 
 export function isUserBanned(groupId, userId) {
+  if (userId === OWNER_NUMBER) return false;
+  
   const banEndTime = bannedUsers.get(`${groupId}:${userId}`);
   if (!banEndTime) return false;
   

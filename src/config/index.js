@@ -1,5 +1,3 @@
-// src/config/index.js
-
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
@@ -22,4 +20,4 @@ export const PREFIX = '.';
 export const ADMIN_COMMANDS = ['end', 'kick', 'tagall', 'tambah', 'ban', 'unban'];
 export const OWNER_COMMANDS = ['authorize'];
 
-export const PUPPETEER_ARGS = ['--no-sandbox', '--disable-setuid-sandbox'];
+export const PUPPETEER_ARGS = ['--no-sandbox', '--disable-setui
