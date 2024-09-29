@@ -6,10 +6,6 @@ import { isGroupAuthorized } from '../utils/authorizedGroups.js';
 import { isUserBanned, checkUserStatus, warnUser, logViolation } from '../utils/enhancedModerationSystem.js';
 import logger from '../utils/logger.js';
 
-console.log('Message received from:', userId);
-console.log('OWNER_NUMBER in messageHandler:', OWNER_NUMBER);
-console.log('Is owner?', userId === OWNER_NUMBER);
-
 const messageHandler = async (message) => {
   try {
     const chat = await message.getChat();
@@ -18,6 +14,11 @@ const messageHandler = async (message) => {
     const sender = await message.getContact();
     const groupId = chat.id._serialized;
     const userId = sender.id._serialized;
+
+    console.log('Message received from:', userId);
+    console.log('OWNER_NUMBER in messageHandler:', OWNER_NUMBER);
+    console.log('Is owner?', userId === OWNER_NUMBER);
+
 
     // Owner bypass
     if (userId === OWNER_NUMBER) {
