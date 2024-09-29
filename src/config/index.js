@@ -1,4 +1,10 @@
 import dotenv from 'dotenv-safe';
+import dotenvSafe from 'dotenv-safe';
+import path from 'path';
+
+dotenvSafe.config({
+  example: path.resolve(__dirname, '../../.env.example'),
+});
 
 dotenv.config();
 
