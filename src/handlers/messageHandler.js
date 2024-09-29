@@ -84,10 +84,12 @@ console.log('Is owner?', cleanUserId === OWNER_NUMBER);
     const commandName = command.slice(PREFIX.length).toLowerCase();
 
     // Check if the group is authorized for other commands
-    if (!isGroupAuthorized(chat.id._serialized)) {
-      logger.warn(`Unauthorized access attempt in group: ${chat.name}, ID: ${chat.id._serialized}`);
-      return;
-    }
+    // Di dalam fungsi messageHandler
+const isAuthorized = await isGroupAuthorized(chat.id._serialized);
+if (!isAuthorized) {
+  logger.warn(`Unauthorized access attempt in group: ${chat.name}, ID: ${chat.id._serialized}`);
+  return;
+}
 
   
     // Handle commands

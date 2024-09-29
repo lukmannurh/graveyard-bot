@@ -45,21 +45,31 @@ export async function addAuthorizedGroup(groupId) {
       await saveAuthorizedGroups(authorizedGroups);
       logger.info('Added new group:', groupId);
       logger.debug('Updated Authorized Groups:', authorizedGroups);
+      return true;
     } else {
       logger.info('Group already authorized:', groupId);
+      return false;
     }
   } catch (error) {
     logger.error('Error adding authorized group:', error);
+    return false;
   }
 }
 
 export async function removeAuthorizedGroup(groupId) {
   try {
     let authorizedGroups = await loadAuthorizedGroups();
-    authorizedGroups = authorizedGroups.filter(id => id !== groupId);
-    await saveAuthorizedGroups(authorizedGroups);
-    logger.info('Removed authorized group:', groupId);
+    if (authorizedGroups.includes(groupId)) {
+      authorizedGroups = authorizedGroups.filter(id => id !== groupId);
+      await saveAuthorizedGroups(authorizedGroups);
+      logger.info('Removed authorized group:', groupId);
+      return true;
+    } else {
+      logger.info('Group not found in authorized list:', groupId);
+      return false;
+    }
   } catch (error) {
     logger.error('Error removing authorized group:', error);
+    return false;
   }
 }
