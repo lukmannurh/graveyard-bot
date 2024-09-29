@@ -1,12 +1,14 @@
-import dotenv from 'dotenv-safe';
-import dotenvSafe from 'dotenv-safe';
-import path from 'path';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 
-dotenvSafe.config({
-  example: path.resolve(__dirname, '../../.env.example'),
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load .env file
+dotenv.config({
+  path: resolve(__dirname, '../../.env')
 });
-
-dotenv.config();
 
 export const PORT = process.env.PORT || 5000;
 export const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -19,3 +21,6 @@ export const ADMIN_COMMANDS = ['end', 'kick', 'tagall', 'tambah', 'ban', 'unban'
 export const OWNER_COMMANDS = ['authorize'];
 
 export const PUPPETEER_ARGS = ['--no-sandbox', '--disable-setuid-sandbox'];
+
+console.log('Env file loaded from:', resolve(__dirname, '../../.env'));
+console.log('NODE_ENV:', NODE_ENV);
