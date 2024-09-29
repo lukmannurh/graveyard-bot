@@ -20,9 +20,6 @@ async function loadAuthorizedGroups() {
   }
 }
 
-async function saveAuthorizedGroups(groups) {
-  await fs.writeFile(authorizedGroupsFile, JSON.stringify(groups, null, 2));
-}
 
 export async function isGroupAuthorized(groupId) {
   try {
@@ -59,19 +56,31 @@ export async function addAuthorizedGroup(groupId) {
 export async function removeAuthorizedGroup(groupId) {
   try {
     let authorizedGroups = await loadAuthorizedGroups();
-    console.log('Removing group:', groupId);
-    console.log('Current authorized groups:', authorizedGroups);
+    console.log('removeAuthorizedGroup - Removing group:', groupId);
+    console.log('removeAuthorizedGroup - Current authorized groups:', authorizedGroups);
     if (authorizedGroups.includes(groupId)) {
       authorizedGroups = authorizedGroups.filter(id => id !== groupId);
       await saveAuthorizedGroups(authorizedGroups);
-      console.log('Updated authorized groups:', authorizedGroups);
+      console.log('removeAuthorizedGroup - Updated authorized groups:', authorizedGroups);
       return true;
     } else {
-      console.log('Group not found in authorized list');
+      console.log('removeAuthorizedGroup - Group not found in authorized list');
       return false;
     }
   } catch (error) {
+    console.error('Error removing authorized group:', error);
     logger.error('Error removing authorized group:', error);
     return false;
+  }
+}
+
+async function saveAuthorizedGroups(groups) {
+  try {
+    await fs.writeFile(authorizedGroupsFile, JSON.stringify(groups, null, 2));
+    console.log('saveAuthorizedGroups - Successfully saved authorized groups');
+  } catch (error) {
+    console.error('Error saving authorized groups:', error);
+    logger.error('Error saving authorized groups:', error);
+    throw error;
   }
 }
