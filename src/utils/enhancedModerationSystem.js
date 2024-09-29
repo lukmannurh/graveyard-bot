@@ -51,6 +51,7 @@ async function saveModerationData(data) {
 
 export async function warnUser(groupId, userId) {
   if (userId === OWNER_NUMBER) {
+    logger.info(`Owner (${userId}) attempted to be warned, but was ignored.`);
     return { warnings: 0, banned: false };
   }
 
@@ -70,6 +71,7 @@ export async function warnUser(groupId, userId) {
 
 export async function banUser(groupId, userId) {
   if (userId === OWNER_NUMBER) {
+    logger.info(`Attempt to ban owner (${userId}) was ignored.`);
     return { warnings: 0, banned: false };
   }
 
@@ -97,7 +99,9 @@ export async function unbanUser(groupId, userId) {
 }
 
 export function isUserBanned(groupId, userId) {
-  if (userId === OWNER_NUMBER) return false;
+  if (userId === OWNER_NUMBER) {
+    return false;
+  }
   
   const banEndTime = bannedUsers.get(`${groupId}:${userId}`);
   if (!banEndTime) return false;

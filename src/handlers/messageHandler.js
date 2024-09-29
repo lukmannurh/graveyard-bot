@@ -17,6 +17,7 @@ const messageHandler = async (message) => {
 
     // Owner bypass
     if (userId === OWNER_NUMBER) {
+      logger.info(`Owner message received: ${message.body}`);
       // Process commands for owner without any restrictions
       const [command, ...args] = message.body.split(' ');
       if (command.startsWith(PREFIX)) {
