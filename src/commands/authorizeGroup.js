@@ -2,20 +2,22 @@ import { addAuthorizedGroup, removeAuthorizedGroup } from '../utils/authorizedGr
 import { OWNER_NUMBER } from '../config/index.js';
 import logger from '../utils/logger.js';
 
-console.log('Authorize command received');
-console.log('Sender ID:', sender.id.user);
-console.log('OWNER_NUMBER in authorizeGroup:', OWNER_NUMBER);
-console.log('Is sender owner?', sender.id.user === OWNER_NUMBER);
-
 async function authorizeGroup(message, args) {
     try {
+        console.log('Authorize command received');
+        
         const chat = await message.getChat();
+        const sender = await message.getContact();
+        
+        console.log('Sender ID:', sender.id.user);
+        console.log('OWNER_NUMBER in authorizeGroup:', OWNER_NUMBER);
+        console.log('Is sender owner?', sender.id.user === OWNER_NUMBER);
+
         if (!chat.isGroup) {
             await message.reply('Perintah ini hanya bisa digunakan di dalam grup.');
             return;
         }
 
-        const sender = await message.getContact();
         if (sender.id.user !== OWNER_NUMBER) {
             await message.reply('Hanya pemilik bot yang dapat menggunakan perintah ini.');
             return;
