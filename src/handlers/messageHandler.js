@@ -33,6 +33,15 @@ const messageHandler = async (message) => {
           console.log('Authorize command detected, args:', args);
           await commands.authorizeGroup(message, args);
         } else {
+          const isAuthorized = await isGroupAuthorized(groupId);
+          console.log('Is group authorized?', isAuthorized);
+          
+          if (!isAuthorized) {
+            console.log('Unauthorized group, ignoring command even for owner');
+            await message.reply('Grup ini tidak diotorisasi. Gunakan .authorize add untuk mengotorisasi grup.');
+            return;
+          }
+          
           const commandFunction = commands[commandName];
           if (commandFunction) {
             await commandFunction(message, args);
