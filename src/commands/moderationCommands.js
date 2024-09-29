@@ -1,8 +1,9 @@
 // moderationCommands.js
 
-import { banUser, unbanUser, checkUserStatus } from '../utils/enhancedModerationSystem.js';
+import { banUser, unbanUser } from '../utils/enhancedModerationSystem.js';
 import logger from '../utils/logger.js';
 import { OWNER_NUMBER } from '../config/index.js';
+
 
 export const ban = async (message, args) => {
   try {

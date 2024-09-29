@@ -1,3 +1,5 @@
+// src/config/index.js
+
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
@@ -17,7 +19,7 @@ export const API_KEY = process.env.API_KEY;
 export const OWNER_NUMBER = process.env.OWNER_NUMBER;
 
 export const PREFIX = '.';
-export const ADMIN_COMMANDS = ['end', 'kick', 'tagall', 'tambah', 'ban', 'unban', 'timeout'];
+export const ADMIN_COMMANDS = ['end', 'kick', 'tagall', 'tambah', 'ban', 'unban'];
 export const OWNER_COMMANDS = ['authorize'];
 
 export const PUPPETEER_ARGS = ['--no-sandbox', '--disable-setuid-sandbox'];
