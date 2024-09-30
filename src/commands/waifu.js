@@ -27,13 +27,13 @@ const waifu = async (message, args) => {
                 params: {
                     included_tags: 'waifu',
                     height: '>=2000',
-                    many: imageCount > 1,
-                    limit: imageCount
+                    many: true,
+                    limit: Math.max(imageCount, 1)
                 },
                 headers: {
                     'Authorization': `Bearer ${WAIFU_API_TOKEN}`
                 },
-                timeout: 15000 // Increased timeout to 15 seconds
+                timeout: 15000
             });
             console.log('API response received');
             logger.info('API response received');
@@ -66,14 +66,28 @@ const waifu = async (message, args) => {
             } else if (mediaArray.length === 1) {
                 console.log('Sending single image');
                 logger.info('Sending single image');
-                await message.reply(mediaArray[0], null, { caption: 'Here\'s your waifu!' });
+                try {
+                    await message.reply(mediaArray[0], null, { caption: 'Here\'s your waifu!' });
+                    console.log('Single image sent successfully');
+                    logger.info('Single image sent successfully');
+                } catch (sendError) {
+                    console.error('Error sending single image:', sendError);
+                    logger.error('Error sending single image:', sendError);
+                    await message.reply('An error occurred while sending the image. Please try again later.');
+                }
             } else {
                 console.log(`Sending ${mediaArray.length} images`);
                 logger.info(`Sending ${mediaArray.length} images`);
-                await message.reply(mediaArray, null, { caption: `Here are ${mediaArray.length} waifus for you!` });
+                try {
+                    await message.reply(mediaArray, null, { caption: `Here are ${mediaArray.length} waifus for you!` });
+                    console.log('Multiple images sent successfully');
+                    logger.info('Multiple images sent successfully');
+                } catch (sendError) {
+                    console.error('Error sending multiple images:', sendError);
+                    logger.error('Error sending multiple images:', sendError);
+                    await message.reply('An error occurred while sending the images. Please try again later.');
+                }
             }
-            console.log('Images sent successfully');
-            logger.info('Images sent successfully');
         } else {
             console.warn('No images found in API response');
             logger.warn('No images found in API response');
