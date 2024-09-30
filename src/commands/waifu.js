@@ -1,5 +1,6 @@
+import pkg from 'whatsapp-web.js';
+const { MessageMedia } = pkg;
 import axios from 'axios';
-import { MessageMedia } from 'whatsapp-web.js';
 import logger from '../utils/logger.js';
 
 const WAIFU_API_URL = 'https://api.waifu.im/search';
