@@ -1,7 +1,6 @@
-// src/commands/random.js
-
+import pkg from 'whatsapp-web.js';
+const { MessageMedia } = pkg;
 import { createCanvas } from 'canvas';
-import { MessageMedia } from 'whatsapp-web.js';
 import logger from '../utils/logger.js';
 
 const random = async (message, args) => {
