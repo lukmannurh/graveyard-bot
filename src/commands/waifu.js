@@ -7,6 +7,30 @@ import { WAIFU_API_TOKEN } from '../config/index.js';
 const WAIFU_API_URL = 'https://api.waifu.im/search';
 const MAX_IMAGES = 10;
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const downloadImageWithTimeout = async (url, timeout = 30000) => {
+    return new Promise(async (resolve, reject) => {
+        const timer = setTimeout(() => {
+            reject(new Error(`Download timeout for ${url}`));
+        }, timeout);
+
+        try {
+            const media = await MessageMedia.fromUrl(url);
+            clearTimeout(timer);
+            resolve(media);
+        } catch (error) {
+            clearTimeout(timer);
+            reject(error);
+        }
+    });
+};
+
+const checkSendMediaPermission = async (chat) => {
+    const botParticipant = chat.participants.find(p => p.id.user === bot.info.wid.user);
+    return botParticipant && botParticipant.canSendMessages && botParticipant.canSendMedia;
+};
+
 const waifu = async (message, args) => {
     console.log('Waifu function called');
     logger.info('Waifu function called');
@@ -20,6 +44,12 @@ const waifu = async (message, args) => {
 
         console.log('WAIFU_API_TOKEN:', WAIFU_API_TOKEN);
         logger.info('WAIFU_API_TOKEN loaded');
+
+        const chat = await message.getChat();
+        if (!(await checkSendMediaPermission(chat))) {
+            await message.reply("I don't have permission to send media in this group.");
+            return;
+        }
 
         let response;
         try {
@@ -51,7 +81,7 @@ const waifu = async (message, args) => {
                 try {
                     console.log(`Downloading image from ${image.url}`);
                     logger.info(`Downloading image from ${image.url}`);
-                    const media = await MessageMedia.fromUrl(image.url);
+                    const media = await downloadImageWithTimeout(image.url);
                     mediaArray.push(media);
                 } catch (downloadError) {
                     console.error(`Failed to download image from ${image.url}:`, downloadError);
@@ -63,30 +93,24 @@ const waifu = async (message, args) => {
 
             if (mediaArray.length === 0) {
                 await message.reply('Sorry, I couldn\'t download any waifu images. Please try again later.');
-            } else if (mediaArray.length === 1) {
-                console.log('Attempting to send single image');
-                logger.info('Attempting to send single image');
-                try {
-                    const sentMessage = await message.reply(mediaArray[0], null, { caption: 'Here\'s your waifu!' });
-                    console.log('Single image sent successfully, message ID:', sentMessage.id);
-                    logger.info('Single image sent successfully, message ID:', sentMessage.id);
-                } catch (sendError) {
-                    console.error('Error sending single image:', sendError);
-                    logger.error('Error sending single image:', sendError);
-                    await message.reply('An error occurred while sending the image. Please try again later.');
-                }
             } else {
                 console.log(`Attempting to send ${mediaArray.length} images`);
                 logger.info(`Attempting to send ${mediaArray.length} images`);
-                try {
-                    const sentMessage = await message.reply(mediaArray, null, { caption: `Here are ${mediaArray.length} waifus for you!` });
-                    console.log('Multiple images sent successfully, message ID:', sentMessage.id);
-                    logger.info('Multiple images sent successfully, message ID:', sentMessage.id);
-                } catch (sendError) {
-                    console.error('Error sending multiple images:', sendError);
-                    logger.error('Error sending multiple images:', sendError);
-                    await message.reply('An error occurred while sending the images. Please try again later.');
+                for (let i = 0; i < mediaArray.length; i++) {
+                    try {
+                        console.log(`Sending image ${i + 1} of ${mediaArray.length}`);
+                        logger.info(`Sending image ${i + 1} of ${mediaArray.length}`);
+                        const sentMessage = await message.reply(mediaArray[i], null, { caption: `Waifu ${i + 1} of ${mediaArray.length}` });
+                        console.log(`Image ${i + 1} sent successfully, message ID:`, sentMessage.id);
+                        logger.info(`Image ${i + 1} sent successfully, message ID:`, sentMessage.id);
+                        await delay(2000); // Wait 2 seconds between sends
+                    } catch (sendError) {
+                        console.error(`Error sending image ${i + 1}:`, sendError);
+                        logger.error(`Error sending image ${i + 1}:`, sendError);
+                        await message.reply(`An error occurred while sending image ${i + 1}. Skipping to next image.`);
+                    }
                 }
+                await message.reply(`Finished sending ${mediaArray.length} waifu images.`);
             }
         } else {
             console.warn('No images found in API response');
