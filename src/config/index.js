@@ -20,5 +20,6 @@ export const OWNER_NUMBER = process.env.OWNER_NUMBER;
 export const PREFIX = '.';
 export const ADMIN_COMMANDS = ['end', 'kick', 'tagall', 'tambah', 'ban', 'unban'];
 export const OWNER_COMMANDS = ['authorize'];
+export const WAIFU_API_TOKEN = process.env.WAIFU_API_TOKEN;
 
 export const PUPPETEER_ARGS = ['--no-sandbox', '--disable-setuid-sandbox'];

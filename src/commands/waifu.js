@@ -2,6 +2,7 @@ import pkg from 'whatsapp-web.js';
 const { MessageMedia } = pkg;
 import axios from 'axios';
 import logger from '../utils/logger.js';
+import { WAIFU_API_TOKEN } from '../config/index.js';
 
 const WAIFU_API_URL = 'https://api.waifu.im/search';
 const MAX_IMAGES = 10; // Batasan maksimum gambar yang bisa diminta
@@ -19,6 +20,9 @@ const waifu = async (message, args) => {
                 height: '>=2000',
                 many: true,
                 limit: imageCount
+            },
+            headers: {
+                'Authorization': `Bearer ${WAIFU_API_TOKEN}`
             }
         });
 
