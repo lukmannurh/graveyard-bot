@@ -7,8 +7,6 @@ import { WAIFU_API_TOKEN } from '../config/index.js';
 const WAIFU_API_URL = 'https://api.waifu.im/search';
 const MAX_IMAGES = 10;
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 const downloadImageWithTimeout = async (url, timeout = 30000) => {
     return new Promise(async (resolve, reject) => {
         const timer = setTimeout(() => {
@@ -27,7 +25,6 @@ const downloadImageWithTimeout = async (url, timeout = 30000) => {
 };
 
 const checkSendMediaPermission = async (chat) => {
-    // Simplified check: if we can get the chat, we assume we have permission
     return chat.isGroup;
 };
 
@@ -94,23 +91,21 @@ const waifu = async (message, args) => {
             if (mediaArray.length === 0) {
                 await message.reply('Sorry, I couldn\'t download any waifu images. Please try again later.');
             } else {
-                console.log(`Attempting to send ${mediaArray.length} images`);
-                logger.info(`Attempting to send ${mediaArray.length} images`);
-                for (let i = 0; i < mediaArray.length; i++) {
-                    try {
-                        console.log(`Sending image ${i + 1} of ${mediaArray.length}`);
-                        logger.info(`Sending image ${i + 1} of ${mediaArray.length}`);
-                        const sentMessage = await message.reply(mediaArray[i], null, { caption: `Waifu ${i + 1} of ${mediaArray.length}` });
-                        console.log(`Image ${i + 1} sent successfully, message ID:`, sentMessage.id);
-                        logger.info(`Image ${i + 1} sent successfully, message ID:`, sentMessage.id);
-                        await delay(2000); // Wait 2 seconds between sends
-                    } catch (sendError) {
-                        console.error(`Error sending image ${i + 1}:`, sendError);
-                        logger.error(`Error sending image ${i + 1}:`, sendError);
-                        await message.reply(`An error occurred while sending image ${i + 1}. Skipping to next image.`);
-                    }
+                console.log(`Attempting to send ${mediaArray.length} images as an album`);
+                logger.info(`Attempting to send ${mediaArray.length} images as an album`);
+                try {
+                    const chat = await message.getChat();
+                    const sentMessage = await chat.sendMessage(mediaArray, {
+                        caption: `Here are ${mediaArray.length} waifu images for you!`,
+                        media: mediaArray
+                    });
+                    console.log(`Album sent successfully, message ID:`, sentMessage.id);
+                    logger.info(`Album sent successfully, message ID:`, sentMessage.id);
+                } catch (sendError) {
+                    console.error(`Error sending album:`, sendError);
+                    logger.error(`Error sending album:`, sendError);
+                    await message.reply('An error occurred while sending the waifu images. Please try again later.');
                 }
-                await message.reply(`Finished sending ${mediaArray.length} waifu images.`);
             }
         } else {
             console.warn('No images found in API response');
