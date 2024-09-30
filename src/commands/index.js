@@ -10,3 +10,4 @@ export { default as tagall } from './tagall.js';
 export { default as ai } from './ai.js';
 export { default as authorizeGroup } from './authorizeGroup.js';
 export { ban, unban } from './moderationCommands.js';
+export { default as waifu } from './waifu.js'; // Add this line

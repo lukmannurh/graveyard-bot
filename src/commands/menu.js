@@ -11,6 +11,7 @@ const menu = async (message) => {
         menuText += "• .ai [pertanyaan/perintah] - Bertanya atau meminta AI untuk melakukan sesuatu\n";
         menuText += "• Kirim gambar dengan caption .ai [pertanyaan/perintah] - AI akan menganalisis gambar\n";
         menuText += "• .random [jumlah tim] [nama1] [nama2] ... - Membuat tim acak (minimal 2 tim dan 2 nama)\n";
+        menuText += "• .waifu [jumlah] - Mendapatkan gambar waifu acak (1-10 gambar)\n"; // Updated this line
         menuText += "\n===========================\n";
         menuText += "*Perintah khusus admin:*\n";
         menuText += "• .end - Mengakhiri sesi tebak skor\n";
