@@ -25,22 +25,29 @@ const waifu = async (message, args) => {
             },
             headers: {
                 'Authorization': `Bearer ${WAIFU_API_TOKEN}`
-            }
+            },
+            timeout: 10000 // 10 seconds timeout
         });
 
         logger.info('API response received');
 
         if (response.data && response.data.images && response.data.images.length > 0) {
             logger.info(`Found ${response.data.images.length} images`);
-            const mediaPromises = response.data.images.map(async (image) => {
-                logger.info(`Downloading image from ${image.url}`);
-                return MessageMedia.fromUrl(image.url);
-            });
+            const mediaArray = [];
+            for (const image of response.data.images) {
+                try {
+                    logger.info(`Downloading image from ${image.url}`);
+                    const media = await MessageMedia.fromUrl(image.url);
+                    mediaArray.push(media);
+                } catch (downloadError) {
+                    logger.error(`Failed to download image from ${image.url}:`, downloadError);
+                }
+            }
+            logger.info(`Successfully downloaded ${mediaArray.length} images`);
 
-            const mediaArray = await Promise.all(mediaPromises);
-            logger.info('All images downloaded');
-
-            if (mediaArray.length === 1) {
+            if (mediaArray.length === 0) {
+                await message.reply('Sorry, I couldn\'t download any waifu images. Please try again later.');
+            } else if (mediaArray.length === 1) {
                 logger.info('Sending single image');
                 await message.reply(mediaArray[0], null, { caption: 'Here\'s your waifu!' });
             } else {
