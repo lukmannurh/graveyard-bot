@@ -91,18 +91,15 @@ const waifu = async (message, args) => {
             if (mediaArray.length === 0) {
                 await message.reply('Sorry, I couldn\'t download any waifu images. Please try again later.');
             } else {
-                console.log(`Attempting to send ${mediaArray.length} images individually`);
-                logger.info(`Attempting to send ${mediaArray.length} images individually`);
+                console.log(`Attempting to send ${mediaArray.length} images as an album`);
+                logger.info(`Attempting to send ${mediaArray.length} images as an album`);
                 try {
-                    for (let i = 0; i < mediaArray.length; i++) {
-                        const sentMessage = await message.reply(mediaArray[i], null, { caption: `Waifu ${i + 1} of ${mediaArray.length}` });
-                        console.log(`Image ${i + 1} sent successfully, message ID:`, sentMessage.id);
-                        logger.info(`Image ${i + 1} sent successfully, message ID:`, sentMessage.id);
-                    }
-                    await message.reply(`Finished sending ${mediaArray.length} waifu images.`);
+                    const sentMessage = await message.reply(mediaArray, null, { caption: `Here are ${mediaArray.length} waifu images! (Swipe to see all)` });
+                    console.log(`Album sent successfully, message ID:`, sentMessage.id);
+                    logger.info(`Album sent successfully, message ID:`, sentMessage.id);
                 } catch (sendError) {
-                    console.error(`Error sending images:`, sendError);
-                    logger.error(`Error sending images:`, sendError);
+                    console.error(`Error sending album:`, sendError);
+                    logger.error(`Error sending album:`, sendError);
                     await message.reply('An error occurred while sending the waifu images. Please try again later.');
                 }
             }
