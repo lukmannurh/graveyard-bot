@@ -64,24 +64,24 @@ const waifu = async (message, args) => {
             if (mediaArray.length === 0) {
                 await message.reply('Sorry, I couldn\'t download any waifu images. Please try again later.');
             } else if (mediaArray.length === 1) {
-                console.log('Sending single image');
-                logger.info('Sending single image');
+                console.log('Attempting to send single image');
+                logger.info('Attempting to send single image');
                 try {
-                    await message.reply(mediaArray[0], null, { caption: 'Here\'s your waifu!' });
-                    console.log('Single image sent successfully');
-                    logger.info('Single image sent successfully');
+                    const sentMessage = await message.reply(mediaArray[0], null, { caption: 'Here\'s your waifu!' });
+                    console.log('Single image sent successfully, message ID:', sentMessage.id);
+                    logger.info('Single image sent successfully, message ID:', sentMessage.id);
                 } catch (sendError) {
                     console.error('Error sending single image:', sendError);
                     logger.error('Error sending single image:', sendError);
                     await message.reply('An error occurred while sending the image. Please try again later.');
                 }
             } else {
-                console.log(`Sending ${mediaArray.length} images`);
-                logger.info(`Sending ${mediaArray.length} images`);
+                console.log(`Attempting to send ${mediaArray.length} images`);
+                logger.info(`Attempting to send ${mediaArray.length} images`);
                 try {
-                    await message.reply(mediaArray, null, { caption: `Here are ${mediaArray.length} waifus for you!` });
-                    console.log('Multiple images sent successfully');
-                    logger.info('Multiple images sent successfully');
+                    const sentMessage = await message.reply(mediaArray, null, { caption: `Here are ${mediaArray.length} waifus for you!` });
+                    console.log('Multiple images sent successfully, message ID:', sentMessage.id);
+                    logger.info('Multiple images sent successfully, message ID:', sentMessage.id);
                 } catch (sendError) {
                     console.error('Error sending multiple images:', sendError);
                     logger.error('Error sending multiple images:', sendError);
