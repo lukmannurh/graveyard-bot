@@ -4,6 +4,8 @@ import { handleNonCommandMessage } from './nonCommandHandler.js';
 import { isGroupAuthorized } from '../utils/authorizedGroups.js';
 import { OWNER_NUMBER, PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
+import { handleAdventureChoice } from '../commands/adventureCommand.js';
+import adventureManager from '../utils/adventureManager.js';
 
 const messageHandler = async (message) => {
   try {
@@ -14,8 +16,7 @@ const messageHandler = async (message) => {
     const groupId = chat.id._serialized;
     const userId = sender.id._serialized;
 
-    logger.info('Message received from:', userId);
-    logger.info('Group ID:', groupId);
+    logger.info(`Message received - Type: ${message.type}, From: ${userId}, Group: ${groupId}`);
 
     const cleanUserId = userId.replace('@c.us', '');
     const isOwner = cleanUserId === OWNER_NUMBER;
@@ -29,7 +30,27 @@ const messageHandler = async (message) => {
         return;
       }
 
-      if (message.body.startsWith(PREFIX)) {
+      if (message.type === 'poll_vote') {
+        logger.info('Poll vote received');
+        if (adventureManager.isGameActive(groupId)) {
+          const activeGame = adventureManager.getActiveGame(groupId);
+          if (activeGame.userId === userId) {
+            const pollData = await message.getPollVote();
+            logger.info(`Poll vote data: ${JSON.stringify(pollData)}`);
+            if (pollData && pollData.selectedOptions && pollData.selectedOptions.length > 0) {
+              const selectedOption = pollData.selectedOptions[0];
+              logger.info(`Selected option: ${selectedOption}`);
+              await handleAdventureChoice(message, selectedOption);
+            } else {
+              logger.warn('Invalid poll vote data received');
+            }
+          } else {
+            logger.info('Poll vote from non-active player, ignoring');
+          }
+        } else {
+          logger.info('Poll vote received but no active adventure');
+        }
+      } else if (message.body.startsWith(PREFIX)) {
         await handleRegularCommand(message, chat, sender);
       } else {
         await handleNonCommandMessage(message, chat, sender);
