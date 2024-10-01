@@ -108,14 +108,17 @@ const messageHandler = async (message) => {
           await message.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
           return;
         }
+        console.log(`Executing command: ${commandName}`);
         await commandFunction(message, args);
       } else {
         console.log(`Unknown command: ${commandName}`);
+        await message.reply('Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
       }
     }
   } catch (error) {
     console.error('Error in messageHandler:', error);
     logger.error('Error in messageHandler:', error);
+    await message.reply('Terjadi kesalahan saat memproses perintah. Mohon coba lagi nanti.');
   }
 };
 
