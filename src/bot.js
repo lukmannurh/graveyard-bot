@@ -5,44 +5,59 @@ import messageHandler from './handlers/messageHandler.js';
 import logger from './utils/logger.js';
 import { PUPPETEER_ARGS } from './config/index.js';
 
-const client = new Client({
-  authStrategy: new LocalAuth(),
-  puppeteer: {
-    args: PUPPETEER_ARGS,
-  },
-});
+let client;
 
-client.on('qr', (qr) => {
-  qrcode.generate(qr, { small: true });
-  logger.info('QR Code received, scan with your phone.');
-});
-
-client.on('ready', () => {
-  logger.info('WhatsApp Web client is ready!');
-});
-
-client.on('message', async (message) => {
+const startBot = async () => {
   try {
-    await messageHandler(message);
-  } catch (error) {
-    logger.error('Error handling message:', error);
-  }
-});
+    client = new Client({
+      authStrategy: new LocalAuth(),
+      puppeteer: {
+        args: PUPPETEER_ARGS,
+      },
+    });
 
-client.on('disconnected', (reason) => {
-  logger.warn('WhatsApp Web client was disconnected:', reason);
-});
+    client.on('qr', (qr) => {
+      qrcode.generate(qr, { small: true });
+      logger.info('QR Code received, scan with your phone.');
+    });
 
-export const startBot = async () => {
-  try {
+    client.on('ready', () => {
+      logger.info('WhatsApp Web client is ready!');
+    });
+
+    client.on('message', async (message) => {
+      try {
+        await messageHandler(message);
+      } catch (error) {
+        logger.error('Error handling message:', error);
+      }
+    });
+
+    client.on('disconnected', (reason) => {
+      logger.warn('WhatsApp Web client was disconnected:', reason);
+      // Try to reconnect
+      setTimeout(() => {
+        logger.info('Attempting to reconnect...');
+        startBot();
+      }, 5000);
+    });
+
     await client.initialize();
   } catch (error) {
     logger.error('Failed to start the bot:', error);
-    process.exit(1);
+    // Try to restart after a delay
+    setTimeout(() => {
+      logger.info('Attempting to restart the bot...');
+      startBot();
+    }, 5000);
   }
 };
 
-export const stopBot = async () => {
-  await client.destroy();
-  logger.info('Bot stopped');
+const stopBot = async () => {
+  if (client) {
+    await client.destroy();
+    logger.info('Bot stopped');
+  }
 };
+
+export { startBot, stopBot };

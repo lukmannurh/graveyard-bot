@@ -28,13 +28,19 @@ app.use(limiter);
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
   logger.error('Uncaught Exception:', error);
-  // Don't exit the process here
+  // Instead of exiting, we'll try to recover
+  setTimeout(() => {
+    logger.info('Attempting to recover from uncaught exception...');
+    startBot().catch(startError => {
+      logger.error('Failed to restart bot after uncaught exception:', startError);
+    });
+  }, 5000);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Don't exit the process here
+  // Instead of exiting, we'll log and continue
 });
 
 // Start the bot
@@ -62,3 +68,9 @@ process.on('SIGINT', () => {
 });
 
 logger.info('Application started successfully');
+
+// Memory usage logging
+setInterval(() => {
+  const used = process.memoryUsage();
+  logger.info('Memory usage: ' + JSON.stringify(used));
+}, 300000); // Log every 5 minutes
