@@ -7,16 +7,24 @@ const MAX_MEDIA_SIZE = 14 * 1024 * 1024; // 14MB in bytes
 
 const downloadAndSendMedia = async (url, message, caption, isAudio = false) => {
     try {
+        logger.info(`Downloading ${isAudio ? 'audio' : 'video'} from URL: ${url}`);
         const response = await axios.get(url, { responseType: 'arraybuffer' });
         const buffer = Buffer.from(response.data, 'binary');
         const isLargeFile = buffer.length > MAX_MEDIA_SIZE;
 
+        logger.info(`${isAudio ? 'Audio' : 'Video'} size: ${buffer.length} bytes`);
+
+        const mimeType = isAudio ? 'audio/mpeg' : 'video/mp4';
+        const filename = isLargeFile ? (isAudio ? 'tiktok_audio.mp3' : 'tiktok_video.mp4') : undefined;
+
+        logger.info(`Creating MessageMedia with mimeType: ${mimeType}, filename: ${filename}`);
         const media = new MessageMedia(
-            isAudio ? 'audio/mpeg' : 'video/mp4',
+            mimeType,
             buffer.toString('base64'),
-            isLargeFile ? (isAudio ? 'tiktok_audio.mp3' : 'tiktok_video.mp4') : undefined
+            filename
         );
 
+        logger.info(`Sending ${isAudio ? 'audio' : 'video'} as ${isLargeFile ? 'document' : 'media'}`);
         await message.reply(media, null, { 
             caption,
             sendMediaAsDocument: isLargeFile
@@ -24,7 +32,10 @@ const downloadAndSendMedia = async (url, message, caption, isAudio = false) => {
         logger.info(`${isAudio ? 'Audio' : 'Video'} sent successfully`);
     } catch (error) {
         logger.error(`Error downloading or sending ${isAudio ? 'audio' : 'video'}:`, error);
-        await message.reply(`Gagal mengirim ${isAudio ? 'audio' : 'video'} TikTok. Mohon coba lagi nanti.`);
+        if (error.response) {
+            logger.error('Error response:', error.response.status, error.response.statusText);
+        }
+        await message.reply(`Gagal mengirim ${isAudio ? 'audio' : 'video'} TikTok. Error: ${error.message}`);
     }
 };
 
@@ -75,6 +86,7 @@ const tiktokDownloader = async (message, args) => {
         }
 
         if (audioData.status === "success" && audioData.audioUrl) {
+            logger.info('Attempting to download and send audio');
             await downloadAndSendMedia(audioData.audioUrl, message, 'Audio TikTok', true);
         } else {
             logger.warn('Invalid audio data in API response:', audioData);
