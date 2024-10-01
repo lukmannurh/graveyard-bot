@@ -44,88 +44,34 @@ const tiktokDownloader = async (message, args) => {
         logger.info('Video API response:', JSON.stringify(videoData));
         logger.info('Audio API response:', JSON.stringify(audioData));
 
-        if (!videoData.status || !videoData.result || !videoData.result.video_url) {
-            logger.warn('Invalid video data in API response:', videoData);
-            await message.reply(`Maaf, tidak dapat mengunduh video TikTok. Data tidak valid. Response: ${JSON.stringify(videoData)}`);
-        } else {
-            const videoUrl = videoData.result.video_url;
-            const caption = videoData.result.caption || 'Video TikTok';
-
-            logger.info('Attempting to download video from URL:', videoUrl);
+        if (videoData.status === "success" && videoData.videoUrl) {
+            const videoUrl = videoData.videoUrl;
+            logger.info('Attempting to send video URL:', videoUrl);
             try {
-                const videoResponse = await axios.get(videoUrl, { responseType: 'arraybuffer' });
-                const videoBuffer = Buffer.from(videoResponse.data, 'binary');
-                const isLargeFile = videoBuffer.length > MAX_MEDIA_SIZE;
-
-                logger.info(`Video size: ${videoBuffer.length} bytes`);
-
-                const videoMedia = new MessageMedia(
-                    isLargeFile ? 'application/octet-stream' : 'video/mp4',
-                    videoBuffer.toString('base64'),
-                    isLargeFile ? 'tiktok_video.mp4' : undefined
-                );
-
-                logger.info('Video downloaded successfully');
-                
-                try {
-                    if (isLargeFile) {
-                        await message.reply(videoMedia, null, { 
-                            caption, 
-                            sendMediaAsDocument: true
-                        });
-                    } else {
-                        await message.reply(videoMedia, null, { caption });
-                    }
-                    logger.info('Video sent successfully');
-                } catch (sendError) {
-                    logger.error('Error sending video:', sendError);
-                    await message.reply('Gagal mengirim video TikTok. Mohon coba lagi nanti.');
-                }
-            } catch (videoError) {
-                logger.error('Error downloading video:', videoError);
-                await message.reply('Gagal mengunduh video TikTok. Mohon coba lagi nanti.');
+                await message.reply(`Video TikTok: ${videoUrl}\n\nJika video tidak dapat diputar, silakan copy link di atas dan paste di browser.`);
+                logger.info('Video URL sent successfully');
+            } catch (sendError) {
+                logger.error('Error sending video URL:', sendError);
+                await message.reply('Gagal mengirim link video TikTok. Mohon coba lagi nanti.');
             }
+        } else {
+            logger.warn('Invalid video data in API response:', videoData);
+            await message.reply(`Maaf, tidak dapat mengunduh video TikTok. Data tidak valid.`);
         }
 
-        if (!audioData.status || !audioData.result || !audioData.result.audio_url) {
-            logger.warn('Invalid audio data in API response:', audioData);
-            await message.reply(`Maaf, tidak dapat mengunduh audio dari TikTok. Data tidak valid. Response: ${JSON.stringify(audioData)}`);
-        } else {
-            const audioUrl = audioData.result.audio_url;
-            logger.info('Attempting to download audio from URL:', audioUrl);
+        if (audioData.status === "success" && audioData.audioUrl) {
+            const audioUrl = audioData.audioUrl;
+            logger.info('Attempting to send audio URL:', audioUrl);
             try {
-                const audioResponse = await axios.get(audioUrl, { responseType: 'arraybuffer' });
-                const audioBuffer = Buffer.from(audioResponse.data, 'binary');
-                const isLargeFile = audioBuffer.length > MAX_MEDIA_SIZE;
-
-                logger.info(`Audio size: ${audioBuffer.length} bytes`);
-
-                const audioMedia = new MessageMedia(
-                    isLargeFile ? 'application/octet-stream' : 'audio/mpeg',
-                    audioBuffer.toString('base64'),
-                    isLargeFile ? 'tiktok_audio.mp3' : undefined
-                );
-
-                logger.info('Audio downloaded successfully');
-                
-                try {
-                    if (isLargeFile) {
-                        await message.reply(audioMedia, null, { 
-                            caption: 'Audio dari TikTok', 
-                            sendMediaAsDocument: true
-                        });
-                    } else {
-                        await message.reply(audioMedia, null, { caption: 'Audio dari TikTok' });
-                    }
-                    logger.info('Audio sent successfully');
-                } catch (sendError) {
-                    logger.error('Error sending audio:', sendError);
-                    await message.reply('Gagal mengirim audio TikTok. Mohon coba lagi nanti.');
-                }
-            } catch (audioError) {
-                logger.error('Error downloading audio:', audioError);
-                await message.reply('Gagal mengunduh audio TikTok. Mohon coba lagi nanti.');
+                await message.reply(`Audio TikTok: ${audioUrl}\n\nJika audio tidak dapat diputar, silakan copy link di atas dan paste di browser.`);
+                logger.info('Audio URL sent successfully');
+            } catch (sendError) {
+                logger.error('Error sending audio URL:', sendError);
+                await message.reply('Gagal mengirim link audio TikTok. Mohon coba lagi nanti.');
             }
+        } else {
+            logger.warn('Invalid audio data in API response:', audioData);
+            await message.reply(`Maaf, tidak dapat mengunduh audio dari TikTok. Data tidak valid.`);
         }
     } catch (error) {
         logger.error('Error in TikTok downloader:', error);
