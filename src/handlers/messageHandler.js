@@ -46,7 +46,14 @@ const messageHandler = async (message) => {
           if (commandFunction) {
             logger.info(`Executing command: ${commandName}`);
             try {
-              await commandFunction(message, args);
+              if (commandName === 'tt') {
+                await commandFunction(message, args).catch(error => {
+                  logger.error(`Error executing TikTok downloader:`, error);
+                  message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
+                });
+              } else {
+                await commandFunction(message, args);
+              }
               logger.info(`Command ${commandName} executed successfully`);
             } catch (error) {
               logger.error(`Error executing command ${commandName}:`, error);
@@ -120,7 +127,14 @@ const messageHandler = async (message) => {
         }
         logger.info(`Executing command: ${commandName}`);
         try {
-          await commandFunction(message, args);
+          if (commandName === 'tt') {
+            await commandFunction(message, args).catch(error => {
+              logger.error(`Error executing TikTok downloader:`, error);
+              message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
+            });
+          } else {
+            await commandFunction(message, args);
+          }
           logger.info(`Command ${commandName} executed successfully`);
         } catch (error) {
           logger.error(`Error executing command ${commandName}:`, error);

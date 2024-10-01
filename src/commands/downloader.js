@@ -105,74 +105,89 @@ const tiktokDownloader = async (message, args) => {
     logger.info('TikTok downloader function called');
     logger.info('Arguments:', args);
 
-    try {
-        if (args.length === 0) {
-            logger.info('No URL provided');
-            await message.reply('Mohon sertakan link TikTok yang ingin diunduh.');
-            return;
-        }
+    return new Promise(async (resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+            reject(new Error('TikTok download timed out'));
+        }, TIMEOUT);
 
-        const url = args[0];
-        if (!url.includes('tiktok.com')) {
-            logger.warn('Invalid TikTok URL');
-            await message.reply('URL yang diberikan bukan URL TikTok yang valid.');
-            return;
-        }
-
-        const videoApiUrl = `https://mr-apis.com/api/downloader/ttv?url=${encodeURIComponent(url)}`;
-        const audioApiUrl = `https://mr-apis.com/api/downloader/tta?url=${encodeURIComponent(url)}`;
-
-        logger.info('Video API URL:', videoApiUrl);
-        logger.info('Audio API URL:', audioApiUrl);
-
-        await message.reply('Sedang memproses video dan audio TikTok...');
-
-        logger.info('Sending API requests');
-        let videoResponse, audioResponse;
         try {
-            [videoResponse, audioResponse] = await Promise.all([
-                axios.get(videoApiUrl, { timeout: TIMEOUT }),
-                axios.get(audioApiUrl, { timeout: TIMEOUT })
-            ]);
-            logger.info('API responses received');
-        } catch (apiError) {
-            logger.error('Error calling API:', apiError);
-            throw apiError;
-        }
+            if (args.length === 0) {
+                logger.info('No URL provided');
+                await message.reply('Mohon sertakan link TikTok yang ingin diunduh.');
+                clearTimeout(timeoutId);
+                resolve();
+                return;
+            }
 
-        const videoData = videoResponse.data;
-        const audioData = audioResponse.data;
+            const url = args[0];
+            if (!url.includes('tiktok.com')) {
+                logger.warn('Invalid TikTok URL');
+                await message.reply('URL yang diberikan bukan URL TikTok yang valid.');
+                clearTimeout(timeoutId);
+                resolve();
+                return;
+            }
 
-        logger.info('Video API response:', JSON.stringify(videoData));
-        logger.info('Audio API response:', JSON.stringify(audioData));
+            const videoApiUrl = `https://mr-apis.com/api/downloader/ttv?url=${encodeURIComponent(url)}`;
+            const audioApiUrl = `https://mr-apis.com/api/downloader/tta?url=${encodeURIComponent(url)}`;
 
-        if (videoData.status === "success" && videoData.videoUrl) {
-            await downloadAndSendMedia(videoData.videoUrl, message, 'Video TikTok');
-        } else {
-            logger.warn('Invalid video data in API response:', videoData);
-            await message.reply('Maaf, tidak dapat mengunduh video TikTok. Data tidak valid.');
-        }
+            logger.info('Video API URL:', videoApiUrl);
+            logger.info('Audio API URL:', audioApiUrl);
 
-        if (audioData.status === "success" && audioData.audioUrl) {
-            logger.info('Attempting to download and send audio');
-            await downloadAndSendMedia(audioData.audioUrl, message, 'Audio TikTok', true);
-        } else {
-            logger.warn('Invalid audio data in API response:', audioData);
-            await message.reply('Maaf, tidak dapat mengunduh audio dari TikTok. Data tidak valid.');
+            await message.reply('Sedang memproses video dan audio TikTok...');
+
+            logger.info('Sending API requests');
+            let videoResponse, audioResponse;
+            try {
+                [videoResponse, audioResponse] = await Promise.all([
+                    axios.get(videoApiUrl, { timeout: TIMEOUT }),
+                    axios.get(audioApiUrl, { timeout: TIMEOUT })
+                ]);
+                logger.info('API responses received');
+            } catch (apiError) {
+                logger.error('Error calling API:', apiError);
+                throw apiError;
+            }
+
+            const videoData = videoResponse.data;
+            const audioData = audioResponse.data;
+
+            logger.info('Video API response:', JSON.stringify(videoData));
+            logger.info('Audio API response:', JSON.stringify(audioData));
+
+            if (videoData.status === "success" && videoData.videoUrl) {
+                await downloadAndSendMedia(videoData.videoUrl, message, 'Video TikTok');
+            } else {
+                logger.warn('Invalid video data in API response:', videoData);
+                await message.reply('Maaf, tidak dapat mengunduh video TikTok. Data tidak valid.');
+            }
+
+            if (audioData.status === "success" && audioData.audioUrl) {
+                logger.info('Attempting to download and send audio');
+                await downloadAndSendMedia(audioData.audioUrl, message, 'Audio TikTok', true);
+            } else {
+                logger.warn('Invalid audio data in API response:', audioData);
+                await message.reply('Maaf, tidak dapat mengunduh audio dari TikTok. Data tidak valid.');
+            }
+
+            clearTimeout(timeoutId);
+            resolve();
+        } catch (error) {
+            logger.error('Error in TikTok downloader:', error);
+            if (error.response) {
+                logger.error('API Response Error:', error.response.data);
+                logger.error('API Response Status:', error.response.status);
+                logger.error('API Response Headers:', error.response.headers);
+            } else if (error.request) {
+                logger.error('No response received:', error.request);
+            } else {
+                logger.error('Error setting up request:', error.message);
+            }
+            await message.reply('Terjadi kesalahan saat mengunduh konten TikTok. Mohon coba lagi nanti.');
+            clearTimeout(timeoutId);
+            reject(error);
         }
-    } catch (error) {
-        logger.error('Error in TikTok downloader:', error);
-        if (error.response) {
-            logger.error('API Response Error:', error.response.data);
-            logger.error('API Response Status:', error.response.status);
-            logger.error('API Response Headers:', error.response.headers);
-        } else if (error.request) {
-            logger.error('No response received:', error.request);
-        } else {
-            logger.error('Error setting up request:', error.message);
-        }
-        await message.reply('Terjadi kesalahan saat mengunduh konten TikTok. Mohon coba lagi nanti.');
-    }
+    });
 };
 
 export { tiktokDownloader };
