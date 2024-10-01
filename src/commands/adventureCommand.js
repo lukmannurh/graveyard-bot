@@ -44,7 +44,7 @@ export const adventure = async (message) => {
 const sendAdventureMessage = async (message, node, groupId) => {
   try {
     logger.debug(`Sending adventure message: ${JSON.stringify(node)}`);
-    const options = node.options.map((opt, index) => `${index + 1}. ${opt.text}`).join('\n');
+    const options = node.options ? node.options.map((opt, index) => `${index + 1}. ${opt.text}`).join('\n') : '';
     
     if (!groupId) {
       logger.error('Group ID is undefined');
@@ -59,8 +59,23 @@ const sendAdventureMessage = async (message, node, groupId) => {
 
     const adventureTitle = activeGame.adventure.title || 'Unknown Adventure';
     
-    await message.reply(`*${adventureTitle}*\n\n${node.text}\n\nPilihan:\n${options}\n\nBalas dengan nomor pilihan Anda untuk melanjutkan.`);
+    let replyMessage = `*${adventureTitle}*\n\n${node.text}`;
+    if (options) {
+      replyMessage += `\n\nPilihan:\n${options}\n\nBalas dengan nomor pilihan Anda untuk melanjutkan.`;
+    }
+    
+    await message.reply(replyMessage);
     logger.debug('Adventure message sent');
+
+    if (node.end) {
+      logger.debug('Adventure ended');
+      if (node.win) {
+        await message.reply('🎉 Selamat! Anda telah menyelesaikan petualangan dengan sukses!');
+      } else {
+        await message.reply('😔 Petualangan berakhir. Terima kasih telah bermain!');
+      }
+      adventureManager.endGame(groupId);
+    }
   } catch (error) {
     logger.error('Error in sendAdventureMessage:', error);
     throw error;
@@ -92,7 +107,7 @@ export const handleAdventureChoice = async (message) => {
     const choice = parseInt(message.body) - 1;
     const currentNode = activeGame.adventure.nodes[activeGame.currentNode] || activeGame.adventure.start;
     
-    if (isNaN(choice) || choice < 0 || choice >= currentNode.options.length) {
+    if (isNaN(choice) || choice < 0 || choice >= (currentNode.options ? currentNode.options.length : 0)) {
       logger.debug('Invalid choice');
       await message.reply('Pilihan tidak valid. Silakan pilih nomor yang sesuai.');
       return;
@@ -101,20 +116,14 @@ export const handleAdventureChoice = async (message) => {
     const nextNodeId = currentNode.options[choice].next;
     const nextNode = activeGame.adventure.nodes[nextNodeId];
 
-    if (nextNode.end) {
-      logger.debug('Adventure ended');
-      await message.reply(nextNode.text);
-      if (nextNode.win) {
-        await message.reply('🎉 Selamat! Anda telah menyelesaikan petualangan dengan sukses!');
-      } else {
-        await message.reply('😔 Sayang sekali, petualangan berakhir. Coba lagi lain waktu!');
-      }
-      adventureManager.endGame(groupId);
-    } else {
-      logger.debug('Continuing to next node');
-      activeGame.currentNode = nextNodeId;
-      await sendAdventureMessage(message, nextNode, groupId);
+    if (!nextNode) {
+      logger.error(`Next node not found: ${nextNodeId}`);
+      await message.reply('Terjadi kesalahan. Mohon coba lagi atau mulai petualangan baru.');
+      return;
     }
+
+    activeGame.currentNode = nextNodeId;
+    await sendAdventureMessage(message, nextNode, groupId);
   } catch (error) {
     logger.error('Error in handling adventure choice:', error);
     await message.reply('Terjadi kesalahan saat memproses pilihan. Mohon coba lagi.');

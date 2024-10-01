@@ -15,49 +15,56 @@
         "text": "Anda memasuki hutan. Suara-suara aneh terdengar dari segala arah. Tiba-tiba, Anda melihat jejak kaki aneh di tanah.",
         "options": [
           {"text": "Ikuti jejak", "next": "jungle_2"},
-          {"text": "Abaikan dan terus berjalan", "next": "jungle_3"}
+          {"text": "Abaikan dan terus berjalan", "next": "jungle_3"},
+          {"text": "Kembali ke tepi hutan", "next": "start"}
         ]
       },
       "jungle_2": {
         "text": "Jejak itu membawa Anda ke sebuah gua tersembunyi. Di dalamnya, Anda melihat kilau emas!",
         "options": [
           {"text": "Masuk ke gua", "next": "treasure"},
-          {"text": "Tunggu dan amati", "next": "jungle_4"}
+          {"text": "Tunggu dan amati", "next": "jungle_4"},
+          {"text": "Kembali ke jalan sebelumnya", "next": "jungle_1"}
         ]
       },
       "jungle_3": {
         "text": "Anda terus berjalan dan menemukan sungai deras. Ada jembatan tua yang tampak rapuh.",
         "options": [
           {"text": "Seberangi jembatan", "next": "river_1"},
-          {"text": "Cari jalan lain", "next": "jungle_5"}
+          {"text": "Cari jalan lain", "next": "jungle_5"},
+          {"text": "Berenang menyeberangi sungai", "next": "river_2"}
         ]
       },
       "jungle_4": {
         "text": "Saat mengamati, Anda melihat makhluk aneh keluar dari gua. Ia tampak ramah.",
         "options": [
           {"text": "Berkenalan", "next": "friend"},
-          {"text": "Lari!", "next": "run"}
+          {"text": "Lari!", "next": "run"},
+          {"text": "Bersembunyi dan mengamati lebih lanjut", "next": "hide_1"}
         ]
       },
       "jungle_5": {
         "text": "Anda menemukan jalan setapak kuno. Ada tanda peringatan dalam bahasa kuno.",
         "options": [
           {"text": "Ikuti jalan", "next": "temple"},
-          {"text": "Kembali ke sungai", "next": "river_1"}
+          {"text": "Kembali ke sungai", "next": "jungle_3"},
+          {"text": "Coba terjemahkan tanda peringatan", "next": "translate_1"}
         ]
       },
       "village_1": {
         "text": "Desa terdekat sepi. Hanya ada seorang tetua yang bersedia bicara.",
         "options": [
           {"text": "Tanya tentang harta karun", "next": "village_2"},
-          {"text": "Minta bantuan", "next": "village_3"}
+          {"text": "Minta bantuan", "next": "village_3"},
+          {"text": "Tanya tentang sejarah desa", "next": "village_4"}
         ]
       },
       "camp_1": {
         "text": "Di kamp, rekan Anda menyarankan untuk menunggu hingga pagi. Namun, Anda mendengar suara aneh dari hutan.",
         "options": [
           {"text": "Periksa suara", "next": "night_1"},
-          {"text": "Tidur saja", "next": "morning_1"}
+          {"text": "Tidur saja", "next": "morning_1"},
+          {"text": "Berjaga sepanjang malam", "next": "night_2"}
         ]
       },
       "treasure": {
@@ -70,6 +77,13 @@
         "end": true,
         "win": false
       },
+      "river_2": {
+        "text": "Anda berhasil menyeberangi sungai dengan berenang. Di seberang, Anda menemukan pintu masuk gua rahasia.",
+        "options": [
+          {"text": "Masuk ke gua", "next": "secret_cave"},
+          {"text": "Lanjut menyusuri tepi sungai", "next": "riverside"}
+        ]
+      },
       "friend": {
         "text": "Makhluk itu ternyata penjaga harta karun. Ia mengajak Anda masuk dan membagi harta. Anda menang!",
         "end": true,
@@ -80,10 +94,24 @@
         "end": true,
         "win": false
       },
+      "hide_1": {
+        "text": "Anda bersembunyi dan melihat makhluk itu membuka pintu rahasia di dalam gua.",
+        "options": [
+          {"text": "Ikuti makhluk itu", "next": "secret_door"},
+          {"text": "Tunggu sampai makhluk itu pergi", "next": "wait_creature"}
+        ]
+      },
       "temple": {
         "text": "Jalan membawa Anda ke kuil kuno. Di dalamnya, Anda menemukan artefak berharga. Misi sukses!",
         "end": true,
         "win": true
+      },
+      "translate_1": {
+        "text": "Anda berhasil menerjemahkan sebagian tanda. Ini memperingatkan tentang kutukan kuno.",
+        "options": [
+          {"text": "Abaikan peringatan dan lanjut", "next": "ignore_warning"},
+          {"text": "Kembali ke jalan sebelumnya", "next": "jungle_5"}
+        ]
       },
       "village_2": {
         "text": "Tetua memberi tahu lokasi harta, tapi memperingatkan tentang kutukan. Anda mengabaikannya dan pergi. Di lokasi, Anda dikejutkan oleh jebakan mematikan. Game Over.",
@@ -95,6 +123,13 @@
         "end": true,
         "win": true
       },
+      "village_4": {
+        "text": "Tetua menceritakan tentang konflik kuno antara desanya dan penjaga harta karun.",
+        "options": [
+          {"text": "Tawarkan diri untuk menengahi konflik", "next": "mediate_conflict"},
+          {"text": "Cari tahu lebih banyak tentang penjaga harta karun", "next": "learn_guardian"}
+        ]
+      },
       "night_1": {
         "text": "Anda menemukan makhluk ajaib yang tersesat. Ia memberi Anda hadiah atas kebaikan Anda. Misi sukses!",
         "end": true,
@@ -104,6 +139,316 @@
         "text": "Pagi tiba, tapi ekspedisi dibatalkan karena badai besar. Petualangan berakhir tanpa hasil.",
         "end": true,
         "win": false
+      },
+      "night_2": {
+        "text": "Anda melihat cahaya aneh di kejauhan. Apa yang akan Anda lakukan?",
+        "options": [
+          {"text": "Selidiki cahaya", "next": "investigate_light"},
+          {"text": "Tetap di kamp", "next": "stay_camp"}
+        ]
+      },
+      "secret_cave": {
+        "text": "Di dalam gua, Anda menemukan peta harta karun yang lengkap!",
+        "options": [
+          {"text": "Ikuti peta", "next": "follow_map"},
+          {"text": "Keluar dari gua dan cari bantuan", "next": "seek_help"}
+        ]
+      },
+      "riverside": {
+        "text": "Anda menemukan perahu kecil terikat di tepi sungai.",
+        "options": [
+          {"text": "Gunakan perahu", "next": "use_boat"},
+          {"text": "Lanjut berjalan", "next": "continue_walking"}
+        ]
+      },
+      "secret_door": {
+        "text": "Anda menemukan ruangan penuh harta karun! Namun, makhluk itu melihat Anda.",
+        "options": [
+          {"text": "Coba bernegosiasi", "next": "negotiate"},
+          {"text": "Ambil harta dan lari", "next": "grab_and_run"}
+        ]
+      },
+      "wait_creature": {
+        "text": "Makhluk itu pergi, meninggalkan pintu terbuka. Anda masuk dan menemukan harta karun!",
+        "end": true,
+        "win": true
+      },
+      "ignore_warning": {
+        "text": "Anda mengabaikan peringatan dan masuk ke area terkutuk. Tiba-tiba, Anda merasa pusing dan terbangun di kamp. Petualangan berakhir.",
+        "end": true,
+        "win": false
+      },
+      "mediate_conflict": {
+        "text": "Anda berhasil menengahi konflik. Sebagai hadiah, Anda diberi akses ke harta karun. Misi sukses!",
+        "end": true,
+        "win": true
+      },
+      "learn_guardian": {
+        "text": "Anda belajar bahwa penjaga harta karun sebenarnya ingin pensiun. Ini memberi Anda ide...",
+        "options": [
+          {"text": "Tawarkan diri untuk menggantikan penjaga", "next": "replace_guardian"},
+          {"text": "Cari penjaga dan bujuk dia untuk membagi harta", "next": "persuade_guardian"}
+        ]
+      },
+      "investigate_light": {
+        "text": "Cahaya itu berasal dari perkemahan rahasia para pemburu harta karun!",
+        "options": [
+          {"text": "Bergabung dengan mereka", "next": "join_hunters"},
+          {"text": "Kembali ke kamp Anda", "next": "return_camp"}
+        ]
+      },
+      "stay_camp": {
+        "text": "Anda tetap di kamp. Pagi harinya, Anda menemukan petunjuk baru di perlengkapan Anda.",
+        "options": [
+          {"text": "Ikuti petunjuk baru", "next": "follow_new_clue"},
+          {"text": "Abaikan dan lanjutkan rencana awal", "next": "original_plan"}
+        ]
+      },
+      "follow_map": {
+        "text": "Peta membawa Anda ke harta karun tersembunyi. Selamat, Anda menang!",
+        "end": true,
+        "win": true
+      },
+      "seek_help": {
+        "text": "Anda kembali ke desa untuk mencari bantuan. Penduduk desa bergabung dalam pencarian Anda.",
+        "options": [
+          {"text": "Pimpin ekspedisi besar", "next": "lead_expedition"},
+          {"text": "Bagi peta dan biarkan mereka memimpin", "next": "share_map"}
+        ]
+      },
+      "use_boat": {
+        "text": "Perahu membawa Anda ke air terjun tersembunyi. Di baliknya, Anda melihat gua berkilauan.",
+        "options": [
+          {"text": "Jelajahi gua", "next": "explore_cave"},
+          {"text": "Kembali ke tepi sungai", "next": "return_shore"}
+        ]
+      },
+      "continue_walking": {
+        "text": "Anda menemukan jejak kaki aneh yang menuju ke dalam hutan.",
+        "options": [
+          {"text": "Ikuti jejak", "next": "follow_tracks"},
+          {"text": "Kembali ke perahu", "next": "back_to_boat"}
+        ]
+      },
+      "negotiate": {
+        "text": "Makhluk itu terkesan dengan keberanian Anda. Ia membagi sebagian harta dan mengizinkan Anda pergi. Misi sukses!",
+        "end": true,
+        "win": true
+      },
+      "grab_and_run": {
+        "text": "Anda berhasil mengambil beberapa harta, tapi terjatuh saat melarikan diri. Petualangan berakhir dengan cedera ringan.",
+        "end": true,
+        "win": false
+      },
+      "replace_guardian": {
+        "text": "Anda menjadi penjaga harta yang baru, hidup dengan kekayaan dan kebijaksanaan. Sebuah akhir yang tidak terduga!",
+        "end": true,
+        "win": true
+      },
+      "persuade_guardian": {
+        "text": "Penjaga tersentuh oleh argumen Anda dan setuju untuk membagi sebagian harta. Anda mendapatkan teman baru dan harta karun!",
+        "end": true,
+        "win": true
+      },
+      "join_hunters": {
+        "text": "Anda bergabung dengan pemburu harta karun. Bersama-sama, kalian menemukan harta yang legendaris!",
+        "end": true,
+        "win": true
+      },
+      "return_camp": {
+        "text": "Anda kembali ke kamp dan tidur. Keesokan harinya, jejak pemburu harta karun telah menghilang.",
+        "options": [
+          {"text": "Cari jejak mereka", "next": "search_hunters"},
+          {"text": "Lanjutkan ekspedisi sendiri", "next": "solo_expedition"}
+        ]
+      },
+      "follow_new_clue": {
+        "text": "Petunjuk baru membawa Anda ke sebuah kuil tersembunyi. Di dalamnya, Anda menemukan harta karun yang tidak ternilai!",
+        "end": true,
+        "win": true
+      },
+      "original_plan": {
+        "text": "Anda melanjutkan rencana awal dan menemukan jejak kuno yang mengarah ke dalam hutan.",
+        "options": [
+          {"text": "Ikuti jejak", "next": "follow_ancient_trail"},
+          {"text": "Kembali ke desa untuk informasi", "next": "village_1"}
+        ]
+      },
+      "lead_expedition": {
+        "text": "Anda memimpin ekspedisi besar. Setelah beberapa hari, kelompok Anda menemukan reruntuhan kota kuno.",
+        "options": [
+          {"text": "Jelajahi reruntuhan", "next": "explore_ruins"},
+          {"text": "Bagi kelompok untuk mencari di area yang berbeda", "next": "split_group"}
+        ]
+      },
+      "share_map": {
+        "text": "Penduduk desa sangat berterima kasih. Mereka membagi pengetahuan rahasia tentang hutan.",
+        "options": [
+          {"text": "Gunakan pengetahuan untuk mencari jalan pintas", "next": "shortcut"},
+          {"text": "Ikuti saran untuk menghindari bahaya", "next": "avoid_danger"}
+        ]
+      },
+      "explore_cave": {
+        "text": "Di dalam gua, Anda menemukan altar kuno dengan tulisan misterius.",
+        "options": [
+          {"text": "Coba terjemahkan tulisan", "next": "decipher_writing"},
+          {"text": "Periksa altar lebih dekat", "next": "examine_altar"}
+        ]
+      },
+      "return_shore": {
+        "text": "Kembali ke tepi sungai, Anda melihat sekelompok makhluk aneh sedang berdiskusi.",
+        "options": [
+          {"text": "Coba menguping pembicaraan mereka", "next": "eavesdrop"},
+          {"text": "Perkenalkan diri", "next": "introduce_yourself"}
+        ]
+      },
+      "follow_tracks": {
+        "text": "Jejak kaki membawa Anda ke sebuah gua tersembunyi. Suara-suara aneh terdengar dari dalam.",
+        "options": [
+          {"text": "Masuk ke gua", "next": "enter_hidden_cave"},
+          {"text": "Tunggu di luar dan amati", "next": "observe_cave"}
+        ]
+      },
+      "back_to_boat": {
+        "text": "Kembali ke perahu, Anda melihat peta tua tersangkut di semak-semak.",
+        "options": [
+          {"text": "Ambil dan ikuti peta", "next": "follow_old_map"},
+          {"text": "Abaikan peta dan lanjut menyusuri sungai", "next": "continue_river"}
+        ]
+      },
+      "search_hunters": {
+        "text": "Anda menemukan jejak pemburu harta karun yang mengarah ke sebuah lembah tersembunyi.",
+        "options": [
+          {"text": "Ikuti jejak ke lembah", "next": "hidden_valley"},
+          {"text": "Tinggalkan jejak dan cari jalan sendiri", "next": "own_path"}
+        ]
+      },
+      "solo_expedition": {
+        "text": "Anda memutuskan untuk melanjutkan sendiri dan menemukan gua dengan lukisan kuno di dindingnya.",
+        "options": [
+          {"text": "Pelajari lukisan", "next": "study_paintings"},
+          {"text": "Cari jalan lebih dalam ke gua", "next": "deeper_cave"}
+        ]
+      },
+      "follow_ancient_trail": {
+        "text": "Jejak kuno membawa Anda ke sebuah air terjun magis. Air terjun tersebut tampaknya menyembunyikan sesuatu di baliknya.",
+        "options": [
+          {"text": "Coba lewati air terjun", "next": "behind_waterfall"},
+          {"text": "Cari jalan lain di sekitar air terjun", "next": "around_waterfall"}
+        ]
+      },
+      "explore_ruins": {
+        "text": "Di dalam reruntuhan, Anda menemukan pintu rahasia yang mengarah ke ruang bawah tanah.",
+        "options": [
+          {"text": "Masuk ke ruang bawah tanah", "next": "underground_chamber"},
+          {"text": "Lanjutkan menjelajahi permukaan", "next": "surface_exploration"}
+        ]
+      },
+      "split_group": {
+        "text": "Kelompok Anda menemukan berbagai petunjuk. Salah satunya mengarah ke gunung berapi yang tidak aktif.",
+        "options": [
+          {"text": "Jelajahi gunung berapi", "next": "volcano_expedition"},
+          {"text": "Ikuti petunjuk lain ke hutan lebat", "next": "dense_forest"}
+        ]
+      },
+      "shortcut": {
+        "text": "Jalan pintas membawa Anda ke sebuah danau tersembunyi. Di tengahnya ada pulau kecil dengan bangunan kuno.",
+        "options": [
+          {"text": "Berenang ke pulau", "next": "swim_to_island"},
+          {"text": "Cari perahu untuk menyeberang", "next": "find_boat"}
+        ]
+      },
+      "avoid_danger": {
+        "text": "Dengan menghindari bahaya, Anda menemukan jalur aman yang mengarah ke puncak gunung. Pemandangan dari atas luar biasa.",
+        "options": [
+          {"text": "Pelajari peta alam dari puncak", "next": "study_landscape"},
+          {"text": "Turun gunung dari sisi lain", "next": "descend_mountain"}
+        ]
+      },
+      "decipher_writing": {
+        "text": "Tulisan itu mengungkapkan lokasi harta karun legendaris, tetapi juga memperingatkan tentang penjaganya yang ganas.",
+        "options": [
+          {"text": "Cari harta karun", "next": "seek_treasure"},
+          {"text": "Cari informasi lebih lanjut tentang penjaga", "next": "research_guardian"}
+        ]
+      },
+      "examine_altar": {
+        "text": "Saat memeriksa altar, Anda tidak sengaja mengaktifkan mekanisme rahasia. Lantai di bawah Anda terbuka!",
+        "options": [
+          {"text": "Melompat untuk menghindari jatuh", "next": "jump_avoid"},
+          {"text": "Biarkan diri Anda jatuh", "next": "fall_through"}
+        ]
+      },
+      "eavesdrop": {
+        "text": "Anda mendengar makhluk-makhluk itu membicarakan tentang portal ajaib yang tersembunyi di dekat air terjun.",
+        "options": [
+          {"text": "Cari portal di dekat air terjun", "next": "find_portal"},
+          {"text": "Dekati makhluk-makhluk itu untuk informasi lebih lanjut", "next": "approach_creatures"}
+        ]
+      },
+      "introduce_yourself": {
+        "text": "Makhluk-makhluk itu terkejut tapi ramah. Mereka menawarkan untuk membantu Anda dalam pencarian, dengan syarat.",
+        "options": [
+          {"text": "Terima tawaran mereka", "next": "accept_offer"},
+          {"text": "Tolak dengan sopan dan lanjutkan sendiri", "next": "decline_offer"}
+        ]
+      },
+      "enter_hidden_cave": {
+        "text": "Di dalam gua, Anda menemukan laboratorium kuno dengan berbagai ramuan ajaib.",
+        "options": [
+          {"text": "Coba salah satu ramuan", "next": "try_potion"},
+          {"text": "Pelajari buku ramuan di meja", "next": "study_potionbook"}
+        ]
+      },
+      "observe_cave": {
+        "text": "Dari luar, Anda melihat cahaya aneh berkedip-kedip dari dalam gua. Tiba-tiba, seorang penyihir tua keluar.",
+        "options": [
+          {"text": "Sembunyi dan amati", "next": "hide_observe"},
+          {"text": "Sapa penyihir", "next": "greet_wizard"}
+        ]
+      },
+      "follow_old_map": {
+        "text": "Peta tua itu mengarahkan Anda ke sebuah kuil tersembunyi di tengah rawa.",
+        "options": [
+          {"text": "Jelajahi kuil", "next": "explore_temple"},
+          {"text": "Cari jalan aman melintasi rawa", "next": "navigate_swamp"}
+        ]
+      },
+      "continue_river": {
+        "text": "Menyusuri sungai, Anda menemukan air terjun raksasa dengan gua di belakangnya.",
+        "options": [
+          {"text": "Coba lewati air terjun ke gua", "next": "waterfall_cave"},
+          {"text": "Cari jalan lain di sekitar air terjun", "next": "around_waterfall"}
+        ]
+      },
+      "hidden_valley": {
+        "text": "Lembah tersembunyi dipenuhi dengan tanaman langka dan hewan-hewan ajaib.",
+        "options": [
+          {"text": "Pelajari tanaman dan hewan", "next": "study_wildlife"},
+          {"text": "Cari tanda-tanda peradaban kuno", "next": "search_civilization"}
+        ]
+      },
+      "own_path": {
+        "text": "Anda menemukan jalan setapak yang mengarah ke puncak gunung berkabut.",
+        "options": [
+          {"text": "Daki gunung", "next": "climb_mountain"},
+          {"text": "Jelajahi kaki gunung", "next": "explore_foothills"}
+        ]
+      },
+      "study_paintings": {
+        "text": "Lukisan-lukisan itu menceritakan legenda tentang artefak sakti yang tersembunyi di puncak gunung tertinggi.",
+        "options": [
+          {"text": "Cari gunung tertinggi", "next": "seek_highest_peak"},
+          {"text": "Cari petunjuk lebih lanjut di gua", "next": "search_cave_clues"}
+        ]
+      },
+      "deeper_cave": {
+        "text": "Semakin dalam, Anda menemukan ruangan dengan berbagai pintu misterius.",
+        "options": [
+          {"text": "Pilih pintu berukir naga", "next": "dragon_door"},
+          {"text": "Pilih pintu dengan simbol matahari", "next": "sun_door"},
+          {"text": "Pilih pintu dengan ukiran labirin", "next": "maze_door"}
+        ]
       }
     }
   }
