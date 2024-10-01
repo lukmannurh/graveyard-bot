@@ -60,12 +60,22 @@ const tiktokDownloader = async (message, args) => {
         await message.reply('Sedang memproses video TikTok...');
 
         logger.info('Sending API request');
-        const apiResponse = await axios.get(apiUrl, { timeout: TIMEOUT });
+        const apiResponse = await axios.get(apiUrl, { 
+            timeout: TIMEOUT,
+            validateStatus: false // Ini akan mencegah axios melempar error untuk status non-2xx
+        });
         logger.info('API response received');
+        logger.info('API response status:', apiResponse.status);
+        logger.info('API response headers:', JSON.stringify(apiResponse.headers));
+        logger.info('API response data:', JSON.stringify(apiResponse.data));
 
         const videoData = apiResponse.data;
 
-        logger.info('API response:', JSON.stringify(videoData));
+        if (apiResponse.status !== 200) {
+            logger.warn(`API returned non-200 status code: ${apiResponse.status}`);
+            await message.reply(`Gagal mengakses API. Status: ${apiResponse.status}`);
+            return;
+        }
 
         if (videoData.status === "Success" && videoData.result && videoData.result.video) {
             await downloadAndSendVideo(videoData.result.video, message);
