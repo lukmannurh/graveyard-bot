@@ -3,9 +3,6 @@ const { MessageMedia } = pkg;
 import axios from 'axios';
 import logger from '../utils/logger.js';
 
-console.log('Downloader module loaded');
-logger.info('Downloader module loaded');
-
 const MAX_VIDEO_SIZE = 14 * 1024 * 1024; // 14MB in bytes
 const TIMEOUT = 60000; // 60 seconds timeout
 
@@ -74,7 +71,7 @@ const tiktokDownloader = async (message, args) => {
         logger.info('API response received');
         logger.info('API response status:', apiResponse.status);
         logger.info('API response headers:', JSON.stringify(apiResponse.headers));
-        logger.info('API response data:', JSON.stringify(apiResponse.data));
+        logger.info('API response data:', JSON.stringify(apiResponse.data, null, 2));
 
         const videoData = apiResponse.data;
 
@@ -84,16 +81,27 @@ const tiktokDownloader = async (message, args) => {
             return;
         }
 
-        if (videoData.status === "Success" && videoData.result && videoData.result.video) {
-            logger.info('Valid video data received, attempting to download');
-            await downloadAndSendVideo(videoData.result.video, message);
-        } else {
-            logger.warn('Invalid or unexpected video data in API response:', videoData);
-            if (videoData.status === "Error") {
-                await message.reply(`Gagal mengunduh video: ${videoData.message || 'Alasan tidak diketahui'}`);
+        logger.info('Video data structure:', JSON.stringify(videoData, null, 2));
+
+        // Memeriksa struktur respons dengan lebih detail
+        if (videoData.status && videoData.result) {
+            logger.info('API response has status and result fields');
+            if (videoData.status === "Success" && videoData.result.video) {
+                logger.info('Valid video data received, attempting to download');
+                await downloadAndSendVideo(videoData.result.video, message);
+            } else if (videoData.status === "Success" && videoData.result.play) {
+                logger.info('Valid video data received (alternative structure), attempting to download');
+                await downloadAndSendVideo(videoData.result.play, message);
             } else {
-                await message.reply('Maaf, tidak dapat mengunduh video TikTok. Format respons API tidak sesuai yang diharapkan.');
+                logger.warn('Unexpected structure in successful response:', JSON.stringify(videoData.result, null, 2));
+                await message.reply('Maaf, struktur data video tidak sesuai yang diharapkan.');
             }
+        } else if (videoData.status === "Error") {
+            logger.warn('API returned error status:', videoData.message);
+            await message.reply(`Gagal mengunduh video: ${videoData.message || 'Alasan tidak diketahui'}`);
+        } else {
+            logger.warn('Completely unexpected API response structure:', JSON.stringify(videoData, null, 2));
+            await message.reply('Maaf, tidak dapat mengunduh video TikTok. Format respons API tidak sesuai yang diharapkan.');
         }
 
     } catch (error) {
