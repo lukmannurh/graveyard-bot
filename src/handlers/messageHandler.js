@@ -21,24 +21,23 @@ const messageHandler = async (message) => {
     const cleanUserId = userId.replace('@c.us', '');
     const isOwner = cleanUserId === OWNER_NUMBER;
 
-    if (isOwner) {
-      await handleOwnerCommand(message, groupId);
-    } else {
-      const isAuthorized = await isGroupAuthorized(groupId);
-      if (!isAuthorized) {
-        logger.debug('Unauthorized group, ignoring message');
-        return;
-      }
-
-      if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body)) {
-        // Handle adventure choice if there's an active game and the message is a number
-        logger.debug('Processing adventure choice');
-        await handleAdventureChoice(message);
-      } else if (message.body.startsWith(PREFIX)) {
-        await handleRegularCommand(message, chat, sender);
+    if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
+      // Handle adventure choice if there's an active game and the message is a number
+      logger.debug('Processing adventure choice');
+      await handleAdventureChoice(message);
+    } else if (message.body.startsWith(PREFIX)) {
+      if (isOwner) {
+        await handleOwnerCommand(message, groupId);
       } else {
-        await handleNonCommandMessage(message, chat, sender);
+        const isAuthorized = await isGroupAuthorized(groupId);
+        if (!isAuthorized) {
+          logger.debug('Unauthorized group, ignoring message');
+          return;
+        }
+        await handleRegularCommand(message, chat, sender);
       }
+    } else {
+      await handleNonCommandMessage(message, chat, sender);
     }
   } catch (error) {
     logger.error('Error in messageHandler:', error);
