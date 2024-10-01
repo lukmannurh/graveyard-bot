@@ -45,22 +45,31 @@ const messageHandler = async (message) => {
           const commandFunction = commands[commandName];
           if (commandFunction) {
             logger.info(`Executing command: ${commandName}`);
+            console.log(`Executing command: ${commandName}`);
             try {
               if (commandName === 'tt') {
+                logger.info('TikTok downloader command detected');
+                console.log('TikTok downloader command detected');
+                logger.info('TikTok URL:', args[0]);
+                console.log('TikTok URL:', args[0]);
                 await commandFunction(message, args).catch(error => {
                   logger.error(`Error executing TikTok downloader:`, error);
+                  console.error(`Error executing TikTok downloader:`, error);
                   message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
                 });
               } else {
                 await commandFunction(message, args);
               }
               logger.info(`Command ${commandName} executed successfully`);
+              console.log(`Command ${commandName} executed successfully`);
             } catch (error) {
               logger.error(`Error executing command ${commandName}:`, error);
+              console.error(`Error executing command ${commandName}:`, error);
               await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
             }
           } else {
             logger.warn(`Unknown command: ${commandName}`);
+            console.warn(`Unknown command: ${commandName}`);
             await message.reply('Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
           }
         }
@@ -126,6 +135,7 @@ const messageHandler = async (message) => {
           return;
         }
         logger.info(`Executing command: ${commandName}`);
+        console.log(`Executing command: ${commandName}`);
         try {
           if (commandName === 'tt') {
             await commandFunction(message, args).catch(error => {
@@ -136,21 +146,26 @@ const messageHandler = async (message) => {
             await commandFunction(message, args);
           }
           logger.info(`Command ${commandName} executed successfully`);
+          console.log(`Command ${commandName} executed successfully`);
         } catch (error) {
           logger.error(`Error executing command ${commandName}:`, error);
+          console.error(`Error executing command ${commandName}:`, error);
           await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
         }
       } else {
         logger.warn(`Unknown command: ${commandName}`);
+        console.warn(`Unknown command: ${commandName}`);
         await message.reply('Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
       }
     }
   } catch (error) {
     logger.error('Error in messageHandler:', error);
+    console.error('Error in messageHandler:', error);
     try {
       await message.reply('Terjadi kesalahan saat memproses pesan. Mohon coba lagi nanti.');
     } catch (replyError) {
       logger.error('Failed to send error message:', replyError);
+      console.error('Failed to send error message:', replyError);
     }
   }
 };

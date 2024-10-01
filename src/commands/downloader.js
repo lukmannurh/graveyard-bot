@@ -3,6 +3,9 @@ const { MessageMedia } = pkg;
 import axios from 'axios';
 import logger from '../utils/logger.js';
 
+console.log('Downloader module loaded');
+logger.info('Downloader module loaded');
+
 const MAX_VIDEO_SIZE = 14 * 1024 * 1024; // 14MB in bytes
 const TIMEOUT = 60000; // 60 seconds timeout
 
