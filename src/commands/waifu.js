@@ -5,7 +5,7 @@ import logger from '../utils/logger.js';
 import { WAIFU_API_TOKEN } from '../config/index.js';
 
 const WAIFU_API_URL = 'https://api.waifu.im/search';
-const MAX_IMAGES = 10;
+const MAX_IMAGES = 20;
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -55,7 +55,7 @@ const waifu = async (message, args) => {
         try {
             response = await axios.get(WAIFU_API_URL, {
                 params: {
-                    included_tags: 'waifu',
+                    included_tags: ['waifu', 'selfies', 'uniform', 'maid'],
                     height: '>=2000',
                     many: true,
                     limit: Math.max(imageCount, 1)
