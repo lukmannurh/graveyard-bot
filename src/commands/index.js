@@ -12,3 +12,4 @@ export { default as waifu } from './waifu.js';
 export { default as random } from './random.js';
 export { bandarsabu } from './contactCommands.js';
 export { cekjomok } from './funCommands.js';
+export { adventure } from './adventureCommand.js';

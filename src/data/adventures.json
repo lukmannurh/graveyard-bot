@@ -1,0 +1,110 @@
+[
+    {
+      "id": "jungle_expedition",
+      "title": "Ekspedisi Hutan Misterius",
+      "start": {
+        "text": "Anda berada di tepi hutan lebat yang konon menyimpan harta karun kuno. Apa yang akan Anda lakukan?",
+        "options": [
+          {"text": "Masuk ke hutan", "next": "jungle_1"},
+          {"text": "Mencari pemandu lokal", "next": "village_1"},
+          {"text": "Kembali ke kamp", "next": "camp_1"}
+        ]
+      },
+      "nodes": {
+        "jungle_1": {
+          "text": "Anda memasuki hutan. Suara-suara aneh terdengar dari segala arah. Tiba-tiba, Anda melihat jejak kaki aneh di tanah.",
+          "options": [
+            {"text": "Ikuti jejak", "next": "jungle_2"},
+            {"text": "Abaikan dan terus berjalan", "next": "jungle_3"}
+          ]
+        },
+        "jungle_2": {
+          "text": "Jejak itu membawa Anda ke sebuah gua tersembunyi. Di dalamnya, Anda melihat kilau emas!",
+          "options": [
+            {"text": "Masuk ke gua", "next": "treasure"},
+            {"text": "Tunggu dan amati", "next": "jungle_4"}
+          ]
+        },
+        "jungle_3": {
+          "text": "Anda terus berjalan dan menemukan sungai deras. Ada jembatan tua yang tampak rapuh.",
+          "options": [
+            {"text": "Seberangi jembatan", "next": "river_1"},
+            {"text": "Cari jalan lain", "next": "jungle_5"}
+          ]
+        },
+        "jungle_4": {
+          "text": "Saat mengamati, Anda melihat makhluk aneh keluar dari gua. Ia tampak ramah.",
+          "options": [
+            {"text": "Berkenalan", "next": "friend"},
+            {"text": "Lari!", "next": "run"}
+          ]
+        },
+        "jungle_5": {
+          "text": "Anda menemukan jalan setapak kuno. Ada tanda peringatan dalam bahasa kuno.",
+          "options": [
+            {"text": "Ikuti jalan", "next": "temple"},
+            {"text": "Kembali ke sungai", "next": "river_1"}
+          ]
+        },
+        "village_1": {
+          "text": "Desa terdekat sepi. Hanya ada seorang tetua yang bersedia bicara.",
+          "options": [
+            {"text": "Tanya tentang harta karun", "next": "village_2"},
+            {"text": "Minta bantuan", "next": "village_3"}
+          ]
+        },
+        "camp_1": {
+          "text": "Di kamp, rekan Anda menyarankan untuk menunggu hingga pagi. Namun, Anda mendengar suara aneh dari hutan.",
+          "options": [
+            {"text": "Periksa suara", "next": "night_1"},
+            {"text": "Tidur saja", "next": "morning_1"}
+          ]
+        },
+        "treasure": {
+          "text": "Selamat! Anda menemukan harta karun kuno. Petualangan berakhir dengan kemenangan!",
+          "end": true,
+          "win": true
+        },
+        "river_1": {
+          "text": "Jembatan runtuh! Anda terjatuh ke sungai deras dan hanyut. Petualangan berakhir.",
+          "end": true,
+          "win": false
+        },
+        "friend": {
+          "text": "Makhluk itu ternyata penjaga harta karun. Ia mengajak Anda masuk dan membagi harta. Anda menang!",
+          "end": true,
+          "win": true
+        },
+        "run": {
+          "text": "Anda berlari ketakutan dan tersesat di hutan. Petualangan berakhir.",
+          "end": true,
+          "win": false
+        },
+        "temple": {
+          "text": "Jalan membawa Anda ke kuil kuno. Di dalamnya, Anda menemukan artefak berharga. Misi sukses!",
+          "end": true,
+          "win": true
+        },
+        "village_2": {
+          "text": "Tetua memberi tahu lokasi harta, tapi memperingatkan tentang kutukan. Anda mengabaikannya dan pergi. Di lokasi, Anda dikejutkan oleh jebakan mematikan. Game Over.",
+          "end": true,
+          "win": false
+        },
+        "village_3": {
+          "text": "Tetua memberi Anda peta ajaib. Dengan bantuan ini, Anda berhasil menemukan harta dengan mudah. Misi sukses!",
+          "end": true,
+          "win": true
+        },
+        "night_1": {
+          "text": "Anda menemukan makhluk ajaib yang tersesat. Ia memberi Anda hadiah atas kebaikan Anda. Misi sukses!",
+          "end": true,
+          "win": true
+        },
+        "morning_1": {
+          "text": "Pagi tiba, tapi ekspedisi dibatalkan karena badai besar. Petualangan berakhir tanpa hasil.",
+          "end": true,
+          "win": false
+        }
+      }
+    }
+  ]

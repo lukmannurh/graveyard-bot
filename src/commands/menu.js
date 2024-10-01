@@ -16,7 +16,8 @@ const menu = async (message) => {
       { name: 'random [jumlah tim] [nama1] [nama2] ...', description: 'Membuat tim acak (minimal 2 tim dan 2 nama)' },
       { name: 'waifu [jumlah]', description: 'Mendapatkan gambar waifu acak (1-10 gambar)' },
       { name: 'bandarsabu', description: 'Mendapatkan kontak Imam Bandar Sabu Lampung' },
-      { name: 'cekjomok', description: 'Mengecek tingkat jomok Anda' }
+      { name: 'cekjomok', description: 'Mengecek tingkat jomok Anda' },
+      { name: 'adventure', description: 'Memulai petualangan teks interaktif' }
     ];
 
     const adminCommands = [

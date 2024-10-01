@@ -5,6 +5,8 @@ import { checkForbiddenWord, getForbiddenWordResponse } from '../utils/wordFilte
 import { isGroupAuthorized } from '../utils/authorizedGroups.js';
 import { isUserBanned, checkUserStatus, warnUser, logViolation } from '../utils/enhancedModerationSystem.js';
 import logger from '../utils/logger.js';
+import { handleAdventureChoice } from '../commands/adventureCommand.js';
+import adventureManager from '../utils/adventureManager.js';
 
 const messageHandler = async (message) => {
   try {
@@ -93,6 +95,12 @@ const messageHandler = async (message) => {
 
       const [command, ...args] = message.body.split(' ');
       if (!command.startsWith(PREFIX)) {
+        // Check if it's an adventure choice
+        if (/^[1-9]\d*$/.test(message.body) && adventureManager.isGameActive(groupId)) {
+          await handleAdventureChoice(message);
+          return;
+        }
+        
         // Check for forbidden words in non-command messages
         const forbiddenCheck = checkForbiddenWord(message.body, userId);
         if (forbiddenCheck.found) {
