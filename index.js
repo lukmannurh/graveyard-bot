@@ -28,19 +28,20 @@ app.use(limiter);
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
   logger.error('Uncaught Exception:', error);
-  // Optionally, you can gracefully shutdown your app here
-  // process.exit(1);
+  // Don't exit the process here
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Optionally, you can gracefully shutdown your app here
-  // process.exit(1);
+  // Don't exit the process here
 });
 
 // Start the bot
-startBot();
+logger.info('Starting the bot...');
+startBot().catch(error => {
+  logger.error('Failed to start the bot:', error);
+});
 
 // Start the server
 const server = app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
@@ -52,3 +53,12 @@ process.on('SIGTERM', () => {
     logger.info('HTTP server closed');
   });
 });
+
+process.on('SIGINT', () => {
+  logger.info('SIGINT signal received: closing HTTP server');
+  server.close(() => {
+    logger.info('HTTP server closed');
+  });
+});
+
+logger.info('Application started successfully');
