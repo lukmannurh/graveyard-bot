@@ -3,25 +3,47 @@ const { MessageMedia } = pkg;
 import axios from 'axios';
 import logger from '../utils/logger.js';
 import ffmpeg from 'fluent-ffmpeg';
+import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import stream from 'stream';
+import fs from 'fs/promises';
+import path from 'path';
+import os from 'os';
+
+ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 const MAX_MEDIA_SIZE = 14 * 1024 * 1024; // 14MB in bytes
 
-const convertToMp3 = async (inputBuffer) => {
-    return new Promise((resolve, reject) => {
-        const inputStream = stream.Readable.from(inputBuffer);
-        const chunks = [];
+const getTempFilePath = (prefix, extension) => {
+    return path.join(os.tmpdir(), `${prefix}-${Date.now()}.${extension}`);
+};
 
-        ffmpeg(inputStream)
-            .toFormat('mp3')
-            .on('error', (err) => reject(err))
-            .on('data', (chunk) => chunks.push(chunk))
-            .on('end', () => resolve(Buffer.concat(chunks)))
-            .pipe();
+const convertToMp3 = async (inputBuffer) => {
+    const inputPath = getTempFilePath('input', 'bin');
+    const outputPath = getTempFilePath('output', 'mp3');
+
+    await fs.writeFile(inputPath, inputBuffer);
+
+    return new Promise((resolve, reject) => {
+        ffmpeg(inputPath)
+            .setFfmpegPath(ffmpegInstaller.path)
+            .output(outputPath)
+            .on('end', async () => {
+                const buffer = await fs.readFile(outputPath);
+                await fs.unlink(inputPath).catch(err => logger.error('Error deleting input file:', err));
+                await fs.unlink(outputPath).catch(err => logger.error('Error deleting output file:', err));
+                resolve(buffer);
+            })
+            .on('error', (err) => {
+                logger.error('FFmpeg error:', err);
+                fs.unlink(inputPath).catch(err => logger.error('Error deleting input file:', err));
+                reject(err);
+            })
+            .run();
     });
 };
 
 const downloadAndSendMedia = async (url, message, caption, isAudio = false) => {
+    let tempFilePath = null;
     try {
         logger.info(`Downloading ${isAudio ? 'audio' : 'video'} from URL: ${url}`);
         const response = await axios.get(url, { responseType: 'arraybuffer' });
@@ -29,7 +51,13 @@ const downloadAndSendMedia = async (url, message, caption, isAudio = false) => {
 
         if (isAudio) {
             logger.info('Converting audio to MP3');
-            buffer = await convertToMp3(buffer);
+            try {
+                buffer = await convertToMp3(buffer);
+                logger.info('Audio conversion successful');
+            } catch (conversionError) {
+                logger.error('Audio conversion failed:', conversionError);
+                throw new Error('Failed to convert audio');
+            }
         }
 
         const isLargeFile = buffer.length > MAX_MEDIA_SIZE;
@@ -38,8 +66,11 @@ const downloadAndSendMedia = async (url, message, caption, isAudio = false) => {
         const mimeType = isAudio ? 'audio/mpeg' : 'video/mp4';
         const filename = isAudio ? 'tiktok_audio.mp3' : 'tiktok_video.mp4';
 
+        tempFilePath = getTempFilePath('tiktok', isAudio ? 'mp3' : 'mp4');
+        await fs.writeFile(tempFilePath, buffer);
+
         logger.info(`Creating MessageMedia with mimeType: ${mimeType}, filename: ${filename}`);
-        const media = new MessageMedia(mimeType, buffer.toString('base64'), filename);
+        const media = MessageMedia.fromFilePath(tempFilePath);
 
         logger.info(`Sending ${isAudio ? 'audio' : 'video'} as ${isLargeFile || isAudio ? 'document' : 'media'}`);
         await message.reply(media, null, { 
@@ -47,12 +78,22 @@ const downloadAndSendMedia = async (url, message, caption, isAudio = false) => {
             sendMediaAsDocument: isLargeFile || isAudio
         });
         logger.info(`${isAudio ? 'Audio' : 'Video'} sent successfully`);
+
     } catch (error) {
         logger.error(`Error downloading or sending ${isAudio ? 'audio' : 'video'}:`, error);
         if (error.response) {
             logger.error('Error response:', error.response.status, error.response.statusText);
         }
         await message.reply(`Gagal mengirim ${isAudio ? 'audio' : 'video'} TikTok. Error: ${error.message}`);
+    } finally {
+        if (tempFilePath) {
+            try {
+                await fs.unlink(tempFilePath);
+                logger.info(`Temporary file deleted: ${tempFilePath}`);
+            } catch (unlinkError) {
+                logger.error('Error deleting temporary file:', unlinkError);
+            }
+        }
     }
 };
 
