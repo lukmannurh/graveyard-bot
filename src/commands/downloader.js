@@ -9,6 +9,7 @@ const TIMEOUT = 60000; // 60 seconds timeout
 const downloadAndSendVideo = async (url, message) => {
     logger.info('Entering downloadAndSendVideo function');
     try {
+        // Step 1: Download video
         logger.info(`Downloading video from URL: ${url}`);
         const response = await axios.get(url, { 
             responseType: 'arraybuffer',
@@ -16,6 +17,7 @@ const downloadAndSendVideo = async (url, message) => {
         });
         logger.info('Video downloaded successfully');
         
+        // Step 2: Check video size
         const buffer = Buffer.from(response.data, 'binary');
         const isLargeFile = buffer.length > MAX_VIDEO_SIZE;
         logger.info(`Video size: ${buffer.length} bytes`);
@@ -26,10 +28,12 @@ const downloadAndSendVideo = async (url, message) => {
             return;
         }
 
+        // Step 3: Create MessageMedia object
         logger.info('Creating MessageMedia object');
         const media = new MessageMedia('video/mp4', buffer.toString('base64'), 'tiktok_video.mp4');
         logger.info('MessageMedia object created successfully');
 
+        // Step 4: Send video
         logger.info('Attempting to send video...');
         try {
             const sent = await message.reply(media, null, { sendMediaAsDocument: false });
@@ -61,6 +65,7 @@ const tiktokDownloader = async (message, args) => {
     logger.info('Arguments:', args);
 
     try {
+        // Step 1: Check URL
         if (args.length === 0) {
             logger.info('No URL provided');
             await message.reply('Mohon sertakan link TikTok yang ingin diunduh.');
@@ -76,11 +81,13 @@ const tiktokDownloader = async (message, args) => {
             return;
         }
 
+        // Step 2: Prepare API request
         const apiUrl = `https://api.ryzendesu.vip/api/downloader/ttdl?url=${encodeURIComponent(url)}`;
         logger.info('API URL:', apiUrl);
 
         await message.reply('Sedang memproses video TikTok...');
 
+        // Step 3: Send API request
         logger.info('Sending API request');
         const apiResponse = await axios.get(apiUrl, { 
             timeout: TIMEOUT,
@@ -91,6 +98,7 @@ const tiktokDownloader = async (message, args) => {
         logger.info('API response headers:', JSON.stringify(apiResponse.headers));
         logger.info('API response data:', JSON.stringify(apiResponse.data, null, 2));
 
+        // Step 4: Process API response
         const videoData = apiResponse.data;
 
         if (apiResponse.status !== 200) {
@@ -101,6 +109,7 @@ const tiktokDownloader = async (message, args) => {
 
         logger.info('Video data structure:', JSON.stringify(videoData, null, 2));
 
+        // Step 5: Check video data and download
         if (videoData.status === "Success" && videoData.result && videoData.result.video) {
             logger.info('Valid video data received, attempting to download');
             await downloadAndSendVideo(videoData.result.video, message);
