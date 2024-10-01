@@ -1,5 +1,7 @@
 import adventureManager from '../utils/adventureManager.js';
 import logger from '../utils/logger.js';
+import pkg from 'whatsapp-web.js';
+const { MessageMedia } = pkg;
 
 const adventure = async (message) => {
   try {
@@ -10,8 +12,7 @@ const adventure = async (message) => {
 
     if (!adventureManager.isGameActive(groupId)) {
       const startNode = adventureManager.startAdventure(groupId, userId);
-      const options = startNode.options.map((opt, index) => `${index + 1}. ${opt.text}`).join('\n');
-      await message.reply(`*${adventureManager.getActiveGame(groupId).adventure.title}*\n\n${startNode.text}\n\n${options}`);
+      await sendAdventureMessage(message, startNode);
     } else {
       const activeGame = adventureManager.getActiveGame(groupId);
       if (activeGame.userId !== userId) {
@@ -26,7 +27,22 @@ const adventure = async (message) => {
   }
 };
 
-const handleAdventureChoice = async (message) => {
+const sendAdventureMessage = async (message, node) => {
+  const options = node.options.map((opt, index) => `${index + 1}. ${opt.text}`).join('\n');
+  const pollOptions = node.options.map(opt => opt.text);
+  
+  await message.reply(`*${adventureManager.getActiveGame(message.chat.id._serialized).adventure.title}*\n\n${node.text}`);
+  
+  // Send poll for options
+  await message.reply('Pilih tindakan selanjutnya:', {
+    poll: {
+      title: 'Apa yang akan Anda lakukan?',
+      options: pollOptions
+    }
+  });
+};
+
+const handleAdventureChoice = async (message, choice) => {
   try {
     const chat = await message.getChat();
     const sender = await message.getContact();
@@ -42,7 +58,6 @@ const handleAdventureChoice = async (message) => {
       return;
     }
 
-    const choice = parseInt(message.body) - 1;
     const nextNode = adventureManager.getNextNode(groupId, choice);
 
     if (nextNode.end) {
@@ -54,8 +69,7 @@ const handleAdventureChoice = async (message) => {
       }
       adventureManager.endGame(groupId);
     } else {
-      const options = nextNode.options.map((opt, index) => `${index + 1}. ${opt.text}`).join('\n');
-      await message.reply(`${nextNode.text}\n\n${options}`);
+      await sendAdventureMessage(message, nextNode);
     }
   } catch (error) {
     logger.error('Error in handling adventure choice:', error);

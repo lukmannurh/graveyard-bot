@@ -95,9 +95,14 @@ const messageHandler = async (message) => {
 
       const [command, ...args] = message.body.split(' ');
       if (!command.startsWith(PREFIX)) {
-        // Check if it's an adventure choice
-        if (/^[1-9]\d*$/.test(message.body) && adventureManager.isGameActive(groupId)) {
-          await handleAdventureChoice(message);
+        // Check if it's an adventure choice via poll
+        if (message.type === 'poll_vote' && adventureManager.isGameActive(chat.id._serialized)) {
+          const activeGame = adventureManager.getActiveGame(chat.id._serialized);
+          if (activeGame.userId === userId) {
+            const pollData = await message.getPollData();
+            const selectedOption = pollData.selectedOptions[0];
+            await handleAdventureChoice(message, selectedOption);
+          }
           return;
         }
         

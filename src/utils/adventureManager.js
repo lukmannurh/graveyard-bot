@@ -28,9 +28,12 @@ class AdventureManager {
     if (!game) return null;
 
     const currentNode = game.adventure.nodes[game.currentNode] || game.adventure.start;
-    const nextNodeId = currentNode.options[choice].next;
-    game.currentNode = nextNodeId;
-    return game.adventure.nodes[nextNodeId];
+    const nextNodeId = currentNode.options.find(opt => opt.text === choice)?.next;
+    if (nextNodeId) {
+      game.currentNode = nextNodeId;
+      return game.adventure.nodes[nextNodeId];
+    }
+    return null;
   }
 
   isGameActive(groupId) {
