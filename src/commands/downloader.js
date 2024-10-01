@@ -12,6 +12,7 @@ import os from 'os';
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 const MAX_MEDIA_SIZE = 14 * 1024 * 1024; // 14MB in bytes
+const TIMEOUT = 60000; // 60 seconds timeout
 
 const getTempFilePath = (prefix, extension) => {
     return path.join(os.tmpdir(), `${prefix}-${Date.now()}.${extension}`);
@@ -46,7 +47,10 @@ const downloadAndSendMedia = async (url, message, caption, isAudio = false) => {
     let tempFilePath = null;
     try {
         logger.info(`Downloading ${isAudio ? 'audio' : 'video'} from URL: ${url}`);
-        const response = await axios.get(url, { responseType: 'arraybuffer' });
+        const response = await axios.get(url, { 
+            responseType: 'arraybuffer',
+            timeout: TIMEOUT
+        });
         let buffer = Buffer.from(response.data, 'binary');
 
         if (isAudio) {
@@ -84,7 +88,7 @@ const downloadAndSendMedia = async (url, message, caption, isAudio = false) => {
         if (error.response) {
             logger.error('Error response:', error.response.status, error.response.statusText);
         }
-        await message.reply(`Gagal mengirim ${isAudio ? 'audio' : 'video'} TikTok. Error: ${error.message}`);
+        throw error;
     } finally {
         if (tempFilePath) {
             try {
@@ -127,8 +131,8 @@ const tiktokDownloader = async (message, args) => {
         let videoResponse, audioResponse;
         try {
             [videoResponse, audioResponse] = await Promise.all([
-                axios.get(videoApiUrl),
-                axios.get(audioApiUrl)
+                axios.get(videoApiUrl, { timeout: TIMEOUT }),
+                axios.get(audioApiUrl, { timeout: TIMEOUT })
             ]);
             logger.info('API responses received');
         } catch (apiError) {
