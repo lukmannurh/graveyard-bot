@@ -1,5 +1,6 @@
+import pkg from 'whatsapp-web.js';
+const { MessageMedia } = pkg;
 import axios from 'axios';
-import { MessageMedia } from 'whatsapp-web.js';
 import logger from '../utils/logger.js';
 
 const tiktokDownloader = async (message, args) => {
@@ -28,7 +29,7 @@ const tiktokDownloader = async (message, args) => {
             const caption = videoData.result.caption || 'Video TikTok';
 
             const videoMedia = await MessageMedia.fromUrl(videoUrl);
-            await message.reply(videoMedia, message.from, { caption });
+            await message.reply(videoMedia, null, { caption });
         } else {
             await message.reply('Maaf, tidak dapat mengunduh video TikTok. Pastikan link yang Anda berikan valid.');
         }
@@ -37,7 +38,7 @@ const tiktokDownloader = async (message, args) => {
             const audioUrl = audioData.result.audio_url;
             const audioMedia = await MessageMedia.fromUrl(audioUrl, { unsafeMime: true });
             audioMedia.filename = 'tiktok_audio.mp3';
-            await message.reply(audioMedia, message.from, { caption: 'Audio dari TikTok' });
+            await message.reply(audioMedia, null, { caption: 'Audio dari TikTok' });
         } else {
             await message.reply('Maaf, tidak dapat mengunduh audio dari TikTok.');
         }
