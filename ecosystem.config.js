@@ -15,5 +15,8 @@ module.exports = {
       max_restarts: 10,
       restart_delay: 5000,
       autorestart: true,
+      exec_mode: 'fork',
+      instances: 1,
+      exp_backoff_restart_delay: 100
     }]
   };
