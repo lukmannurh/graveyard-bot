@@ -4,10 +4,11 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { startBot, stopBot } from './src/bot.js';
 import logger from './src/utils/logger.js';
-import { PORT } from './src/config/index.js';
+import { PORT } from './src/config/constants.js';
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import adventureManager from './src/utils/adventureManager.js';
+import messageHandler from './src/handlers/messageHandler.js';
 
 await adventureManager.loadAdventures();
 logger.info('Adventures loaded');
@@ -35,7 +36,7 @@ process.on('uncaughtException', (error) => {
   // Instead of exiting, we'll try to recover
   setTimeout(() => {
     logger.info('Attempting to recover from uncaught exception...');
-    startBot().catch(startError => {
+    startBot(messageHandler).catch(startError => {
       logger.error('Failed to restart bot after uncaught exception:', startError);
     });
   }, 5000);
@@ -48,7 +49,7 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Start the bot
 logger.info('Starting the bot...');
-startBot().catch(error => {
+startBot(messageHandler).catch(error => {
   logger.error('Failed to start the bot:', error);
 });
 
@@ -74,7 +75,6 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 logger.info('Application started successfully');
-
 
 // Memory usage logging
 setInterval(() => {

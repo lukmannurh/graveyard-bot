@@ -1,15 +1,13 @@
 import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
 import qrcode from 'qrcode-terminal';
-import messageHandler from './handlers/messageHandler.js';
 import logger from './utils/logger.js';
-import { PUPPETEER_ARGS } from './config/index.js';
+import { PUPPETEER_ARGS } from './config/constants.js';
 import adventureManager from './utils/adventureManager.js';
-
 
 let client;
 
-const startBot = async () => {
+const startBot = async (messageHandler) => {
   try {
     logger.info('Initializing WhatsApp client...');
     client = new Client({
@@ -41,7 +39,7 @@ const startBot = async () => {
       // Try to reconnect
       setTimeout(() => {
         logger.info('Attempting to reconnect...');
-        startBot();
+        startBot(messageHandler);
       }, 5000);
     });
 
@@ -50,7 +48,7 @@ const startBot = async () => {
     logger.info('WhatsApp client initialized successfully');
   } catch (error) {
     logger.error('Failed to start the bot:', error);
-    throw error; // Rethrow the error to be caught in index.js
+    throw error;
   }
   await adventureManager.loadAdventures();
 };
