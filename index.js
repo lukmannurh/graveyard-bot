@@ -8,7 +8,6 @@ import { PORT } from './src/config/index.js';
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import adventureManager from './src/utils/adventureManager.js';
-import logger from './src/utils/logger.js';
 
 await adventureManager.loadAdventures();
 logger.info('Adventures loaded');
