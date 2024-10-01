@@ -1,3 +1,4 @@
+// src/handlers/messageHandler.js
 import { handleOwnerCommand } from './ownerCommandHandler.js';
 import { handleRegularCommand } from './regularCommandHandler.js';
 import { handleNonCommandMessage } from './nonCommandHandler.js';
@@ -16,7 +17,7 @@ const messageHandler = async (message) => {
     const groupId = chat.id._serialized;
     const userId = sender.id._serialized;
 
-    logger.info(`Message received - Type: ${message.type}, From: ${userId}, Group: ${groupId}`);
+    logger.debug(`Message received - Type: ${message.type}, From: ${userId}, Group: ${groupId}, Body: ${message.body}`);
 
     const cleanUserId = userId.replace('@c.us', '');
     const isOwner = cleanUserId === OWNER_NUMBER;
@@ -26,32 +27,17 @@ const messageHandler = async (message) => {
     } else {
       const isAuthorized = await isGroupAuthorized(groupId);
       if (!isAuthorized) {
-        logger.info('Unauthorized group, ignoring message');
+        logger.debug('Unauthorized group, ignoring message');
         return;
       }
 
-      if (message.type === 'poll_vote') {
-        logger.info('Poll vote received');
-        if (adventureManager.isGameActive(groupId)) {
-          const activeGame = adventureManager.getActiveGame(groupId);
-          if (activeGame.userId === userId) {
-            const pollData = await message.getPollVote();
-            logger.info(`Poll vote data: ${JSON.stringify(pollData)}`);
-            if (pollData && pollData.selectedOptions && pollData.selectedOptions.length > 0) {
-              const selectedOption = pollData.selectedOptions[0];
-              logger.info(`Selected option: ${selectedOption}`);
-              await handleAdventureChoice(message, selectedOption);
-            } else {
-              logger.warn('Invalid poll vote data received');
-            }
-          } else {
-            logger.info('Poll vote from non-active player, ignoring');
-          }
-        } else {
-          logger.info('Poll vote received but no active adventure');
-        }
-      } else if (message.body.startsWith(PREFIX)) {
+      if (message.body.startsWith(PREFIX)) {
         await handleRegularCommand(message, chat, sender);
+      } else if (adventureManager.isGameActive(groupId)) {
+        const activeGame = adventureManager.getActiveGame(groupId);
+        if (activeGame.userId === userId) {
+          await handleAdventureChoice(message);
+        }
       } else {
         await handleNonCommandMessage(message, chat, sender);
       }
