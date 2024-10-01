@@ -70,8 +70,12 @@ const tiktokDownloader = async (message, args) => {
         if (videoData.status === "Success" && videoData.result && videoData.result.video) {
             await downloadAndSendVideo(videoData.result.video, message);
         } else {
-            logger.warn('Invalid video data in API response:', videoData);
-            await message.reply('Maaf, tidak dapat mengunduh video TikTok. Data tidak valid.');
+            logger.warn('Invalid or unexpected video data in API response:', videoData);
+            if (videoData.status === "Error") {
+                await message.reply(`Gagal mengunduh video: ${videoData.message || 'Alasan tidak diketahui'}`);
+            } else {
+                await message.reply('Maaf, tidak dapat mengunduh video TikTok. Format respons API tidak sesuai yang diharapkan.');
+            }
         }
 
     } catch (error) {
@@ -80,12 +84,14 @@ const tiktokDownloader = async (message, args) => {
             logger.error('API Response Error:', error.response.data);
             logger.error('API Response Status:', error.response.status);
             logger.error('API Response Headers:', error.response.headers);
+            await message.reply(`Terjadi kesalahan saat mengakses API: ${error.response.status} - ${error.response.statusText}`);
         } else if (error.request) {
             logger.error('No response received:', error.request);
+            await message.reply('Tidak ada respons dari server API. Mohon coba lagi nanti.');
         } else {
             logger.error('Error setting up request:', error.message);
+            await message.reply('Terjadi kesalahan internal saat memproses permintaan Anda.');
         }
-        await message.reply('Terjadi kesalahan saat mengunduh konten TikTok. Mohon coba lagi nanti.');
     }
 };
 
