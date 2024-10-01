@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import logger from './logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,9 +13,16 @@ class AdventureManager {
   }
 
   async loadAdventures() {
-    const filePath = path.join(__dirname, '../data/adventures.json');
-    const data = await fs.readFile(filePath, 'utf8');
-    this.adventures = JSON.parse(data);
+    try {
+      const filePath = path.join(__dirname, '../data/adventures.json');
+      logger.info(`Loading adventures from ${filePath}`);
+      const data = await fs.readFile(filePath, 'utf8');
+      this.adventures = JSON.parse(data);
+      logger.info(`Loaded ${this.adventures.length} adventures`);
+      logger.debug('Adventures:', JSON.stringify(this.adventures));
+    } catch (error) {
+      logger.error('Error loading adventures:', error);
+    }
   }
 
   startAdventure(groupId, userId) {
