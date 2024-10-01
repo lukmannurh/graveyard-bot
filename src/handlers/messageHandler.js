@@ -30,11 +30,12 @@ const messageHandler = async (message) => {
         return;
       }
 
-      if (message.body.startsWith(PREFIX)) {
-        await handleRegularCommand(message, chat, sender);
-      } else if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body)) {
+      if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body)) {
         // Handle adventure choice if there's an active game and the message is a number
+        logger.debug('Processing adventure choice');
         await handleAdventureChoice(message);
+      } else if (message.body.startsWith(PREFIX)) {
+        await handleRegularCommand(message, chat, sender);
       } else {
         await handleNonCommandMessage(message, chat, sender);
       }

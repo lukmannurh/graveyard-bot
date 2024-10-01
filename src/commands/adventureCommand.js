@@ -78,12 +78,14 @@ export const handleAdventureChoice = async (message) => {
 
     if (!adventureManager.isGameActive(groupId)) {
       logger.debug('No active game found');
+      await message.reply('Tidak ada petualangan aktif saat ini. Gunakan .adventure untuk memulai petualangan baru.');
       return;
     }
 
     const activeGame = adventureManager.getActiveGame(groupId);
     if (activeGame.userId !== userId) {
       logger.debug('User is not the active player');
+      await message.reply('Anda bukan pemain aktif dalam petualangan ini.');
       return;
     }
 
