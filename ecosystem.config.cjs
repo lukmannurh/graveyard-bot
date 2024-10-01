@@ -2,7 +2,7 @@ module.exports = {
   apps : [{
     name: 'graveyard-bot',
     script: 'index.js',
-    watch: false,  // Disable watch
+    watch: false,
     ignore_watch : [
       "node_modules",
       "logs",
@@ -21,6 +21,9 @@ module.exports = {
     autorestart: true,
     exec_mode: 'fork',
     instances: 1,
-    exp_backoff_restart_delay: 100
+    exp_backoff_restart_delay: 100,
+    kill_timeout: 5000,
+    wait_ready: true,
+    listen_timeout: 10000
   }]
 };

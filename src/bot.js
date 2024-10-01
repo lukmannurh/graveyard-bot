@@ -9,6 +9,7 @@ let client;
 
 const startBot = async () => {
   try {
+    logger.info('Initializing WhatsApp client...');
     client = new Client({
       authStrategy: new LocalAuth(),
       puppeteer: {
@@ -17,8 +18,8 @@ const startBot = async () => {
     });
 
     client.on('qr', (qr) => {
-      qrcode.generate(qr, { small: true });
       logger.info('QR Code received, scan with your phone.');
+      qrcode.generate(qr, { small: true });
     });
 
     client.on('ready', () => {
@@ -42,21 +43,20 @@ const startBot = async () => {
       }, 5000);
     });
 
+    logger.info('Starting WhatsApp client...');
     await client.initialize();
+    logger.info('WhatsApp client initialized successfully');
   } catch (error) {
     logger.error('Failed to start the bot:', error);
-    // Try to restart after a delay
-    setTimeout(() => {
-      logger.info('Attempting to restart the bot...');
-      startBot();
-    }, 5000);
+    throw error; // Rethrow the error to be caught in index.js
   }
 };
 
 const stopBot = async () => {
   if (client) {
+    logger.info('Destroying WhatsApp client...');
     await client.destroy();
-    logger.info('Bot stopped');
+    logger.info('WhatsApp client destroyed');
   }
 };
 
