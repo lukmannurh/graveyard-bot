@@ -1,4 +1,3 @@
-// src/commands/adventureCommand.js
 import adventureManager from '../utils/adventureManager.js';
 import logger from '../utils/logger.js';
 
@@ -46,7 +45,8 @@ const sendAdventureMessage = async (message, node) => {
     logger.debug(`Sending adventure message: ${JSON.stringify(node)}`);
     const options = node.options.map((opt, index) => `${index + 1}. ${opt.text}`).join('\n');
     
-    const activeGame = adventureManager.getActiveGame(message.chat.id._serialized);
+    const groupId = message.chat.id._serialized;
+    const activeGame = adventureManager.getActiveGame(groupId);
     const adventureTitle = activeGame ? activeGame.adventure.title : 'Unknown Adventure';
     
     await message.reply(`*${adventureTitle}*\n\n${node.text}\n\nPilihan:\n${options}`);
