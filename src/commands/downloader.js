@@ -1,62 +1,78 @@
 import pkg from 'whatsapp-web.js';
 const { MessageMedia } = pkg;
 import axios from 'axios';
+import fs from 'fs/promises';
+import path from 'path';
+import os from 'os';
 import logger from '../utils/logger.js';
 
-const MAX_VIDEO_SIZE = 14 * 1024 * 1024; // 14MB in bytes
+const MAX_VIDEO_SIZE = 64 * 1024 * 1024; // 64MB in bytes (WhatsApp limit)
 const TIMEOUT = 60000; // 60 seconds timeout
+
+const getTempFilePath = (prefix, extension) => {
+    return path.join(os.tmpdir(), `${prefix}-${Date.now()}.${extension}`);
+};
 
 const downloadAndSendVideo = async (url, message) => {
     logger.info('Entering downloadAndSendVideo function');
+    let tempFilePath = null;
     try {
-        // Step 1: Download video
+        // Step 1: Download video to temp file
         logger.info(`Downloading video from URL: ${url}`);
         const response = await axios.get(url, { 
-            responseType: 'arraybuffer',
+            responseType: 'stream',
             timeout: TIMEOUT
         });
-        logger.info('Video downloaded successfully');
         
-        // Step 2: Check video size
-        const buffer = Buffer.from(response.data, 'binary');
-        const isLargeFile = buffer.length > MAX_VIDEO_SIZE;
-        logger.info(`Video size: ${buffer.length} bytes`);
+        tempFilePath = getTempFilePath('tiktok', 'mp4');
+        const writer = fs.createWriteStream(tempFilePath);
+        
+        response.data.pipe(writer);
+        
+        await new Promise((resolve, reject) => {
+            writer.on('finish', resolve);
+            writer.on('error', reject);
+        });
+        
+        logger.info(`Video downloaded successfully to ${tempFilePath}`);
 
-        if (isLargeFile) {
+        // Step 2: Check video size
+        const stats = await fs.stat(tempFilePath);
+        const fileSize = stats.size;
+        logger.info(`Video size: ${fileSize} bytes`);
+
+        if (fileSize > MAX_VIDEO_SIZE) {
             logger.warn('File size exceeds WhatsApp limit');
             await message.reply('Maaf, ukuran video melebihi batas maksimum yang diizinkan WhatsApp.');
             return;
         }
 
-        // Step 3: Create MessageMedia object
-        logger.info('Creating MessageMedia object');
-        const media = new MessageMedia('video/mp4', buffer.toString('base64'), 'tiktok_video.mp4');
-        logger.info('MessageMedia object created successfully');
-
-        // Step 4: Send video
+        // Step 3: Send video
         logger.info('Attempting to send video...');
-        try {
-            const sent = await message.reply(media, null, { sendMediaAsDocument: false });
+        const media = MessageMedia.fromFilePath(tempFilePath);
+        const sent = await message.reply(media, null, { sendMediaAsDocument: false });
+        
+        if (sent) {
             logger.info('Video sent successfully');
             await message.reply('Video berhasil dikirim.');
-        } catch (sendError) {
-            logger.error('Error sending video:', sendError);
-            await message.reply('Gagal mengirim video. Mencoba mengirim sebagai dokumen...');
-            try {
-                const sentAsDoc = await message.reply(media, null, { sendMediaAsDocument: true });
-                logger.info('Video sent as document successfully');
-                await message.reply('Video berhasil dikirim sebagai dokumen.');
-            } catch (docSendError) {
-                logger.error('Error sending video as document:', docSendError);
-                await message.reply('Gagal mengirim video sebagai dokumen. Mohon coba lagi nanti.');
-            }
+        } else {
+            logger.warn('Failed to send video');
+            await message.reply('Gagal mengirim video. Mohon coba lagi nanti.');
         }
+
     } catch (error) {
         logger.error('Error in downloadAndSendVideo:', error);
-        if (error.response) {
-            logger.error('Error response:', error.response.status, error.response.statusText);
-        }
         await message.reply('Terjadi kesalahan saat mengunduh atau mengirim video. Mohon coba lagi nanti.');
+    } finally {
+        // Step 4: Delete temp file
+        if (tempFilePath) {
+            try {
+                await fs.unlink(tempFilePath);
+                logger.info(`Temporary file deleted: ${tempFilePath}`);
+            } catch (unlinkError) {
+                logger.error('Error deleting temporary file:', unlinkError);
+            }
+        }
     }
 };
 
