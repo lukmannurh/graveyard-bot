@@ -2,32 +2,49 @@ import pkg from 'whatsapp-web.js';
 const { MessageMedia } = pkg;
 import axios from 'axios';
 import logger from '../utils/logger.js';
+import ffmpeg from 'fluent-ffmpeg';
+import stream from 'stream';
 
 const MAX_MEDIA_SIZE = 14 * 1024 * 1024; // 14MB in bytes
+
+const convertToMp3 = async (inputBuffer) => {
+    return new Promise((resolve, reject) => {
+        const inputStream = stream.Readable.from(inputBuffer);
+        const chunks = [];
+
+        ffmpeg(inputStream)
+            .toFormat('mp3')
+            .on('error', (err) => reject(err))
+            .on('data', (chunk) => chunks.push(chunk))
+            .on('end', () => resolve(Buffer.concat(chunks)))
+            .pipe();
+    });
+};
 
 const downloadAndSendMedia = async (url, message, caption, isAudio = false) => {
     try {
         logger.info(`Downloading ${isAudio ? 'audio' : 'video'} from URL: ${url}`);
         const response = await axios.get(url, { responseType: 'arraybuffer' });
-        const buffer = Buffer.from(response.data, 'binary');
-        const isLargeFile = buffer.length > MAX_MEDIA_SIZE;
+        let buffer = Buffer.from(response.data, 'binary');
 
+        if (isAudio) {
+            logger.info('Converting audio to MP3');
+            buffer = await convertToMp3(buffer);
+        }
+
+        const isLargeFile = buffer.length > MAX_MEDIA_SIZE;
         logger.info(`${isAudio ? 'Audio' : 'Video'} size: ${buffer.length} bytes`);
 
         const mimeType = isAudio ? 'audio/mpeg' : 'video/mp4';
-        const filename = isLargeFile ? (isAudio ? 'tiktok_audio.mp3' : 'tiktok_video.mp4') : undefined;
+        const filename = isAudio ? 'tiktok_audio.mp3' : 'tiktok_video.mp4';
 
         logger.info(`Creating MessageMedia with mimeType: ${mimeType}, filename: ${filename}`);
-        const media = new MessageMedia(
-            mimeType,
-            buffer.toString('base64'),
-            filename
-        );
+        const media = new MessageMedia(mimeType, buffer.toString('base64'), filename);
 
-        logger.info(`Sending ${isAudio ? 'audio' : 'video'} as ${isLargeFile ? 'document' : 'media'}`);
+        logger.info(`Sending ${isAudio ? 'audio' : 'video'} as ${isLargeFile || isAudio ? 'document' : 'media'}`);
         await message.reply(media, null, { 
             caption,
-            sendMediaAsDocument: isLargeFile
+            sendMediaAsDocument: isLargeFile || isAudio
         });
         logger.info(`${isAudio ? 'Audio' : 'Video'} sent successfully`);
     } catch (error) {
