@@ -10,4 +10,3 @@ export { default as authorizeGroup } from './authorizeGroup.js';
 export { ban, unban } from './moderationCommands.js';
 export { default as waifu } from './waifu.js';
 export { default as random } from './random.js';
-export { tiktokDownloader as tt } from './downloader.js';

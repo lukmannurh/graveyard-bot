@@ -47,19 +47,7 @@ const messageHandler = async (message) => {
             logger.info(`Executing command: ${commandName}`);
             console.log(`Executing command: ${commandName}`);
             try {
-              if (commandName === 'tt') {
-                logger.info('TikTok downloader command detected');
-                console.log('TikTok downloader command detected');
-                logger.info('TikTok URL:', args[0]);
-                console.log('TikTok URL:', args[0]);
-                await commandFunction(message, args).catch(error => {
-                  logger.error(`Error executing TikTok downloader:`, error);
-                  console.error(`Error executing TikTok downloader:`, error);
-                  message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
-                });
-              } else {
-                await commandFunction(message, args);
-              }
+              await commandFunction(message, args);
               logger.info(`Command ${commandName} executed successfully`);
               console.log(`Command ${commandName} executed successfully`);
             } catch (error) {
@@ -137,14 +125,7 @@ const messageHandler = async (message) => {
         logger.info(`Executing command: ${commandName}`);
         console.log(`Executing command: ${commandName}`);
         try {
-          if (commandName === 'tt') {
-            await commandFunction(message, args).catch(error => {
-              logger.error(`Error executing TikTok downloader:`, error);
-              message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
-            });
-          } else {
-            await commandFunction(message, args);
-          }
+          await commandFunction(message, args);
           logger.info(`Command ${commandName} executed successfully`);
           console.log(`Command ${commandName} executed successfully`);
         } catch (error) {

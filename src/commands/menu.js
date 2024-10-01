@@ -14,8 +14,7 @@ const menu = async (message) => {
       { name: 'tebak [skor]', description: 'Menebak skor pertandingan (contoh: .tebak 1-0)' },
       { name: 'list', description: 'Melihat daftar tebakan peserta' },
       { name: 'random [jumlah tim] [nama1] [nama2] ...', description: 'Membuat tim acak (minimal 2 tim dan 2 nama)' },
-      { name: 'waifu [jumlah]', description: 'Mendapatkan gambar waifu acak (1-20 gambar)' },
-      { name: 'tt [URL TikTok]', description: 'Mengunduh video dan audio dari TikTok' }
+      { name: 'waifu [jumlah]', description: 'Mendapatkan gambar waifu acak (1-10 gambar)' }
     ];
 
     const adminCommands = [
