@@ -1,4 +1,3 @@
-// src/utils/adventureManager.js
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -46,8 +45,13 @@ class AdventureManager {
 
   getActiveGame(groupId) {
     const game = this.activeGames.get(groupId);
-    logger.debug(`Getting active game for group ${groupId}: ${game ? JSON.stringify(game) : 'Not found'}`);
-    return game;
+    if (game) {
+      logger.debug(`Getting active game for group ${groupId}: Found`);
+      return game;
+    } else {
+      logger.debug(`Getting active game for group ${groupId}: Not found`);
+      return null;
+    }
   }
 
   endGame(groupId) {

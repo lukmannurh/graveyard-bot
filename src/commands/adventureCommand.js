@@ -18,7 +18,7 @@ export const adventure = async (message) => {
       const startNode = await adventureManager.startAdventure(groupId, userId);
       if (startNode) {
         logger.debug('Adventure started successfully');
-        await sendAdventureMessage(message, startNode);
+        await sendAdventureMessage(message, startNode, groupId);
       } else {
         logger.error('Failed to start adventure');
         throw new Error("Failed to start adventure");
@@ -40,19 +40,27 @@ export const adventure = async (message) => {
   }
 };
 
-const sendAdventureMessage = async (message, node) => {
+const sendAdventureMessage = async (message, node, groupId) => {
   try {
     logger.debug(`Sending adventure message: ${JSON.stringify(node)}`);
     const options = node.options.map((opt, index) => `${index + 1}. ${opt.text}`).join('\n');
     
-    const groupId = message.chat.id._serialized;
+    if (!groupId) {
+      logger.error('Group ID is undefined');
+      throw new Error('Group ID is undefined');
+    }
+
     const activeGame = adventureManager.getActiveGame(groupId);
-    const adventureTitle = activeGame ? activeGame.adventure.title : 'Unknown Adventure';
+    if (!activeGame) {
+      logger.error('No active game found for group');
+      throw new Error('No active game found for group');
+    }
+
+    const adventureTitle = activeGame.adventure.title || 'Unknown Adventure';
     
     await message.reply(`*${adventureTitle}*\n\n${node.text}\n\nPilihan:\n${options}`);
     logger.debug('Adventure message sent');
     
-    // For now, we'll use text-based options instead of a poll
     await message.reply('Balas dengan nomor pilihan Anda untuk melanjutkan.');
   } catch (error) {
     logger.error('Error in sendAdventureMessage:', error);
@@ -104,7 +112,7 @@ export const handleAdventureChoice = async (message) => {
     } else {
       logger.debug('Continuing to next node');
       activeGame.currentNode = nextNodeId;
-      await sendAdventureMessage(message, nextNode);
+      await sendAdventureMessage(message, nextNode, groupId);
     }
   } catch (error) {
     logger.error('Error in handling adventure choice:', error);
