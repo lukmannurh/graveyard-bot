@@ -31,7 +31,8 @@ export const adventure = async (message) => {
         await message.reply('Ada petualangan yang sedang berlangsung. Tunggu hingga selesai untuk memulai yang baru.');
       } else {
         logger.debug('Current user is already playing');
-        await message.reply('Petualangan Anda sedang berlangsung. Gunakan opsi yang tersedia untuk melanjutkan.');
+        const currentNode = activeGame.adventure.nodes[activeGame.currentNode] || activeGame.adventure.start;
+        await sendAdventureMessage(message, currentNode, groupId);
       }
     }
   } catch (error) {
@@ -58,10 +59,8 @@ const sendAdventureMessage = async (message, node, groupId) => {
 
     const adventureTitle = activeGame.adventure.title || 'Unknown Adventure';
     
-    await message.reply(`*${adventureTitle}*\n\n${node.text}\n\nPilihan:\n${options}`);
+    await message.reply(`*${adventureTitle}*\n\n${node.text}\n\nPilihan:\n${options}\n\nBalas dengan nomor pilihan Anda untuk melanjutkan.`);
     logger.debug('Adventure message sent');
-    
-    await message.reply('Balas dengan nomor pilihan Anda untuk melanjutkan.');
   } catch (error) {
     logger.error('Error in sendAdventureMessage:', error);
     throw error;

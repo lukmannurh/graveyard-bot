@@ -1,4 +1,3 @@
-// src/handlers/messageHandler.js
 import { handleOwnerCommand } from './ownerCommandHandler.js';
 import { handleRegularCommand } from './regularCommandHandler.js';
 import { handleNonCommandMessage } from './nonCommandHandler.js';
@@ -33,11 +32,9 @@ const messageHandler = async (message) => {
 
       if (message.body.startsWith(PREFIX)) {
         await handleRegularCommand(message, chat, sender);
-      } else if (adventureManager.isGameActive(groupId)) {
-        const activeGame = adventureManager.getActiveGame(groupId);
-        if (activeGame.userId === userId) {
-          await handleAdventureChoice(message);
-        }
+      } else if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body)) {
+        // Handle adventure choice if there's an active game and the message is a number
+        await handleAdventureChoice(message);
       } else {
         await handleNonCommandMessage(message, chat, sender);
       }
