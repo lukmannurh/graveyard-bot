@@ -7,18 +7,21 @@ const MAX_VIDEO_SIZE = 14 * 1024 * 1024; // 14MB in bytes
 const TIMEOUT = 60000; // 60 seconds timeout
 
 const downloadAndSendVideo = async (url, message) => {
+    logger.info('Entering downloadAndSendVideo function');
     try {
         logger.info(`Downloading video from URL: ${url}`);
         const response = await axios.get(url, { 
             responseType: 'arraybuffer',
             timeout: TIMEOUT
         });
+        logger.info('Video downloaded successfully');
+        
         const buffer = Buffer.from(response.data, 'binary');
-
         const isLargeFile = buffer.length > MAX_VIDEO_SIZE;
         logger.info(`Video size: ${buffer.length} bytes`);
 
         const media = new MessageMedia('video/mp4', buffer.toString('base64'), 'tiktok_video.mp4');
+        logger.info('MessageMedia object created');
 
         logger.info(`Sending video as ${isLargeFile ? 'document' : 'media'}`);
         await message.reply(media, null, { 
@@ -27,7 +30,7 @@ const downloadAndSendVideo = async (url, message) => {
         logger.info('Video sent successfully');
 
     } catch (error) {
-        logger.error('Error downloading or sending video:', error);
+        logger.error('Error in downloadAndSendVideo:', error);
         if (error.response) {
             logger.error('Error response:', error.response.status, error.response.statusText);
         }
@@ -36,7 +39,7 @@ const downloadAndSendVideo = async (url, message) => {
 };
 
 const tiktokDownloader = async (message, args) => {
-    logger.info('TikTok downloader function called');
+    logger.info('Entering tiktokDownloader function');
     logger.info('Arguments:', args);
 
     try {
@@ -47,6 +50,8 @@ const tiktokDownloader = async (message, args) => {
         }
 
         const url = args[0];
+        logger.info('TikTok URL:', url);
+        
         if (!url.includes('tiktok.com')) {
             logger.warn('Invalid TikTok URL');
             await message.reply('URL yang diberikan bukan URL TikTok yang valid.');
@@ -54,7 +59,6 @@ const tiktokDownloader = async (message, args) => {
         }
 
         const apiUrl = `https://api.ryzendesu.vip/api/downloader/ttdl?url=${encodeURIComponent(url)}`;
-
         logger.info('API URL:', apiUrl);
 
         await message.reply('Sedang memproses video TikTok...');
@@ -62,7 +66,7 @@ const tiktokDownloader = async (message, args) => {
         logger.info('Sending API request');
         const apiResponse = await axios.get(apiUrl, { 
             timeout: TIMEOUT,
-            validateStatus: false // Ini akan mencegah axios melempar error untuk status non-2xx
+            validateStatus: false
         });
         logger.info('API response received');
         logger.info('API response status:', apiResponse.status);
@@ -78,6 +82,7 @@ const tiktokDownloader = async (message, args) => {
         }
 
         if (videoData.status === "Success" && videoData.result && videoData.result.video) {
+            logger.info('Valid video data received, attempting to download');
             await downloadAndSendVideo(videoData.result.video, message);
         } else {
             logger.warn('Invalid or unexpected video data in API response:', videoData);
@@ -89,7 +94,7 @@ const tiktokDownloader = async (message, args) => {
         }
 
     } catch (error) {
-        logger.error('Error in TikTok downloader:', error);
+        logger.error('Error in tiktokDownloader:', error);
         if (error.response) {
             logger.error('API Response Error:', error.response.data);
             logger.error('API Response Status:', error.response.status);
