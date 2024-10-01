@@ -2,8 +2,8 @@ import pkg from 'whatsapp-web.js';
 const { MessageMedia } = pkg;
 import axios from 'axios';
 import logger from '../utils/logger.js';
-import fs from 'fs';
-import path from 'path';
+
+const MAX_MEDIA_SIZE = 14 * 1024 * 1024; // 14MB in bytes
 
 const tiktokDownloader = async (message, args) => {
     logger.info('TikTok downloader function called');
@@ -54,11 +54,26 @@ const tiktokDownloader = async (message, args) => {
             try {
                 const videoResponse = await axios.get(videoUrl, { responseType: 'arraybuffer' });
                 const videoBuffer = Buffer.from(videoResponse.data, 'binary');
-                const videoMedia = new MessageMedia('video/mp4', videoBuffer.toString('base64'), 'tiktok_video.mp4');
+                const isLargeFile = videoBuffer.length > MAX_MEDIA_SIZE;
+
+                const videoMedia = new MessageMedia(
+                    isLargeFile ? 'application/octet-stream' : 'video/mp4',
+                    videoBuffer.toString('base64'),
+                    isLargeFile ? 'tiktok_video.mp4' : undefined
+                );
+
                 logger.info('Video downloaded successfully');
+                logger.info(`Video size: ${videoBuffer.length} bytes`);
                 
                 try {
-                    await chat.sendMessage(videoMedia, { caption });
+                    if (isLargeFile) {
+                        await chat.sendMessage(videoMedia, { 
+                            caption, 
+                            sendMediaAsDocument: true
+                        });
+                    } else {
+                        await chat.sendMessage(videoMedia, { caption });
+                    }
                     logger.info('Video sent successfully');
                 } catch (sendError) {
                     logger.error('Error sending video:', sendError);
@@ -79,11 +94,26 @@ const tiktokDownloader = async (message, args) => {
             try {
                 const audioResponse = await axios.get(audioUrl, { responseType: 'arraybuffer' });
                 const audioBuffer = Buffer.from(audioResponse.data, 'binary');
-                const audioMedia = new MessageMedia('audio/mpeg', audioBuffer.toString('base64'), 'tiktok_audio.mp3');
+                const isLargeFile = audioBuffer.length > MAX_MEDIA_SIZE;
+
+                const audioMedia = new MessageMedia(
+                    isLargeFile ? 'application/octet-stream' : 'audio/mpeg',
+                    audioBuffer.toString('base64'),
+                    isLargeFile ? 'tiktok_audio.mp3' : undefined
+                );
+
                 logger.info('Audio downloaded successfully');
+                logger.info(`Audio size: ${audioBuffer.length} bytes`);
                 
                 try {
-                    await chat.sendMessage(audioMedia, { caption: 'Audio dari TikTok' });
+                    if (isLargeFile) {
+                        await chat.sendMessage(audioMedia, { 
+                            caption: 'Audio dari TikTok', 
+                            sendMediaAsDocument: true
+                        });
+                    } else {
+                        await chat.sendMessage(audioMedia, { caption: 'Audio dari TikTok' });
+                    }
                     logger.info('Audio sent successfully');
                 } catch (sendError) {
                     logger.error('Error sending audio:', sendError);
