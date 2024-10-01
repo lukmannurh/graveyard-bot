@@ -7,7 +7,6 @@ import logger from './src/utils/logger.js';
 import { PORT } from './src/config/index.js';
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
-import adventureManager from './src/utils/adventureManager.js';
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
@@ -72,7 +71,7 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 logger.info('Application started successfully');
 
-await adventureManager.loadAdventures();
+
 // Memory usage logging
 setInterval(() => {
   const used = process.memoryUsage();

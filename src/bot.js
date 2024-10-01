@@ -4,6 +4,8 @@ import qrcode from 'qrcode-terminal';
 import messageHandler from './handlers/messageHandler.js';
 import logger from './utils/logger.js';
 import { PUPPETEER_ARGS } from './config/index.js';
+import adventureManager from './src/utils/adventureManager.js';
+
 
 let client;
 
@@ -50,6 +52,7 @@ const startBot = async () => {
     logger.error('Failed to start the bot:', error);
     throw error; // Rethrow the error to be caught in index.js
   }
+  await adventureManager.loadAdventures();
 };
 
 const stopBot = async () => {
