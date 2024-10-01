@@ -101,20 +101,26 @@ const tiktokDownloader = async (message, args) => {
     logger.info('TikTok downloader function called');
     logger.info('Arguments:', args);
 
-    if (args.length === 0) {
-        logger.info('No URL provided');
-        await message.reply('Mohon sertakan link TikTok yang ingin diunduh.');
-        return;
-    }
-
-    const url = args[0];
-    const videoApiUrl = `https://mr-apis.com/api/downloader/ttv?url=${encodeURIComponent(url)}`;
-    const audioApiUrl = `https://mr-apis.com/api/downloader/tta?url=${encodeURIComponent(url)}`;
-
-    logger.info('Video API URL:', videoApiUrl);
-    logger.info('Audio API URL:', audioApiUrl);
-
     try {
+        if (args.length === 0) {
+            logger.info('No URL provided');
+            await message.reply('Mohon sertakan link TikTok yang ingin diunduh.');
+            return;
+        }
+
+        const url = args[0];
+        if (!url.includes('tiktok.com')) {
+            logger.warn('Invalid TikTok URL');
+            await message.reply('URL yang diberikan bukan URL TikTok yang valid.');
+            return;
+        }
+
+        const videoApiUrl = `https://mr-apis.com/api/downloader/ttv?url=${encodeURIComponent(url)}`;
+        const audioApiUrl = `https://mr-apis.com/api/downloader/tta?url=${encodeURIComponent(url)}`;
+
+        logger.info('Video API URL:', videoApiUrl);
+        logger.info('Audio API URL:', audioApiUrl);
+
         await message.reply('Sedang memproses video dan audio TikTok...');
 
         logger.info('Sending API requests');
