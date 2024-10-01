@@ -44,7 +44,17 @@ const messageHandler = async (message) => {
           
           const commandFunction = commands[commandName];
           if (commandFunction) {
-            await commandFunction(message, args);
+            console.log(`Attempting to execute command: ${commandName}`);
+            try {
+              await commandFunction(message, args);
+              console.log(`Command ${commandName} executed successfully`);
+            } catch (error) {
+              console.error(`Error executing command ${commandName}:`, error);
+              await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
+            }
+          } else {
+            console.log(`Unknown command: ${commandName}`);
+            await message.reply('Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
           }
         }
       }
@@ -109,7 +119,13 @@ const messageHandler = async (message) => {
           return;
         }
         console.log(`Executing command: ${commandName}`);
-        await commandFunction(message, args);
+        try {
+          await commandFunction(message, args);
+          console.log(`Command ${commandName} executed successfully`);
+        } catch (error) {
+          console.error(`Error executing command ${commandName}:`, error);
+          await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
+        }
       } else {
         console.log(`Unknown command: ${commandName}`);
         await message.reply('Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
