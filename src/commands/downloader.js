@@ -2,6 +2,8 @@ import pkg from 'whatsapp-web.js';
 const { MessageMedia } = pkg;
 import axios from 'axios';
 import logger from '../utils/logger.js';
+import fs from 'fs';
+import path from 'path';
 
 const tiktokDownloader = async (message, args) => {
     logger.info('TikTok downloader function called');
@@ -42,18 +44,28 @@ const tiktokDownloader = async (message, args) => {
         logger.info('Video API response:', JSON.stringify(videoData));
         logger.info('Audio API response:', JSON.stringify(audioData));
 
+        const chat = await message.getChat();
+
         if (videoData.status && videoData.result && videoData.result.video_url) {
             const videoUrl = videoData.result.video_url;
             const caption = videoData.result.caption || 'Video TikTok';
 
             logger.info('Attempting to download video');
             try {
-                const videoMedia = await MessageMedia.fromUrl(videoUrl);
+                const videoResponse = await axios.get(videoUrl, { responseType: 'arraybuffer' });
+                const videoBuffer = Buffer.from(videoResponse.data, 'binary');
+                const videoMedia = new MessageMedia('video/mp4', videoBuffer.toString('base64'), 'tiktok_video.mp4');
                 logger.info('Video downloaded successfully');
-                await message.reply(videoMedia, null, { caption });
-                logger.info('Video sent successfully');
+                
+                try {
+                    await chat.sendMessage(videoMedia, { caption });
+                    logger.info('Video sent successfully');
+                } catch (sendError) {
+                    logger.error('Error sending video:', sendError);
+                    await message.reply('Gagal mengirim video TikTok. Mohon coba lagi nanti.');
+                }
             } catch (videoError) {
-                logger.error('Error downloading or sending video:', videoError);
+                logger.error('Error downloading video:', videoError);
                 await message.reply('Gagal mengunduh video TikTok. Mohon coba lagi nanti.');
             }
         } else {
@@ -65,13 +77,20 @@ const tiktokDownloader = async (message, args) => {
             const audioUrl = audioData.result.audio_url;
             logger.info('Attempting to download audio');
             try {
-                const audioMedia = await MessageMedia.fromUrl(audioUrl, { unsafeMime: true });
-                audioMedia.filename = 'tiktok_audio.mp3';
+                const audioResponse = await axios.get(audioUrl, { responseType: 'arraybuffer' });
+                const audioBuffer = Buffer.from(audioResponse.data, 'binary');
+                const audioMedia = new MessageMedia('audio/mpeg', audioBuffer.toString('base64'), 'tiktok_audio.mp3');
                 logger.info('Audio downloaded successfully');
-                await message.reply(audioMedia, null, { caption: 'Audio dari TikTok' });
-                logger.info('Audio sent successfully');
+                
+                try {
+                    await chat.sendMessage(audioMedia, { caption: 'Audio dari TikTok' });
+                    logger.info('Audio sent successfully');
+                } catch (sendError) {
+                    logger.error('Error sending audio:', sendError);
+                    await message.reply('Gagal mengirim audio TikTok. Mohon coba lagi nanti.');
+                }
             } catch (audioError) {
-                logger.error('Error downloading or sending audio:', audioError);
+                logger.error('Error downloading audio:', audioError);
                 await message.reply('Gagal mengunduh audio TikTok. Mohon coba lagi nanti.');
             }
         } else {
