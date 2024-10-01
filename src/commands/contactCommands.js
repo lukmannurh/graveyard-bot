@@ -5,7 +5,7 @@ import logger from '../utils/logger.js';
 const bandarsabu = async (message) => {
     try {
         const client = message.client;
-        const contactId = '85768971424@c.us';
+        const contactId = '6285768971424@c.us';
         let contact = await client.getContactById(contactId);
 
         if (!contact) {
