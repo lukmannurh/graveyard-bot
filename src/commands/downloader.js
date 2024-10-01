@@ -26,21 +26,27 @@ const downloadAndSendVideo = async (url, message) => {
             return;
         }
 
+        logger.info('Creating MessageMedia object');
         const media = new MessageMedia('video/mp4', buffer.toString('base64'), 'tiktok_video.mp4');
-        logger.info('MessageMedia object created');
+        logger.info('MessageMedia object created successfully');
 
-        logger.info(`Attempting to send video...`);
-        const sent = await message.reply(media, null, { 
-            sendMediaAsDocument: false
-        });
-        
-        if (sent) {
+        logger.info('Attempting to send video...');
+        try {
+            const sent = await message.reply(media, null, { sendMediaAsDocument: false });
             logger.info('Video sent successfully');
-        } else {
-            logger.error('Failed to send video');
-            await message.reply('Gagal mengirim video. Mohon coba lagi nanti.');
+            await message.reply('Video berhasil dikirim.');
+        } catch (sendError) {
+            logger.error('Error sending video:', sendError);
+            await message.reply('Gagal mengirim video. Mencoba mengirim sebagai dokumen...');
+            try {
+                const sentAsDoc = await message.reply(media, null, { sendMediaAsDocument: true });
+                logger.info('Video sent as document successfully');
+                await message.reply('Video berhasil dikirim sebagai dokumen.');
+            } catch (docSendError) {
+                logger.error('Error sending video as document:', docSendError);
+                await message.reply('Gagal mengirim video sebagai dokumen. Mohon coba lagi nanti.');
+            }
         }
-
     } catch (error) {
         logger.error('Error in downloadAndSendVideo:', error);
         if (error.response) {
