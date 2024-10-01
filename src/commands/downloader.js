@@ -44,17 +44,20 @@ const tiktokDownloader = async (message, args) => {
         logger.info('Video API response:', JSON.stringify(videoData));
         logger.info('Audio API response:', JSON.stringify(audioData));
 
-        const chat = await message.getChat();
-
-        if (videoData.status && videoData.result && videoData.result.video_url) {
+        if (!videoData.status || !videoData.result || !videoData.result.video_url) {
+            logger.warn('Invalid video data in API response:', videoData);
+            await message.reply(`Maaf, tidak dapat mengunduh video TikTok. Data tidak valid. Response: ${JSON.stringify(videoData)}`);
+        } else {
             const videoUrl = videoData.result.video_url;
             const caption = videoData.result.caption || 'Video TikTok';
 
-            logger.info('Attempting to download video');
+            logger.info('Attempting to download video from URL:', videoUrl);
             try {
                 const videoResponse = await axios.get(videoUrl, { responseType: 'arraybuffer' });
                 const videoBuffer = Buffer.from(videoResponse.data, 'binary');
                 const isLargeFile = videoBuffer.length > MAX_MEDIA_SIZE;
+
+                logger.info(`Video size: ${videoBuffer.length} bytes`);
 
                 const videoMedia = new MessageMedia(
                     isLargeFile ? 'application/octet-stream' : 'video/mp4',
@@ -63,16 +66,15 @@ const tiktokDownloader = async (message, args) => {
                 );
 
                 logger.info('Video downloaded successfully');
-                logger.info(`Video size: ${videoBuffer.length} bytes`);
                 
                 try {
                     if (isLargeFile) {
-                        await chat.sendMessage(videoMedia, { 
+                        await message.reply(videoMedia, null, { 
                             caption, 
                             sendMediaAsDocument: true
                         });
                     } else {
-                        await chat.sendMessage(videoMedia, { caption });
+                        await message.reply(videoMedia, null, { caption });
                     }
                     logger.info('Video sent successfully');
                 } catch (sendError) {
@@ -83,18 +85,20 @@ const tiktokDownloader = async (message, args) => {
                 logger.error('Error downloading video:', videoError);
                 await message.reply('Gagal mengunduh video TikTok. Mohon coba lagi nanti.');
             }
-        } else {
-            logger.warn('Invalid video data in API response');
-            await message.reply('Maaf, tidak dapat mengunduh video TikTok. Data tidak valid.');
         }
 
-        if (audioData.status && audioData.result && audioData.result.audio_url) {
+        if (!audioData.status || !audioData.result || !audioData.result.audio_url) {
+            logger.warn('Invalid audio data in API response:', audioData);
+            await message.reply(`Maaf, tidak dapat mengunduh audio dari TikTok. Data tidak valid. Response: ${JSON.stringify(audioData)}`);
+        } else {
             const audioUrl = audioData.result.audio_url;
-            logger.info('Attempting to download audio');
+            logger.info('Attempting to download audio from URL:', audioUrl);
             try {
                 const audioResponse = await axios.get(audioUrl, { responseType: 'arraybuffer' });
                 const audioBuffer = Buffer.from(audioResponse.data, 'binary');
                 const isLargeFile = audioBuffer.length > MAX_MEDIA_SIZE;
+
+                logger.info(`Audio size: ${audioBuffer.length} bytes`);
 
                 const audioMedia = new MessageMedia(
                     isLargeFile ? 'application/octet-stream' : 'audio/mpeg',
@@ -103,16 +107,15 @@ const tiktokDownloader = async (message, args) => {
                 );
 
                 logger.info('Audio downloaded successfully');
-                logger.info(`Audio size: ${audioBuffer.length} bytes`);
                 
                 try {
                     if (isLargeFile) {
-                        await chat.sendMessage(audioMedia, { 
+                        await message.reply(audioMedia, null, { 
                             caption: 'Audio dari TikTok', 
                             sendMediaAsDocument: true
                         });
                     } else {
-                        await chat.sendMessage(audioMedia, { caption: 'Audio dari TikTok' });
+                        await message.reply(audioMedia, null, { caption: 'Audio dari TikTok' });
                     }
                     logger.info('Audio sent successfully');
                 } catch (sendError) {
@@ -123,9 +126,6 @@ const tiktokDownloader = async (message, args) => {
                 logger.error('Error downloading audio:', audioError);
                 await message.reply('Gagal mengunduh audio TikTok. Mohon coba lagi nanti.');
             }
-        } else {
-            logger.warn('Invalid audio data in API response');
-            await message.reply('Maaf, tidak dapat mengunduh audio dari TikTok. Data tidak valid.');
         }
     } catch (error) {
         logger.error('Error in TikTok downloader:', error);
