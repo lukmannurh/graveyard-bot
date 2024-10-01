@@ -15,55 +15,55 @@ const messageHandler = async (message) => {
     const groupId = chat.id._serialized;
     const userId = sender.id._serialized;
 
-    console.log('Message received from:', userId);
-    console.log('OWNER_NUMBER in messageHandler:', OWNER_NUMBER);
-    console.log('Group ID:', groupId);
+    logger.info('Message received from:', userId);
+    logger.info('OWNER_NUMBER in messageHandler:', OWNER_NUMBER);
+    logger.info('Group ID:', groupId);
 
     const cleanUserId = userId.replace('@c.us', '');
-    console.log('Cleaned userId:', cleanUserId);
-    console.log('Is owner?', cleanUserId === OWNER_NUMBER);
+    logger.info('Cleaned userId:', cleanUserId);
+    logger.info('Is owner?', cleanUserId === OWNER_NUMBER);
 
     if (cleanUserId === OWNER_NUMBER) {
-      console.log('Owner detected, processing command...');
+      logger.info('Owner detected, processing command...');
       const [command, ...args] = message.body.split(' ');
       if (command.startsWith(PREFIX)) {
         const commandName = command.slice(PREFIX.length).toLowerCase();
-        console.log('Command received:', commandName);
+        logger.info('Command received:', commandName);
         if (commandName === 'authorize') {
-          console.log('Authorize command detected, args:', args);
+          logger.info('Authorize command detected, args:', args);
           await commands.authorizeGroup(message, args);
         } else {
           const isAuthorized = await isGroupAuthorized(groupId);
-          console.log('Is group authorized?', isAuthorized);
+          logger.info('Is group authorized?', isAuthorized);
           
           if (!isAuthorized) {
-            console.log('Unauthorized group, ignoring command even for owner');
+            logger.info('Unauthorized group, ignoring command even for owner');
             await message.reply('Grup ini tidak diotorisasi. Gunakan .authorize add untuk mengotorisasi grup.');
             return;
           }
           
           const commandFunction = commands[commandName];
           if (commandFunction) {
-            console.log(`Attempting to execute command: ${commandName}`);
+            logger.info(`Executing command: ${commandName}`);
             try {
               await commandFunction(message, args);
-              console.log(`Command ${commandName} executed successfully`);
+              logger.info(`Command ${commandName} executed successfully`);
             } catch (error) {
-              console.error(`Error executing command ${commandName}:`, error);
+              logger.error(`Error executing command ${commandName}:`, error);
               await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
             }
           } else {
-            console.log(`Unknown command: ${commandName}`);
+            logger.warn(`Unknown command: ${commandName}`);
             await message.reply('Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
           }
         }
       }
     } else {
       const isAuthorized = await isGroupAuthorized(groupId);
-      console.log('Is group authorized?', isAuthorized);
+      logger.info('Is group authorized?', isAuthorized);
       
       if (!isAuthorized) {
-        console.log('Unauthorized group, ignoring message');
+        logger.info('Unauthorized group, ignoring message');
         return;
       }
 
@@ -118,23 +118,26 @@ const messageHandler = async (message) => {
           await message.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
           return;
         }
-        console.log(`Executing command: ${commandName}`);
+        logger.info(`Executing command: ${commandName}`);
         try {
           await commandFunction(message, args);
-          console.log(`Command ${commandName} executed successfully`);
+          logger.info(`Command ${commandName} executed successfully`);
         } catch (error) {
-          console.error(`Error executing command ${commandName}:`, error);
+          logger.error(`Error executing command ${commandName}:`, error);
           await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
         }
       } else {
-        console.log(`Unknown command: ${commandName}`);
+        logger.warn(`Unknown command: ${commandName}`);
         await message.reply('Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
       }
     }
   } catch (error) {
-    console.error('Error in messageHandler:', error);
     logger.error('Error in messageHandler:', error);
-    await message.reply('Terjadi kesalahan saat memproses perintah. Mohon coba lagi nanti.');
+    try {
+      await message.reply('Terjadi kesalahan saat memproses pesan. Mohon coba lagi nanti.');
+    } catch (replyError) {
+      logger.error('Failed to send error message:', replyError);
+    }
   }
 };
 

@@ -5,6 +5,10 @@ import rateLimit from 'express-rate-limit';
 import { startBot } from './src/bot.js';
 import logger from './src/utils/logger.js';
 import { PORT } from './src/config/index.js';
+import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
+import ffmpeg from 'fluent-ffmpeg';
+
+ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 const app = express();
 
@@ -19,6 +23,21 @@ const limiter = rateLimit({
   max: 100 // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
+
+// Global error handlers
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  logger.error('Uncaught Exception:', error);
+  // Optionally, you can gracefully shutdown your app here
+  // process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Optionally, you can gracefully shutdown your app here
+  // process.exit(1);
+});
 
 // Start the bot
 startBot();
