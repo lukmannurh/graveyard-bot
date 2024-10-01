@@ -1,5 +1,3 @@
-// src/handlers/messageHandler.js
-
 import * as commands from '../commands/index.js';
 import { isAdmin } from '../utils/adminChecker.js';
 import { PREFIX, ADMIN_COMMANDS, OWNER_COMMANDS, OWNER_NUMBER } from '../config/index.js';
