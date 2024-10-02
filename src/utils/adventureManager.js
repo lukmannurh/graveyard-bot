@@ -26,6 +26,25 @@ class AdventureManager {
     }
   }
 
+  updateCurrentNode(groupId, nextNode) {
+    const game = this.activeGames.get(groupId);
+    if (game) {
+      game.currentNode = nextNode;
+      logger.debug(`Updated current node for group ${groupId} to ${nextNode}`);
+      return true;
+    }
+    logger.debug(`Failed to update node for group ${groupId}: game not found`);
+    return false;
+  }
+
+  getCurrentNode(groupId) {
+    const game = this.activeGames.get(groupId);
+    if (game) {
+      return game.adventure.nodes[game.currentNode] || game.adventure.start;
+    }
+    return null;
+  }
+
   startAdventure(groupId, userId, timeoutCallback) {
     logger.debug(`Starting adventure for group ${groupId} and user ${userId}`);
     if (this.adventures.length === 0) {
@@ -36,6 +55,7 @@ class AdventureManager {
     const adventure = this.adventures[randomIndex];
     this.activeGames.set(groupId, { adventure, currentNode: 'start', userId });
     logger.debug(`Adventure started: ${adventure.title}`);
+
     this.startTimeout(groupId, timeoutCallback);
     return adventure.start;
   }
