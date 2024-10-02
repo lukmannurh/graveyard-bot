@@ -1,5 +1,6 @@
 import * as commands from '../commands/index.js';
-import { PREFIX, OWNER_COMMANDS } from '../commands/index.js';
+import { OWNER_COMMANDS } from '../commands/index.js';
+import { PREFIX } from '../config/constants.js';  // Impor PREFIX dari file konfigurasi
 import logger from '../utils/logger.js';
 import { handleRegularCommand } from './regularCommandHandler.js';
 

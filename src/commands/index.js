@@ -15,7 +15,7 @@ import { cekjomok } from './funCommands.js';
 import { adventure } from './adventureCommand.js';
 import getpp from './getProfilePicture.js';
 import stats from './stats.js';
-import jadwalsholat from './jadwalSholat.js';
+import jadwalsholat from './jadwalsholat.js';  // Pastikan nama file sesuai
 
 export {
   menu,
