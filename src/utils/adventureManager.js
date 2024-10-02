@@ -32,7 +32,8 @@ class AdventureManager {
       logger.error("No adventures loaded");
       return null;
     }
-    const adventure = this.adventures[Math.floor(Math.random() * this.adventures.length)];
+    const randomIndex = Math.floor(Math.random() * this.adventures.length);
+    const adventure = this.adventures[randomIndex];
     this.activeGames.set(groupId, { adventure, currentNode: 'start', userId });
     logger.debug(`Adventure started: ${adventure.title}`);
     this.startTimeout(groupId, timeoutCallback);

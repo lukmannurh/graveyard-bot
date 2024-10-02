@@ -451,5 +451,115 @@
         ]
       }
     }
+  },
+  {
+    "id": "space_odyssey",
+    "title": "Odyssey Luar Angkasa",
+    "start": {
+      "text": "Anda adalah kapten pesawat luar angkasa yang sedang dalam misi eksplorasi. Tiba-tiba, sistem navigasi Anda mengalami kerusakan dan Anda tersesat di galaksi asing. Apa yang akan Anda lakukan?",
+      "options": [
+        {"text": "Mendarat di planet terdekat", "next": "planet_landing"},
+        {"text": "Kirim sinyal bantuan", "next": "send_signal"},
+        {"text": "Coba perbaiki sistem navigasi", "next": "fix_navigation"}
+      ]
+    },
+    "nodes": {
+      "planet_landing": {
+        "text": "Anda berhasil mendarat di planet misterius. Atmosfernya dapat bernapas, tapi lingkungannya sangat asing.",
+        "options": [
+          {"text": "Eksplorasi sekitar", "next": "explore_surroundings"},
+          {"text": "Tetap di dalam pesawat", "next": "stay_in_ship"},
+          {"text": "Bangun kamp sementara", "next": "build_camp"}
+        ]
+      },
+      "send_signal": {
+        "text": "Anda mengirim sinyal bantuan. Beberapa saat kemudian, Anda menerima respons dari stasiun luar angkasa terdekat.",
+        "options": [
+          {"text": "Minta petunjuk navigasi", "next": "navigation_help"},
+          {"text": "Minta bantuan evakuasi", "next": "request_evacuation"},
+          {"text": "Tanyakan tentang lokasi Anda", "next": "ask_location"}
+        ]
+      },
+      "fix_navigation": {
+        "text": "Anda mencoba memperbaiki sistem navigasi. Saat memeriksa mesin, Anda menemukan komponen asing yang tidak dikenal.",
+        "options": [
+          {"text": "Coba singkirkan komponen asing", "next": "remove_component"},
+          {"text": "Analisis komponen asing", "next": "analyze_component"},
+          {"text": "Abaikan dan lanjutkan perbaikan", "next": "continue_repair"}
+        ]
+      },
+      "explore_surroundings": {
+        "text": "Anda menemukan reruntuhan kota alien kuno. Di tengahnya ada sebuah menara yang memancarkan cahaya aneh.",
+        "options": [
+          {"text": "Masuk ke menara", "next": "enter_tower"},
+          {"text": "Selidiki reruntuhan", "next": "investigate_ruins"},
+          {"text": "Kembali ke pesawat", "next": "return_to_ship"}
+        ]
+      },
+      "stay_in_ship": {
+        "text": "Anda memutuskan untuk tetap di dalam pesawat. Tiba-tiba, sekelompok makhluk alien mengetuk pintu pesawat Anda.",
+        "options": [
+          {"text": "Buka pintu dan sapa mereka", "next": "greet_aliens"},
+          {"text": "Abaikan dan tetap di dalam", "next": "ignore_aliens"},
+          {"text": "Siapkan senjata untuk berjaga-jaga", "next": "prepare_weapons"}
+        ]
+      },
+      "build_camp": {
+        "text": "Anda membangun kamp sementara. Saat malam tiba, Anda melihat cahaya aneh di langit.",
+        "options": [
+          {"text": "Selidiki cahaya", "next": "investigate_lights"},
+          {"text": "Tetap di kamp", "next": "stay_at_camp"},
+          {"text": "Hubungi pesawat induk", "next": "contact_mothership"}
+        ]
+      },
+      "navigation_help": {
+        "text": "Stasiun memberikan petunjuk navigasi. Anda menemukan rute pulang, tapi harus melewati sabuk asteroid berbahaya.",
+        "options": [
+          {"text": "Ambil risiko dan ikuti rute", "next": "follow_risky_route"},
+          {"text": "Cari rute alternatif", "next": "find_alternative"},
+          {"text": "Minta bantuan tambahan", "next": "request_more_help"}
+        ]
+      },
+      "request_evacuation": {
+        "text": "Stasiun setuju untuk mengirim tim evakuasi, tapi mereka akan membutuhkan waktu 3 hari untuk tiba.",
+        "options": [
+          {"text": "Tunggu di lokasi saat ini", "next": "wait_for_rescue"},
+          {"text": "Coba perbaiki pesawat sambil menunggu", "next": "repair_while_waiting"},
+          {"text": "Eksplorasi area sekitar", "next": "explore_while_waiting"}
+        ]
+      },
+      "ask_location": {
+        "text": "Stasiun memberi tahu bahwa Anda berada di Sektor Zeta-9, wilayah yang belum dipetakan dan penuh bahaya.",
+        "options": [
+          {"text": "Minta informasi lebih lanjut tentang sektor", "next": "sector_info"},
+          {"text": "Tanyakan cara tercepat keluar dari sektor", "next": "quickest_exit"},
+          {"text": "Laporkan penemuan Anda di sektor ini", "next": "report_findings"}
+        ]
+      },
+      "remove_component": {
+        "text": "Saat Anda mencoba menyingkirkan komponen asing, pesawat tiba-tiba aktif dan melompat ke hiperspasi!",
+        "options": [
+          {"text": "Coba kendalikan pesawat", "next": "control_ship"},
+          {"text": "Matikan mesin", "next": "shut_down_engine"},
+          {"text": "Biarkan pesawat melaju", "next": "let_ship_go"}
+        ]
+      },
+      "analyze_component": {
+        "text": "Analisis menunjukkan bahwa komponen ini adalah teknologi alien canggih yang dapat meningkatkan kemampuan pesawat Anda.",
+        "options": [
+          {"text": "Integrasikan komponen ke sistem", "next": "integrate_component"},
+          {"text": "Simpan komponen untuk penelitian lebih lanjut", "next": "store_component"},
+          {"text": "Hancurkan komponen karena terlalu berbahaya", "next": "destroy_component"}
+        ]
+      },
+      "continue_repair": {
+        "text": "Anda melanjutkan perbaikan tanpa mempedulikan komponen asing. Sistem navigasi kembali online, tapi ada sesuatu yang aneh...",
+        "options": [
+          {"text": "Uji coba sistem navigasi", "next": "test_navigation"},
+          {"text": "Periksa ulang semua sistem", "next": "recheck_systems"},
+          {"text": "Laporkan ke markas tentang anomali", "next": "report_anomaly"}
+        ]
+      }
+    }
   }
 ]
