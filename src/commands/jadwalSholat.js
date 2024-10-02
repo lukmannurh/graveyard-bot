@@ -1,6 +1,6 @@
 import { getAllPrayerTimes } from '../utils/prayerTimes.js';
 
-const jadwalSholat = async (message, args) => {
+const jadwalsholat = async (message, args) => {
   try {
     const prayerTimes = await getAllPrayerTimes();
     
@@ -16,9 +16,9 @@ const jadwalSholat = async (message, args) => {
     
     await message.reply(response);
   } catch (error) {
-    console.error('Error in jadwalSholat command:', error);
+    console.error('Error in jadwalsholat command:', error);
     await message.reply('Terjadi kesalahan saat mengambil jadwal sholat. Silakan coba lagi nanti.');
   }
 };
 
-export default jadwalSholat;
+export default jadwalsholat;

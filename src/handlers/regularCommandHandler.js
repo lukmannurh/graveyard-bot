@@ -7,10 +7,12 @@ export const handleRegularCommand = async (message, chat, sender) => {
   const commandName = command.toLowerCase();
 
   logger.info(`Attempting to execute command: ${commandName}`);
+  logger.info(`Available commands: ${Object.keys(commands)}`);
 
   if (GENERAL_COMMANDS.includes(commandName)) {
     const commandFunction = commands[commandName];
     if (commandFunction) {
+      logger.info(`Found command function for: ${commandName}`);
       try {
         await commandFunction(message, args);
         logger.info(`Command ${commandName} executed successfully`);

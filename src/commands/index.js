@@ -21,3 +21,6 @@ export const GENERAL_COMMANDS = [
     'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 
     'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat'
   ];
+
+
+console.log('Exported commands:', Object.keys(exports).filter(key => key !== 'GENERAL_COMMANDS'));
