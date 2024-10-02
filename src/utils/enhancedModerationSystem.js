@@ -111,6 +111,16 @@ export function isUserBanned(groupId, userId) {
   return true;
 }
 
+
+export async function deleteBannedUserMessage(message) {
+  try {
+    await message.delete(true);
+    logger.info(`Deleted message from banned user ${message.author} in group ${message.to}`);
+  } catch (error) {
+    logger.error('Error deleting message from banned user:', error);
+  }
+}
+
 export async function checkUserStatus(groupId, userId) {
   const data = await loadModerationData();
   const userStatus = data[groupId]?.[userId] || { warnings: 0, banned: false, banEndTime: null };
@@ -138,3 +148,13 @@ export async function logViolation(groupId, userId, message) {
 }
 
 loadModerationData();
+
+export {
+  warnUser,
+  banUser,
+  unbanUser,
+  isUserBanned,
+  checkUserStatus,
+  logViolation,
+  deleteBannedUserMessage
+};

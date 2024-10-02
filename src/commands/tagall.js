@@ -12,7 +12,7 @@ const tagall = async (message) => {
             text += `@${participant.id.user} `;
         }
 
-        await chat.sendMessage(text, { mentions });
+        await chat.sendMessage(text, { mentions: mentions.map(contact => contact.id._serialized) });
     } catch (error) {
         logger.error("Error in tagall command:", error);
         await message.reply("Terjadi kesalahan saat menandai semua anggota. Mohon coba lagi.");
