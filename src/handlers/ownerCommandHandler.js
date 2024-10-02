@@ -3,6 +3,7 @@ import { OWNER_COMMANDS } from '../commands/index.js';
 import { PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
 import authorizeGroup from '../commands/authorizeGroup.js';
+import { handleRegularCommand } from './regularCommandHandler.js';  // Tambahkan impor ini
 
 export const handleOwnerCommand = async (message, groupId) => {
   const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
@@ -35,6 +36,8 @@ export const handleOwnerCommand = async (message, groupId) => {
     }
   } else {
     // If it's not an owner command, handle it as a regular command
-    await handleRegularCommand(message, await message.getChat(), await message.getContact(), true);
+    const chat = await message.getChat();
+    const sender = await message.getContact();
+    await handleRegularCommand(message, chat, sender, true);
   }
 };
