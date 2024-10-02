@@ -18,7 +18,11 @@ export const handleRegularCommand = async (message, chat, sender) => {
 
     logger.info(`Executing command: ${commandName}`);
     try {
-      await commandFunction(message, args);
+      if (commandName === 'getpp') {
+        await commandFunction(message);
+      } else {
+        await commandFunction(message, args);
+      }
       logger.info(`Command ${commandName} executed successfully`);
     } catch (error) {
       logger.error(`Error executing command ${commandName}:`, error);
