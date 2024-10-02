@@ -2,6 +2,7 @@ import * as commands from '../commands/index.js';
 import { PREFIX, ADMIN_COMMANDS, GENERAL_COMMANDS } from '../config/constants.js';
 import { isAdmin } from '../utils/adminChecker.js';
 import logger from '../utils/logger.js';
+import * as commands from '../commands/index.js';
 
 export const handleRegularCommand = async (message, chat, sender) => {
   const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
