@@ -9,7 +9,7 @@ import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import adventureManager from './src/utils/adventureManager.js';
 import messageHandler from './src/handlers/messageHandler.js';
-import groupStats from './utils/groupStats.js';
+import groupStats from './src/utils/groupStats.js';
 
 await groupStats.loadStats();
 await adventureManager.loadAdventures();
