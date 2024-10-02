@@ -1,10 +1,10 @@
 import * as commands from '../commands/index.js';
-import { GENERAL_COMMANDS, ADMIN_COMMANDS } from '../commands/index.js';
+import { GENERAL_COMMANDS, ADMIN_COMMANDS, OWNER_COMMANDS } from '../commands/index.js';
 import { PREFIX } from '../config/constants.js';
 import { isAdmin } from '../utils/adminChecker.js';
 import logger from '../utils/logger.js';
 
-export const handleRegularCommand = async (message, chat, sender) => {
+export const handleRegularCommand = async (message, chat, sender, isOwner) => {
   const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
   const commandName = command.toLowerCase();
 
@@ -13,16 +13,18 @@ export const handleRegularCommand = async (message, chat, sender) => {
 
   const isUserAdmin = isAdmin(chat, sender);
 
-  if (GENERAL_COMMANDS.includes(commandName) || (isUserAdmin && ADMIN_COMMANDS.includes(commandName))) {
+  const availableCommands = [
+    ...GENERAL_COMMANDS,
+    ...(isUserAdmin || isOwner ? ADMIN_COMMANDS : []),
+    ...(isOwner ? OWNER_COMMANDS : [])
+  ];
+
+  if (availableCommands.includes(commandName)) {
     const commandFunction = commands[commandName];
     if (commandFunction) {
       logger.info(`Found command function for: ${commandName}`);
       try {
-        if (ADMIN_COMMANDS.includes(commandName) && !isUserAdmin) {
-          await message.reply('Maaf, perintah ini hanya dapat digunakan oleh admin grup.');
-        } else {
-          await commandFunction(message, args);
-        }
+        await commandFunction(message, args);
         logger.info(`Command ${commandName} executed successfully`);
       } catch (error) {
         logger.error(`Error executing command ${commandName}:`, error);

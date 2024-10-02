@@ -1,11 +1,18 @@
 import { banUser, unbanUser } from '../utils/enhancedModerationSystem.js';
 import logger from '../utils/logger.js';
 import { OWNER_NUMBER } from '../config/index.js';
+import { isAdmin } from '../utils/adminChecker.js';
 
 export const ban = async (message, args) => {
   try {
     const chat = await message.getChat();
+    const sender = await message.getContact();
     const mentions = await message.getMentions();
+
+    if (!isAdmin(chat, sender) && sender.id.user !== OWNER_NUMBER) {
+      await message.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
+      return;
+    }
 
     if (mentions.length === 0) {
       await chat.sendMessage('Mohon mention pengguna yang ingin di-ban.');
@@ -25,9 +32,6 @@ export const ban = async (message, args) => {
       await chat.sendMessage(`@${targetUser.id.user} telah di-ban dari grup ini selama 1 jam. Pesan mereka akan dihapus secara otomatis.`, {
         mentions: [targetUser]
       });
-      await chat.sendMessage(`@${targetUser.id.user}, Anda telah di-ban dari grup ini selama 1 jam. Anda tidak dapat mengirim pesan dan pesan Anda akan dihapus secara otomatis.`, {
-        mentions: [targetUser]
-      });
     } else {
       await chat.sendMessage(`Gagal melakukan ban pada @${targetUser.id.user}.`, {
         mentions: [targetUser]
@@ -42,7 +46,13 @@ export const ban = async (message, args) => {
 export const unban = async (message, args) => {
   try {
     const chat = await message.getChat();
+    const sender = await message.getContact();
     const mentions = await message.getMentions();
+
+    if (!isAdmin(chat, sender) && sender.id.user !== OWNER_NUMBER) {
+      await message.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
+      return;
+    }
 
     if (mentions.length === 0) {
       await chat.sendMessage('Mohon mention pengguna yang ingin di-unban.');
@@ -54,9 +64,6 @@ export const unban = async (message, args) => {
 
     if (success) {
       await chat.sendMessage(`@${targetUser.id.user} telah di-unban dari grup ini.`, {
-        mentions: [targetUser]
-      });
-      await chat.sendMessage(`@${targetUser.id.user}, Anda telah di-unban dari grup ini. Anda sekarang dapat mengirim pesan kembali. Ingat, Anda memiliki 5 kesempatan lagi sebelum ban berikutnya.`, {
         mentions: [targetUser]
       });
     } else {

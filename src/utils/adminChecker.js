@@ -1,5 +1,4 @@
 export const isAdmin = (chat, user) => {
-    return chat.participants.find(p => p.id._serialized === user.id._serialized)?.isAdmin;
-  };
-
-  
+  const participant = chat.participants.find(p => p.id._serialized === user.id._serialized);
+  return participant ? participant.isAdmin || participant.isSuperAdmin : false;
+};

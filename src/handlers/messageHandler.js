@@ -19,30 +19,31 @@ const messageHandler = async (message) => {
 
     logger.debug(`Message received - Type: ${message.type}, From: ${userId}, Group: ${groupId}, Body: ${message.body}`);
 
+    const cleanUserId = userId.replace('@c.us', '');
+    const isOwner = cleanUserId === OWNER_NUMBER;
+
     // Log message for stats
     if (message.fromMe === false) {
       groupStats.logMessage(groupId, userId);
     }
 
-    const cleanUserId = userId.replace('@c.us', '');
-    const isOwner = cleanUserId === OWNER_NUMBER;
-
-    if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
-      // Handle adventure choice if there's an active game and the message is a number
-      logger.debug('Processing adventure choice');
-      await handleAdventureChoice(message);
-    } else if (message.body.startsWith(PREFIX)) {
+    if (message.body.startsWith(PREFIX)) {
       if (isOwner) {
-        await handleOwnerCommand(message, groupId);
+        // Owner dapat menggunakan semua perintah
+        await handleRegularCommand(message, chat, sender, true);
+      } else if (isGroupAuthorized(groupId)) {
+        // Pengguna biasa hanya dapat menggunakan perintah jika grup diotorisasi
+        await handleRegularCommand(message, chat, sender, false);
       } else {
-        const isAuthorized = await isGroupAuthorized(groupId);
-        if (!isAuthorized) {
-          logger.debug('Unauthorized group, ignoring message');
-          return;
-        }
-        await handleRegularCommand(message, chat, sender);
+        logger.debug(`Unauthorized group ${groupId}, ignoring command`);
       }
-    } else {
+    } else if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
+      // Handle adventure choice if there's an active game and the message is a number
+      if (isGroupAuthorized(groupId) || isOwner) {
+        logger.debug('Processing adventure choice');
+        await handleAdventureChoice(message);
+      }
+    } else if (isGroupAuthorized(groupId) || isOwner) {
       await handleNonCommandMessage(message, chat, sender);
     }
   } catch (error) {

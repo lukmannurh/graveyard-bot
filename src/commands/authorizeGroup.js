@@ -37,7 +37,7 @@ const authorizeGroup = async (message, args) => {
             await message.reply('Penggunaan: .authorize add/remove');
         }
 
-        const isAuthorized = await isGroupAuthorized(groupId);
+        const isAuthorized = isGroupAuthorized(groupId);
         logger.debug(`Authorize command - Group ${groupId} authorization status after operation: ${isAuthorized}`);
 
     } catch (error) {
