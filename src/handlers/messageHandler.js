@@ -6,6 +6,7 @@ import { OWNER_NUMBER, PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
 import adventureManager from '../utils/adventureManager.js';
 import { handleAdventureChoice } from '../commands/adventureCommand.js';
+import groupStats from '../utils/groupStats.js';
 
 const messageHandler = async (message) => {
   try {
@@ -17,6 +18,11 @@ const messageHandler = async (message) => {
     const userId = sender.id._serialized;
 
     logger.debug(`Message received - Type: ${message.type}, From: ${userId}, Group: ${groupId}, Body: ${message.body}`);
+
+    // Log message for stats
+    if (message.fromMe === false) {
+      groupStats.logMessage(groupId, userId);
+    }
 
     const cleanUserId = userId.replace('@c.us', '');
     const isOwner = cleanUserId === OWNER_NUMBER;

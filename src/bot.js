@@ -4,6 +4,7 @@ import qrcode from 'qrcode-terminal';
 import logger from './utils/logger.js';
 import { PUPPETEER_ARGS } from './config/constants.js';
 import adventureManager from './utils/adventureManager.js';
+import groupStats from './utils/groupStats.js';
 
 let client;
 
@@ -51,6 +52,7 @@ const startBot = async (messageHandler) => {
     throw error;
   }
   await adventureManager.loadAdventures();
+  await groupStats.loadStats();
 };
 
 const stopBot = async () => {

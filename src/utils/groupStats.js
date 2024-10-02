@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import logger from './logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +26,7 @@ class GroupStats {
       if (error.code === 'ENOENT') {
         this.resetStats();
       } else {
+        logger.error('Error loading stats:', error);
         throw error;
       }
     }
@@ -37,7 +39,12 @@ class GroupStats {
       startDate: this.startDate.toISOString(),
       endDate: this.endDate.toISOString()
     };
-    await fs.writeFile(statsFile, JSON.stringify(dataToSave, null, 2));
+    try {
+      await fs.writeFile(statsFile, JSON.stringify(dataToSave, null, 2));
+    } catch (error) {
+      logger.error('Error saving stats:', error);
+      throw error;
+    }
   }
 
   resetStats() {
@@ -69,6 +76,7 @@ class GroupStats {
       this.stats[groupId].users[userId] = 0;
     }
     this.stats[groupId].users[userId]++;
+    this.saveStats();
   }
 
   getGroupStats(groupId) {
