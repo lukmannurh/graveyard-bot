@@ -1,5 +1,5 @@
 import logger from '../utils/logger.js';
-import { PREFIX } from '../config/index.js';
+import { PREFIX } from '../config/constants.js';
 
 const createMenuSection = (title, commands) => {
   return `*${title}*\n${commands.map(cmd => `• ${PREFIX}${cmd.name} - ${cmd.description}`).join('\n')}`;
@@ -25,7 +25,8 @@ const menu = async (message) => {
       { name: 'tagall', description: 'Menandai semua anggota grup' },
       { name: 'kick @user', description: 'Mengeluarkan anggota dari grup' },
       { name: 'ban @user', description: 'Mem-ban pengguna dari grup' },
-      { name: 'unban @user', description: 'Menghapus ban pengguna dari grup' }
+      { name: 'unban @user', description: 'Menghapus ban pengguna dari grup' },
+      { name: 'getpp @user', description: 'Mengambil dan mengirim foto profil pengguna yang di-tag' }
     ];
 
     const ownerCommands = [
