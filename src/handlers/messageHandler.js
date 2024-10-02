@@ -4,7 +4,6 @@ import { handleNonCommandMessage } from './nonCommandHandler.js';
 import { isGroupAuthorized } from '../utils/authorizedGroups.js';
 import { OWNER_NUMBER, PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
-import { handleAdventureChoice, handleAdventureTimeout } from '../commands/adventureCommand.js';
 import adventureManager from '../utils/adventureManager.js';
 
 const messageHandler = async (message) => {
@@ -21,17 +20,12 @@ const messageHandler = async (message) => {
     const cleanUserId = userId.replace('@c.us', '');
     const isOwner = cleanUserId === OWNER_NUMBER;
 
-    if (adventureManager.isGameActive(groupId)) {
-      if (/^\d+$/.test(message.body.trim())) {
-        // Handle adventure choice if there's an active game and the message is a number
-        logger.debug('Processing adventure choice');
-        await handleAdventureChoice(message);
-        adventureManager.resetTimeout(groupId, 
-          (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
-      } else {
-        // If there's an active game but the message is not a number, ignore it
-        return;
-      }
+    if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
+      // Handle adventure choice if there's an active game and the message is a number
+      logger.debug('Processing adventure choice');
+      await handleAdventureChoice(message);
+      adventureManager.resetTimeout(groupId, 
+        (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
     } else if (message.body.startsWith(PREFIX)) {
       if (isOwner) {
         await handleOwnerCommand(message, groupId);
