@@ -10,6 +10,7 @@ class AdventureManager {
   constructor() {
     this.adventures = [];
     this.activeGames = new Map();
+    this.timeouts = new Map();
   }
 
   async loadAdventures() {
@@ -34,6 +35,7 @@ class AdventureManager {
     const adventure = this.adventures[Math.floor(Math.random() * this.adventures.length)];
     this.activeGames.set(groupId, { adventure, currentNode: 'start', userId });
     logger.debug(`Adventure started: ${adventure.title}`);
+    this.startTimeout(groupId);
     return adventure.start;
   }
 
@@ -57,6 +59,28 @@ class AdventureManager {
   endGame(groupId) {
     logger.debug(`Ending game for group ${groupId}`);
     this.activeGames.delete(groupId);
+    this.clearTimeout(groupId);
+  }
+
+  startTimeout(groupId) {
+    this.clearTimeout(groupId);
+    const timeout = setTimeout(() => {
+      logger.debug(`Timeout reached for group ${groupId}`);
+      this.endGame(groupId);
+    }, 120000); // 2 minutes
+    this.timeouts.set(groupId, timeout);
+  }
+
+  clearTimeout(groupId) {
+    const existingTimeout = this.timeouts.get(groupId);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+      this.timeouts.delete(groupId);
+    }
+  }
+
+  resetTimeout(groupId) {
+    this.startTimeout(groupId);
   }
 }
 

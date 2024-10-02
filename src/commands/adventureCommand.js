@@ -61,7 +61,7 @@ const sendAdventureMessage = async (message, node, groupId) => {
     
     let replyMessage = `*${adventureTitle}*\n\n${node.text}`;
     if (options) {
-      replyMessage += `\n\nPilihan:\n${options}\n\nBalas dengan nomor pilihan Anda untuk melanjutkan.`;
+      replyMessage += `\n\nPilihan:\n${options}\n\nBalas dengan nomor pilihan Anda untuk melanjutkan.\nAnda memiliki waktu 2 menit untuk menjawab.`;
     }
     
     await message.reply(replyMessage);
@@ -75,6 +75,8 @@ const sendAdventureMessage = async (message, node, groupId) => {
         await message.reply('😔 Petualangan berakhir. Terima kasih telah bermain!');
       }
       adventureManager.endGame(groupId);
+    } else {
+      adventureManager.resetTimeout(groupId);
     }
   } catch (error) {
     logger.error('Error in sendAdventureMessage:', error);
@@ -127,5 +129,15 @@ export const handleAdventureChoice = async (message) => {
   } catch (error) {
     logger.error('Error in handling adventure choice:', error);
     await message.reply('Terjadi kesalahan saat memproses pilihan. Mohon coba lagi.');
+  }
+};
+
+export const handleAdventureTimeout = async (message, groupId) => {
+  try {
+    logger.debug(`Adventure timeout for group ${groupId}`);
+    await message.reply('Waktu habis! Petualangan telah berakhir karena tidak ada respon dalam 2 menit.');
+    adventureManager.endGame(groupId);
+  } catch (error) {
+    logger.error('Error in handling adventure timeout:', error);
   }
 };
