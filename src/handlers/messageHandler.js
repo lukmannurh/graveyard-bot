@@ -7,6 +7,7 @@ import logger from '../utils/logger.js';
 import adventureManager from '../utils/adventureManager.js';
 import { handleAdventureChoice } from '../commands/adventureCommand.js';
 import groupStats from '../utils/groupStats.js';
+import { isUserBanned, deleteBannedUserMessage } from '../utils/enhancedModerationSystem.js';
 
 const messageHandler = async (message) => {
   try {
@@ -22,6 +23,12 @@ const messageHandler = async (message) => {
     const cleanUserId = userId.replace('@c.us', '');
     const isOwner = cleanUserId === OWNER_NUMBER;
 
+    // Check if user is banned
+    if (!isOwner && isUserBanned(groupId, userId)) {
+      await deleteBannedUserMessage(message);
+      return;
+    }
+
     // Log message for stats
     if (message.fromMe === false) {
       groupStats.logMessage(groupId, userId);
@@ -29,16 +36,13 @@ const messageHandler = async (message) => {
 
     if (message.body.startsWith(PREFIX)) {
       if (isOwner) {
-        // Owner dapat menggunakan semua perintah
-        await handleRegularCommand(message, chat, sender, true);
+        await handleOwnerCommand(message, groupId);
       } else if (isGroupAuthorized(groupId)) {
-        // Pengguna biasa hanya dapat menggunakan perintah jika grup diotorisasi
         await handleRegularCommand(message, chat, sender, false);
       } else {
         logger.debug(`Unauthorized group ${groupId}, ignoring command`);
       }
     } else if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
-      // Handle adventure choice if there's an active game and the message is a number
       if (isGroupAuthorized(groupId) || isOwner) {
         logger.debug('Processing adventure choice');
         await handleAdventureChoice(message);
@@ -48,7 +52,7 @@ const messageHandler = async (message) => {
     }
   } catch (error) {
     logger.error('Error in messageHandler:', error);
-    await message.reply('Terjadi kesalahan saat memproses pesan. Mohon coba lagi nanti.');
+    // Do not send error message to avoid responding to banned users
   }
 };
 

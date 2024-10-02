@@ -1,8 +1,8 @@
 import * as commands from '../commands/index.js';
 import { OWNER_COMMANDS } from '../commands/index.js';
-import { PREFIX } from '../config/constants.js';  // Impor PREFIX dari file konfigurasi
+import { PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
-import { handleRegularCommand } from './regularCommandHandler.js';
+import authorizeGroup from '../commands/authorizeGroup.js';
 
 export const handleOwnerCommand = async (message, groupId) => {
   const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
@@ -10,8 +10,16 @@ export const handleOwnerCommand = async (message, groupId) => {
 
   logger.info('Owner command received:', commandName);
 
-  if (OWNER_COMMANDS.includes(commandName)) {
-    const commandFunction = commands[commandName + 'Group']; // Menambahkan 'Group' karena nama fungsinya adalah authorizeGroup
+  if (commandName === 'authorize') {
+    try {
+      await authorizeGroup(message, args);
+      logger.info('Authorize command executed successfully');
+    } catch (error) {
+      logger.error('Error executing authorize command:', error);
+      await message.reply('Terjadi kesalahan saat menjalankan perintah authorize. Mohon coba lagi.');
+    }
+  } else if (OWNER_COMMANDS.includes(commandName)) {
+    const commandFunction = commands[commandName];
     if (commandFunction) {
       logger.info(`Executing owner command: ${commandName}`);
       try {
@@ -27,6 +35,6 @@ export const handleOwnerCommand = async (message, groupId) => {
     }
   } else {
     // If it's not an owner command, handle it as a regular command
-    await handleRegularCommand(message, await message.getChat(), await message.getContact());
+    await handleRegularCommand(message, await message.getChat(), await message.getContact(), true);
   }
 };
