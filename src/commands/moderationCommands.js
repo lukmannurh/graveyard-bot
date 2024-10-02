@@ -1,6 +1,5 @@
-import { banUser, unbanUser } from '../utils/enhancedModerationSystem.js';
+import { banUser, unbanUser, unbanAllUsers, isOwner } from '../utils/enhancedModerationSystem.js';
 import logger from '../utils/logger.js';
-import { OWNER_NUMBER } from '../config/index.js';
 import { isAdmin } from '../utils/adminChecker.js';
 
 export const ban = async (message, args) => {
@@ -9,7 +8,7 @@ export const ban = async (message, args) => {
     const sender = await message.getContact();
     const mentions = await message.getMentions();
 
-    if (!isAdmin(chat, sender) && sender.id.user !== OWNER_NUMBER) {
+    if (!isAdmin(chat, sender) && !isOwner(sender.id._serialized)) {
       await message.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
       return;
     }
@@ -21,7 +20,7 @@ export const ban = async (message, args) => {
 
     const targetUser = mentions[0];
     
-    if (targetUser.id.user === OWNER_NUMBER) {
+    if (isOwner(targetUser.id._serialized)) {
       await chat.sendMessage('Tidak dapat mem-ban owner bot.');
       return;
     }
@@ -49,13 +48,19 @@ export const unban = async (message, args) => {
     const sender = await message.getContact();
     const mentions = await message.getMentions();
 
-    if (!isAdmin(chat, sender) && sender.id.user !== OWNER_NUMBER) {
+    if (!isAdmin(chat, sender) && !isOwner(sender.id._serialized)) {
       await message.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
       return;
     }
 
+    if (args[0] === 'all') {
+      const unbannedCount = await unbanAllUsers(chat.id._serialized);
+      await chat.sendMessage(`${unbannedCount} pengguna telah di-unban dari grup ini.`);
+      return;
+    }
+
     if (mentions.length === 0) {
-      await chat.sendMessage('Mohon mention pengguna yang ingin di-unban.');
+      await chat.sendMessage('Mohon mention pengguna yang ingin di-unban atau gunakan ".unban all" untuk unban semua pengguna.');
       return;
     }
 

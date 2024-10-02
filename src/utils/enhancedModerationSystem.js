@@ -11,6 +11,10 @@ const moderationDataFile = path.join(__dirname, '../../moderationData.json');
 
 let bannedUsers = new Map();
 
+function isOwner(userId) {
+  return userId.replace('@c.us', '') === OWNER_NUMBER;
+}
+
 async function loadModerationData() {
   try {
     const data = await fs.readFile(moderationDataFile, 'utf8');
@@ -46,8 +50,8 @@ async function saveModerationData(data) {
   });
 }
 
-async function warnUser(groupId, userId) {
-  if (userId === OWNER_NUMBER) {
+export async function warnUser(groupId, userId) {
+  if (isOwner(userId)) {
     logger.info(`Owner (${userId}) attempted to be warned, but was ignored.`);
     return { warnings: 0, banned: false };
   }
@@ -66,8 +70,8 @@ async function warnUser(groupId, userId) {
   return data[groupId][userId];
 }
 
-async function banUser(groupId, userId) {
-  if (userId === OWNER_NUMBER) {
+export async function banUser(groupId, userId) {
+  if (isOwner(userId)) {
     logger.info(`Attempt to ban owner (${userId}) was ignored.`);
     return { warnings: 0, banned: false };
   }
@@ -84,7 +88,7 @@ async function banUser(groupId, userId) {
   return data[groupId][userId];
 }
 
-async function unbanUser(groupId, userId) {
+export async function unbanUser(groupId, userId) {
   const data = await loadModerationData();
   if (data[groupId]?.[userId]) {
     data[groupId][userId] = { warnings: 0, banned: false, banEndTime: null };
@@ -95,8 +99,27 @@ async function unbanUser(groupId, userId) {
   return false;
 }
 
-function isUserBanned(groupId, userId) {
-  if (userId === OWNER_NUMBER) {
+export async function unbanAllUsers(groupId) {
+  const data = await loadModerationData();
+  let unbanCount = 0;
+
+  if (data[groupId]) {
+    Object.keys(data[groupId]).forEach(userId => {
+      if (data[groupId][userId].banned) {
+        data[groupId][userId] = { warnings: 0, banned: false, banEndTime: null };
+        bannedUsers.delete(`${groupId}:${userId}`);
+        unbanCount++;
+      }
+    });
+
+    await saveModerationData(data);
+  }
+
+  return unbanCount;
+}
+
+export function isUserBanned(groupId, userId) {
+  if (isOwner(userId)) {
     return false;
   }
   
@@ -111,7 +134,7 @@ function isUserBanned(groupId, userId) {
   return true;
 }
 
-async function checkUserStatus(groupId, userId) {
+export async function checkUserStatus(groupId, userId) {
   const data = await loadModerationData();
   const userStatus = data[groupId]?.[userId] || { warnings: 0, banned: false, banEndTime: null };
 
@@ -126,7 +149,7 @@ async function checkUserStatus(groupId, userId) {
   return userStatus;
 }
 
-function logViolation(groupId, userId, message) {
+export function logViolation(groupId, userId, message) {
   const violation = {
     timestamp: new Date().toISOString(),
     groupId,
@@ -137,7 +160,7 @@ function logViolation(groupId, userId, message) {
   logger.warn(`Violation: ${JSON.stringify(violation)}`);
 }
 
-async function deleteBannedUserMessage(message) {
+export async function deleteBannedUserMessage(message) {
   try {
     await message.delete(true);
     logger.info(`Deleted message from banned user ${message.author} in group ${message.to}`);
@@ -151,9 +174,11 @@ loadModerationData();
 
 // Export all functions
 export {
+  isOwner,
   warnUser,
   banUser,
   unbanUser,
+  unbanAllUsers,
   isUserBanned,
   checkUserStatus,
   logViolation,

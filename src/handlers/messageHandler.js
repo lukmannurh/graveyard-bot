@@ -2,12 +2,12 @@ import { handleOwnerCommand } from './ownerCommandHandler.js';
 import { handleRegularCommand } from './regularCommandHandler.js';
 import { handleNonCommandMessage } from './nonCommandHandler.js';
 import { isGroupAuthorized } from '../utils/authorizedGroups.js';
-import { OWNER_NUMBER, PREFIX } from '../config/constants.js';
+import { PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
 import adventureManager from '../utils/adventureManager.js';
 import { handleAdventureChoice } from '../commands/adventureCommand.js';
 import groupStats from '../utils/groupStats.js';
-import { isUserBanned, deleteBannedUserMessage } from '../utils/enhancedModerationSystem.js';
+import { isUserBanned, deleteBannedUserMessage, isOwner } from '../utils/enhancedModerationSystem.js';
 import { isAdmin } from '../utils/adminChecker.js';
 
 const messageHandler = async (message) => {
@@ -21,15 +21,8 @@ const messageHandler = async (message) => {
 
     logger.debug(`Message received - Type: ${message.type}, From: ${userId}, Group: ${groupId}, Body: ${message.body}`);
 
-    const cleanUserId = userId.replace('@c.us', '');
-    const isOwner = cleanUserId === OWNER_NUMBER;
+    const isOwnerUser = isOwner(userId);
     const isGroupAdmin = await isAdmin(chat, sender);
-
-    // Check if user is banned
-    if (!isOwner && isUserBanned(groupId, userId)) {
-      await deleteBannedUserMessage(message);
-      return;
-    }
 
     // Log message for stats
     if (message.fromMe === false) {
@@ -39,22 +32,31 @@ const messageHandler = async (message) => {
     const isAuthorized = isGroupAuthorized(groupId);
     logger.debug(`Group authorization status: ${isAuthorized}`);
 
-    if (message.body.startsWith(PREFIX)) {
-      if (isOwner) {
-        // Owner dapat menggunakan semua perintah
+    if (isOwnerUser) {
+      // Owner can always use all commands and send messages
+      if (message.body.startsWith(PREFIX)) {
         await handleOwnerCommand(message, groupId);
-      } else if (isAuthorized) {
-        // Pengguna biasa atau admin grup dapat menggunakan perintah jika grup diotorisasi
+      }
+      return;
+    }
+
+    if (isUserBanned(groupId, userId)) {
+      await deleteBannedUserMessage(message);
+      return;
+    }
+
+    if (message.body.startsWith(PREFIX)) {
+      if (isAuthorized) {
         await handleRegularCommand(message, chat, sender, isGroupAdmin);
       } else {
         logger.debug(`Unauthorized group ${groupId}, ignoring command from non-owner`);
       }
     } else if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
-      if (isAuthorized || isOwner) {
+      if (isAuthorized) {
         logger.debug('Processing adventure choice');
         await handleAdventureChoice(message);
       }
-    } else if (isAuthorized || isOwner) {
+    } else if (isAuthorized) {
       await handleNonCommandMessage(message, chat, sender);
     }
   } catch (error) {
