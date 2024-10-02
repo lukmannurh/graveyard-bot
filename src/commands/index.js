@@ -15,7 +15,7 @@ import { cekjomok } from './funCommands.js';
 import { adventure } from './adventureCommand.js';
 import getpp from './getProfilePicture.js';
 import stats from './stats.js';
-import jadwalSholat from './jadwalSholat.js';
+import jadwalsholat from './jadwalSholat.js';  // Perhatikan perubahan nama ini
 
 export {
   menu,
@@ -36,7 +36,7 @@ export {
   adventure,
   getpp,
   stats,
-  jadwalSholat
+  jadwalsholat  // Perhatikan perubahan nama ini
 };
 
 export const GENERAL_COMMANDS = [
@@ -63,7 +63,7 @@ const exportedCommands = {
   adventure,
   getpp,
   stats,
-  jadwalSholat
+  jadwalsholat  // Perhatikan perubahan nama ini
 };
 
 console.log('Exported commands:', Object.keys(exportedCommands).filter(key => key !== 'GENERAL_COMMANDS'));
