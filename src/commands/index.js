@@ -15,7 +15,7 @@ import { cekjomok } from './funCommands.js';
 import { adventure } from './adventureCommand.js';
 import getpp from './getProfilePicture.js';
 import stats from './stats.js';
-import jadwalsholat from './jadwalSholat.js';  // Perhatikan perubahan nama ini
+import jadwalsholat from './jadwalSholat.js';
 
 export {
   menu,
@@ -36,13 +36,15 @@ export {
   adventure,
   getpp,
   stats,
-  jadwalsholat  // Perhatikan perubahan nama ini
+  jadwalsholat
 };
 
 export const GENERAL_COMMANDS = [
   'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 
   'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat'
 ];
+
+export const OWNER_COMMANDS = ['authorize'];
 
 const exportedCommands = {
   menu,
@@ -63,7 +65,8 @@ const exportedCommands = {
   adventure,
   getpp,
   stats,
-  jadwalsholat  // Perhatikan perubahan nama ini
+  jadwalsholat
 };
 
 console.log('Exported commands:', Object.keys(exportedCommands).filter(key => key !== 'GENERAL_COMMANDS'));
+console.log('Owner commands:', OWNER_COMMANDS);

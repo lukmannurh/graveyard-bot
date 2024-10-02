@@ -1,5 +1,5 @@
 import * as commands from '../commands/index.js';
-import { PREFIX, OWNER_COMMANDS } from '../config/constants.js';
+import { PREFIX, OWNER_COMMANDS } from '../commands/index.js';
 import logger from '../utils/logger.js';
 import { handleRegularCommand } from './regularCommandHandler.js';
 
@@ -10,7 +10,7 @@ export const handleOwnerCommand = async (message, groupId) => {
   logger.info('Owner command received:', commandName);
 
   if (OWNER_COMMANDS.includes(commandName)) {
-    const commandFunction = commands[commandName];
+    const commandFunction = commands[commandName + 'Group']; // Menambahkan 'Group' karena nama fungsinya adalah authorizeGroup
     if (commandFunction) {
       logger.info(`Executing owner command: ${commandName}`);
       try {
@@ -22,7 +22,7 @@ export const handleOwnerCommand = async (message, groupId) => {
       }
     } else {
       logger.warn(`Unknown owner command: ${commandName}`);
-      await message.reply('Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
+      await message.reply('Perintah owner tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
     }
   } else {
     // If it's not an owner command, handle it as a regular command
