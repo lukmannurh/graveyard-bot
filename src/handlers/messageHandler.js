@@ -8,6 +8,7 @@ import adventureManager from '../utils/adventureManager.js';
 import { handleAdventureChoice } from '../commands/adventureCommand.js';
 import groupStats from '../utils/groupStats.js';
 import { isUserBanned, deleteBannedUserMessage } from '../utils/enhancedModerationSystem.js';
+import { isAdmin } from '../utils/adminChecker.js';
 
 const messageHandler = async (message) => {
   try {
@@ -22,6 +23,7 @@ const messageHandler = async (message) => {
 
     const cleanUserId = userId.replace('@c.us', '');
     const isOwner = cleanUserId === OWNER_NUMBER;
+    const isGroupAdmin = await isAdmin(chat, sender);
 
     // Check if user is banned
     if (!isOwner && isUserBanned(groupId, userId)) {
@@ -34,20 +36,25 @@ const messageHandler = async (message) => {
       groupStats.logMessage(groupId, userId);
     }
 
+    const isAuthorized = isGroupAuthorized(groupId);
+    logger.debug(`Group authorization status: ${isAuthorized}`);
+
     if (message.body.startsWith(PREFIX)) {
       if (isOwner) {
+        // Owner dapat menggunakan semua perintah
         await handleOwnerCommand(message, groupId);
-      } else if (isGroupAuthorized(groupId)) {
-        await handleRegularCommand(message, chat, sender, false);
+      } else if (isAuthorized) {
+        // Pengguna biasa atau admin grup dapat menggunakan perintah jika grup diotorisasi
+        await handleRegularCommand(message, chat, sender, isGroupAdmin);
       } else {
-        logger.debug(`Unauthorized group ${groupId}, ignoring command`);
+        logger.debug(`Unauthorized group ${groupId}, ignoring command from non-owner`);
       }
     } else if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
-      if (isGroupAuthorized(groupId) || isOwner) {
+      if (isAuthorized || isOwner) {
         logger.debug('Processing adventure choice');
         await handleAdventureChoice(message);
       }
-    } else if (isGroupAuthorized(groupId) || isOwner) {
+    } else if (isAuthorized || isOwner) {
       await handleNonCommandMessage(message, chat, sender);
     }
   } catch (error) {

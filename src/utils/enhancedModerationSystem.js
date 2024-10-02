@@ -9,7 +9,6 @@ const __dirname = path.dirname(__filename);
 
 const moderationDataFile = path.join(__dirname, '../../moderationData.json');
 
-// In-memory cache for banned users and their ban end times
 let bannedUsers = new Map();
 
 async function loadModerationData() {
@@ -17,7 +16,6 @@ async function loadModerationData() {
     const data = await fs.readFile(moderationDataFile, 'utf8');
     const parsedData = JSON.parse(data);
     
-    // Update in-memory cache
     Object.entries(parsedData).forEach(([groupId, groupData]) => {
       Object.entries(groupData).forEach(([userId, userData]) => {
         if (userData.banned) {
@@ -38,7 +36,6 @@ async function loadModerationData() {
 async function saveModerationData(data) {
   await fs.writeFile(moderationDataFile, JSON.stringify(data, null, 2));
   
-  // Update in-memory cache
   bannedUsers.clear();
   Object.entries(data).forEach(([groupId, groupData]) => {
     Object.entries(groupData).forEach(([userId, userData]) => {
@@ -114,16 +111,6 @@ export function isUserBanned(groupId, userId) {
   return true;
 }
 
-export async function deleteBannedUserMessage(message) {
-  try {
-    await message.delete(true);
-    logger.info(`Deleted message from banned user ${message.author} in group ${message.to}`);
-  } catch (error) {
-    logger.error('Error deleting message from banned user:', error);
-  }
-}
-
-
 export async function checkUserStatus(groupId, userId) {
   const data = await loadModerationData();
   const userStatus = data[groupId]?.[userId] || { warnings: 0, banned: false, banEndTime: null };
@@ -150,5 +137,4 @@ export async function logViolation(groupId, userId, message) {
   logger.warn(`Violation: ${JSON.stringify(violation)}`);
 }
 
-// Initialize the banned users cache
 loadModerationData();
