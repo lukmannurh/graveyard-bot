@@ -9,13 +9,15 @@ import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import adventureManager from './src/utils/adventureManager.js';
 import messageHandler from './src/handlers/messageHandler.js';
-import groupStats from './src/utils/groupStats.js';
+import groupStats from './src/utils/groupStats.js';  // Perhatikan path yang diperbarui
 
-await groupStats.loadStats();
 await adventureManager.loadAdventures();
-logger.info('Adventures loaded');
+await groupStats.loadStats();  // Tambahkan ini
+logger.info('Adventures and stats loaded');
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+
+// ... sisa kode tidak berubah ...
 
 const app = express();
 

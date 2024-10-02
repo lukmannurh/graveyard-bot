@@ -15,7 +15,7 @@ import { cekjomok } from './funCommands.js';
 import { adventure } from './adventureCommand.js';
 import getpp from './getProfilePicture.js';
 import stats from './stats.js';
-import jadwalsholat from './jadwalsholat.js';  // Pastikan nama file sesuai
+import jadwalsholat from './jadwalsholat.js';
 
 export {
   menu,
@@ -45,6 +45,7 @@ export const GENERAL_COMMANDS = [
 ];
 
 export const OWNER_COMMANDS = ['authorize'];
+
 export const ADMIN_COMMANDS = ['end', 'kick', 'tagall', 'ban', 'unban'];
 
 const exportedCommands = {
