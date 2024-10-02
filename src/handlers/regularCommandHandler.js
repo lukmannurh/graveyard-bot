@@ -1,5 +1,6 @@
 import * as commands from '../commands/index.js';
-import { PREFIX, GENERAL_COMMANDS } from '../config/constants.js';
+import { GENERAL_COMMANDS } from '../commands/index.js';
+import { PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
 
 export const handleRegularCommand = async (message, chat, sender) => {
