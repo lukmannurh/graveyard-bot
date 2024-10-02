@@ -45,6 +45,7 @@ export const GENERAL_COMMANDS = [
 ];
 
 export const OWNER_COMMANDS = ['authorize'];
+export const ADMIN_COMMANDS = ['end', 'kick', 'tagall', 'ban', 'unban'];
 
 const exportedCommands = {
   menu,
