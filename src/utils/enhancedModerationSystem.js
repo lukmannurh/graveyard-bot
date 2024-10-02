@@ -111,8 +111,7 @@ export function isUserBanned(groupId, userId) {
   return true;
 }
 
-
-export async function deleteBannedUserMessage(message) {
+async function deleteBannedUserMessage(message) {
   try {
     await message.delete(true);
     logger.info(`Deleted message from banned user ${message.author} in group ${message.to}`);
@@ -147,7 +146,6 @@ export async function logViolation(groupId, userId, message) {
   logger.warn(`Violation: ${JSON.stringify(violation)}`);
 }
 
-loadModerationData();
 
 export {
   warnUser,
@@ -158,3 +156,5 @@ export {
   logViolation,
   deleteBannedUserMessage
 };
+
+loadModerationData();

@@ -30,11 +30,11 @@ export const ban = async (message, args) => {
 
     if (status.banned) {
       await chat.sendMessage(`@${targetUser.id.user} telah di-ban dari grup ini selama 1 jam. Pesan mereka akan dihapus secara otomatis.`, {
-        mentions: [targetUser]
+        mentions: [targetUser.id._serialized]
       });
     } else {
       await chat.sendMessage(`Gagal melakukan ban pada @${targetUser.id.user}.`, {
-        mentions: [targetUser]
+        mentions: [targetUser.id._serialized]
       });
     }
   } catch (error) {
@@ -64,11 +64,11 @@ export const unban = async (message, args) => {
 
     if (success) {
       await chat.sendMessage(`@${targetUser.id.user} telah di-unban dari grup ini.`, {
-        mentions: [targetUser]
+        mentions: [targetUser.id._serialized]
       });
     } else {
       await chat.sendMessage(`@${targetUser.id.user} tidak dalam keadaan ter-ban.`, {
-        mentions: [targetUser]
+        mentions: [targetUser.id._serialized]
       });
     }
   } catch (error) {

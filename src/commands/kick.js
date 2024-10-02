@@ -9,7 +9,7 @@ const kick = async (message) => {
             for (let participant of mentionedIds) {
                 await chat.removeParticipants([participant.id._serialized]);
             }
-            await message.reply("Orang ini adalah haters owi dan owo");
+            await message.reply("Pengguna yang ditandai telah dikeluarkan dari grup.");
         } else {
             await message.reply("Mention pengguna yang ingin dikeluarkan.");
         }
