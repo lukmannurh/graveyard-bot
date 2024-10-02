@@ -26,7 +26,8 @@ const messageHandler = async (message) => {
         // Handle adventure choice if there's an active game and the message is a number
         logger.debug('Processing adventure choice');
         await handleAdventureChoice(message);
-        adventureManager.resetTimeout(groupId);
+        adventureManager.resetTimeout(groupId, 
+          (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
       } else {
         // If there's an active game but the message is not a number, ignore it
         return;

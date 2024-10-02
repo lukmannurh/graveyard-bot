@@ -26,7 +26,7 @@ class AdventureManager {
     }
   }
 
-  startAdventure(groupId, userId) {
+  startAdventure(groupId, userId, timeoutCallback) {
     logger.debug(`Starting adventure for group ${groupId} and user ${userId}`);
     if (this.adventures.length === 0) {
       logger.error("No adventures loaded");
@@ -35,7 +35,7 @@ class AdventureManager {
     const adventure = this.adventures[Math.floor(Math.random() * this.adventures.length)];
     this.activeGames.set(groupId, { adventure, currentNode: 'start', userId });
     logger.debug(`Adventure started: ${adventure.title}`);
-    this.startTimeout(groupId);
+    this.startTimeout(groupId, timeoutCallback);
     return adventure.start;
   }
 
@@ -62,12 +62,12 @@ class AdventureManager {
     this.clearTimeout(groupId);
   }
 
-  startTimeout(groupId) {
+  startTimeout(groupId, callback) {
     this.clearTimeout(groupId);
     const timeout = setTimeout(() => {
       logger.debug(`Timeout reached for group ${groupId}`);
-      this.endGame(groupId);
-    }, 120000); // 2 minutes
+      callback(groupId);
+    }, 60000); // 1 minute
     this.timeouts.set(groupId, timeout);
   }
 
@@ -79,8 +79,8 @@ class AdventureManager {
     }
   }
 
-  resetTimeout(groupId) {
-    this.startTimeout(groupId);
+  resetTimeout(groupId, callback) {
+    this.startTimeout(groupId, callback);
   }
 }
 

@@ -15,7 +15,8 @@ export const adventure = async (message) => {
 
     if (!isActive) {
       logger.debug('Starting new adventure');
-      const startNode = await adventureManager.startAdventure(groupId, userId);
+      const startNode = await adventureManager.startAdventure(groupId, userId, 
+        (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
       if (startNode) {
         logger.debug('Adventure started successfully');
         await sendAdventureMessage(message, startNode, groupId);
@@ -61,7 +62,7 @@ const sendAdventureMessage = async (message, node, groupId) => {
     
     let replyMessage = `*${adventureTitle}*\n\n${node.text}`;
     if (options) {
-      replyMessage += `\n\nPilihan:\n${options}\n\nBalas dengan nomor pilihan Anda untuk melanjutkan.\nAnda memiliki waktu 2 menit untuk menjawab.`;
+      replyMessage += `\n\nPilihan:\n${options}\n\nBalas dengan nomor pilihan Anda untuk melanjutkan.\nAnda memiliki waktu 1 menit untuk menjawab.`;
     }
     
     await message.reply(replyMessage);
@@ -76,7 +77,8 @@ const sendAdventureMessage = async (message, node, groupId) => {
       }
       adventureManager.endGame(groupId);
     } else {
-      adventureManager.resetTimeout(groupId);
+      adventureManager.resetTimeout(groupId, 
+        (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
     }
   } catch (error) {
     logger.error('Error in sendAdventureMessage:', error);
@@ -135,7 +137,8 @@ export const handleAdventureChoice = async (message) => {
 export const handleAdventureTimeout = async (message, groupId) => {
   try {
     logger.debug(`Adventure timeout for group ${groupId}`);
-    await message.reply('Waktu habis! Petualangan telah berakhir karena tidak ada respon dalam 2 menit.');
+    const chat = await message.getChat();
+    await chat.sendMessage('Waktu habis! Petualangan telah berakhir karena tidak ada respon dalam 1 menit.');
     adventureManager.endGame(groupId);
   } catch (error) {
     logger.error('Error in handling adventure timeout:', error);
