@@ -50,7 +50,7 @@ async function saveModerationData(data) {
   });
 }
 
-export async function warnUser(groupId, userId) {
+async function warnUser(groupId, userId) {
   if (isOwner(userId)) {
     logger.info(`Owner (${userId}) attempted to be warned, but was ignored.`);
     return { warnings: 0, banned: false };
@@ -70,7 +70,7 @@ export async function warnUser(groupId, userId) {
   return data[groupId][userId];
 }
 
-export async function banUser(groupId, userId) {
+async function banUser(groupId, userId) {
   if (isOwner(userId)) {
     logger.info(`Attempt to ban owner (${userId}) was ignored.`);
     return { warnings: 0, banned: false };
@@ -88,7 +88,7 @@ export async function banUser(groupId, userId) {
   return data[groupId][userId];
 }
 
-export async function unbanUser(groupId, userId) {
+async function unbanUser(groupId, userId) {
   const data = await loadModerationData();
   if (data[groupId]?.[userId]) {
     data[groupId][userId] = { warnings: 0, banned: false, banEndTime: null };
@@ -99,7 +99,7 @@ export async function unbanUser(groupId, userId) {
   return false;
 }
 
-export async function unbanAllUsers(groupId) {
+async function unbanAllUsers(groupId) {
   const data = await loadModerationData();
   let unbanCount = 0;
 
@@ -118,7 +118,7 @@ export async function unbanAllUsers(groupId) {
   return unbanCount;
 }
 
-export function isUserBanned(groupId, userId) {
+function isUserBanned(groupId, userId) {
   if (isOwner(userId)) {
     return false;
   }
@@ -134,7 +134,7 @@ export function isUserBanned(groupId, userId) {
   return true;
 }
 
-export async function checkUserStatus(groupId, userId) {
+async function checkUserStatus(groupId, userId) {
   const data = await loadModerationData();
   const userStatus = data[groupId]?.[userId] || { warnings: 0, banned: false, banEndTime: null };
 
@@ -149,7 +149,7 @@ export async function checkUserStatus(groupId, userId) {
   return userStatus;
 }
 
-export function logViolation(groupId, userId, message) {
+function logViolation(groupId, userId, message) {
   const violation = {
     timestamp: new Date().toISOString(),
     groupId,
@@ -160,7 +160,7 @@ export function logViolation(groupId, userId, message) {
   logger.warn(`Violation: ${JSON.stringify(violation)}`);
 }
 
-export async function deleteBannedUserMessage(message) {
+async function deleteBannedUserMessage(message) {
   try {
     await message.delete(true);
     logger.info(`Deleted message from banned user ${message.author} in group ${message.to}`);
