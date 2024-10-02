@@ -19,7 +19,8 @@ const menu = async (message) => {
       { name: 'cekjomok', description: 'Mengecek tingkat jomok Anda' },
       { name: 'adventure', description: 'Memulai petualangan teks interaktif' },
       { name: 'getpp @user', description: 'Mengambil dan mengirim foto profil pengguna yang di-tag' },
-      { name: 'stats', description: 'Menampilkan statistik aktivitas grup untuk bulan ini' }
+      { name: 'stats', description: 'Menampilkan statistik aktivitas grup untuk bulan ini' },
+      { name: 'jadwalsholat', description: 'Menampilkan jadwal sholat untuk WIB, WITA, dan WIT' }
     ];
 
     const adminCommands = [
