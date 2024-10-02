@@ -1,6 +1,6 @@
 import { getAllPrayerTimes } from '../utils/prayerTimes.js';
 
-const jadwalSholatCommand = async (message, args) => {
+const jadwalSholat = async (message, args) => {
   try {
     const prayerTimes = await getAllPrayerTimes();
     
@@ -21,4 +21,4 @@ const jadwalSholatCommand = async (message, args) => {
   }
 };
 
-export default jadwalSholatCommand;
+export default jadwalSholat;
