@@ -561,5 +561,1149 @@
         ]
       }
     }
+  },
+  {
+    "id": "cyberpunk_detective",
+    "title": "Detektif di Neo-Jakarta 2077",
+    "start": {
+      "text": "Anda adalah detektif swasta di kota futuristik Neo-Jakarta tahun 2077. Suatu malam, Anda menerima panggilan darurat dari seorang klien misterius. Dia meminta Anda untuk menyelidiki hilangnya seorang eksekutif perusahaan teknologi terkemuka, MegaCorp. Apa yang akan Anda lakukan?",
+      "options": [
+        {"text": "Terima kasus dan temui klien", "next": "meet_client"},
+        {"text": "Selidiki MegaCorp terlebih dahulu", "next": "investigate_megacorp"},
+        {"text": "Hubungi kontak di kepolisian", "next": "contact_police"}
+      ]
+    },
+    "nodes": {
+      "meet_client": {
+        "text": "Anda menemui klien di sebuah bar holografik. Dia adalah istri eksekutif yang hilang dan memberikan Anda chip data berisi informasi terakhir suaminya. Namun, Anda merasa ada yang janggal dengan ceritanya.",
+        "options": [
+          {"text": "Tanyakan lebih lanjut tentang suaminya", "next": "ask_about_husband"},
+          {"text": "Analisis chip data", "next": "analyze_chip"},
+          {"text": "Selidiki latar belakang klien", "next": "investigate_client"}
+        ]
+      },
+      "investigate_megacorp": {
+        "text": "Anda menyusup ke sistem keamanan MegaCorp dan menemukan bahwa eksekutif tersebut terlibat dalam proyek rahasia bernama 'Lazarus'. Tiba-tiba, alarm berbunyi!",
+        "options": [
+          {"text": "Coba dapatkan lebih banyak data", "next": "get_more_data"},
+          {"text": "Keluar dari sistem segera", "next": "exit_system"},
+          {"text": "Tinggalkan jejak palsu", "next": "leave_false_trail"}
+        ]
+      },
+      "contact_police": {
+        "text": "Kontak Anda di kepolisian memberi tahu bahwa kasus ini lebih rumit dari yang terlihat. Ada keterlibatan sindikat kejahatan cyber yang berbahaya.",
+        "options": [
+          {"text": "Minta bantuan polisi", "next": "request_police_help"},
+          {"text": "Selidiki sindikat kejahatan", "next": "investigate_syndicate"},
+          {"text": "Kembali ke klien untuk informasi lebih lanjut", "next": "back_to_client"}
+        ]
+      },
+      "ask_about_husband": {
+        "text": "Klien menceritakan bahwa suaminya bekerja pada proyek AI canggih, tapi belakangan bertingkah aneh dan paranoid. Dia curiga suaminya menyembunyikan sesuatu.",
+        "options": [
+          {"text": "Tanyakan tentang proyek AI", "next": "ask_about_ai"},
+          {"text": "Minta akses ke rumah mereka", "next": "request_home_access"},
+          {"text": "Selidiki rekan kerja suami", "next": "investigate_coworkers"}
+        ]
+      },
+      "analyze_chip": {
+        "text": "Analisis chip menunjukkan lokasi terakhir eksekutif di distrik bawah tanah kota. Anda juga menemukan pesan terenkripsi yang mencurigakan.",
+        "options": [
+          {"text": "Pergi ke distrik bawah tanah", "next": "underground_district"},
+          {"text": "Dekripsi pesan", "next": "decrypt_message"},
+          {"text": "Lacak sumber pesan", "next": "trace_message"}
+        ]
+      },
+      "investigate_client": {
+        "text": "Penyelidikan Anda mengungkap bahwa klien memiliki koneksi dengan kelompok hacker terkenal. Motifnya menjadi tidak jelas.",
+        "options": [
+          {"text": "Konfrontasi klien", "next": "confront_client"},
+          {"text": "Selidiki kelompok hacker", "next": "investigate_hackers"},
+          {"text": "Laporkan temuan ke polisi", "next": "report_to_police"}
+        ]
+      },
+      "get_more_data": {
+        "text": "Anda berhasil mengunduh lebih banyak data tentang Proyek Lazarus. Tampaknya ini adalah upaya untuk mengunggah kesadaran manusia ke dalam jaringan komputer.",
+        "options": [
+          {"text": "Cari tahu siapa yang terlibat", "next": "find_involved_persons"},
+          {"text": "Cari kelemahan dalam proyek", "next": "find_project_flaws"},
+          {"text": "Unduh blueprint proyek", "next": "download_blueprints"}
+        ]
+      },
+      "exit_system": {
+        "text": "Anda berhasil keluar dari sistem, tapi jejak digital Anda terdeteksi. Tim keamanan MegaCorp kini mengejar Anda.",
+        "options": [
+          {"text": "Sembunyikan diri", "next": "hide_from_security"},
+          {"text": "Hadapi tim keamanan", "next": "confront_security"},
+          {"text": "Gunakan koneksi untuk bantuan", "next": "use_connections"}
+        ]
+      },
+      "leave_false_trail": {
+        "text": "Anda meninggalkan jejak palsu yang mengarah ke kompetitor MegaCorp. Ini memberi Anda waktu, tapi situasi bisa memanas.",
+        "options": [
+          {"text": "Manfaatkan waktu untuk investigasi lebih lanjut", "next": "further_investigation"},
+          {"text": "Beri tahu klien tentang perkembangan", "next": "update_client"},
+          {"text": "Siapkan rencana cadangan", "next": "prepare_backup_plan"}
+        ]
+      },
+      "request_police_help": {
+        "text": "Polisi setuju untuk membantu, tapi mereka meminta Anda untuk menjadi umpan dalam operasi penyergapan sindikat.",
+        "options": [
+          {"text": "Setuju menjadi umpan", "next": "become_bait"},
+          {"text": "Tolak dan lanjutkan sendiri", "next": "continue_solo"},
+          {"text": "Negosiasi syarat bantuan", "next": "negotiate_terms"}
+        ]
+      },
+      "investigate_syndicate": {
+        "text": "Penyelidikan Anda membawa Anda ke markas sindikat. Anda melihat eksekutif yang hilang dibawa masuk ke gedung.",
+        "options": [
+          {"text": "Coba selamatkan eksekutif", "next": "rescue_attempt"},
+          {"text": "Kumpulkan lebih banyak bukti", "next": "gather_evidence"},
+          {"text": "Hubungi klien untuk instruksi", "next": "contact_client_instructions"}
+        ]
+      },
+      "back_to_client": {
+        "text": "Saat Anda kembali ke klien, Anda menemukan apartemennya diobrak-abrik dan ada tanda-tanda perlawanan.",
+        "options": [
+          {"text": "Cari petunjuk di apartemen", "next": "search_apartment"},
+          {"text": "Lacak keberadaan klien", "next": "track_client"},
+          {"text": "Pasang perangkat pengawas", "next": "set_surveillance"}
+        ]
+      },
+      "ask_about_ai": {
+        "text": "Klien mengungkapkan bahwa proyek AI ini mampu memprediksi masa depan dengan akurasi tinggi. Suaminya tampak ketakutan akan sesuatu yang dia lihat.",
+        "options": [
+          {"text": "Tanyakan prediksi terakhir", "next": "ask_last_prediction"},
+          {"text": "Selidiki keamanan proyek", "next": "investigate_project_security"},
+          {"text": "Cari tahu tentang investor proyek", "next": "research_investors"}
+        ]
+      },
+      "request_home_access": {
+        "text": "Di rumah eksekutif, Anda menemukan ruang kerja rahasia dengan banyak catatan paranoid dan skema rumit.",
+        "options": [
+          {"text": "Analisis catatan", "next": "analyze_notes"},
+          {"text": "Cari perangkat tersembunyi", "next": "search_hidden_devices"},
+          {"text": "Periksa riwayat komunikasi", "next": "check_communication_history"}
+        ]
+      },
+      "investigate_coworkers": {
+        "text": "Anda menemukan bahwa salah satu rekan kerja eksekutif menghilang beberapa hari sebelumnya. Ada rumor tentang perselisihan internal.",
+        "options": [
+          {"text": "Selidiki rekan yang hilang", "next": "investigate_missing_coworker"},
+          {"text": "Wawancarai rekan kerja lain", "next": "interview_other_coworkers"},
+          {"text": "Cek rekaman keamanan kantor", "next": "check_office_security_footage"}
+        ]
+      },
+      "underground_district": {
+        "text": "Di distrik bawah tanah, Anda menemukan pasar gelap teknologi ilegal. Seseorang mengenali Anda sebagai detektif.",
+        "options": [
+          {"text": "Coba menyamar", "next": "go_undercover"},
+          {"text": "Tawarkan bayaran untuk informasi", "next": "offer_payment"},
+          {"text": "Gunakan kekerasan untuk mendapatkan informasi", "next": "use_force"}
+        ]
+      },
+      "decrypt_message": {
+        "text": "Pesan terdekripsi berbunyi: 'Proyek Lazarus sukses. Subjek 0 telah terunggah. Tidak ada jalan kembali.'",
+        "options": [
+          {"text": "Cari tahu tentang 'Subjek 0'", "next": "investigate_subject_zero"},
+          {"text": "Cari cara untuk 'mendownload' kembali", "next": "find_download_method"},
+          {"text": "Selidiki implikasi etis proyek", "next": "ethical_implications"}
+        ]
+      },
+      "trace_message": {
+        "text": "Pelacakan membawa Anda ke sebuah fasilitas penelitian rahasia di pinggir kota. Tempat itu dijaga ketat.",
+        "options": [
+          {"text": "Coba menyusup masuk", "next": "infiltrate_facility"},
+          {"text": "Pantau fasilitas dari jauh", "next": "remote_surveillance"},
+          {"text": "Cari informan dari dalam", "next": "find_insider"}
+        ]
+      },
+      "confront_client": {
+        "text": "Konfrontasi mengungkap bahwa klien adalah bagian dari gerakan anti-AI yang ingin menghentikan Proyek Lazarus.",
+        "options": [
+          {"text": "Bergabung dengan gerakan", "next": "join_movement"},
+          {"text": "Tangkap klien", "next": "arrest_client"},
+          {"text": "Gunakan klien untuk informasi lebih lanjut", "next": "use_client_for_info"}
+        ]
+      },
+      "investigate_hackers": {
+        "text": "Investigasi membawa Anda ke markas hacker. Mereka mengklaim memiliki bukti bahwa MegaCorp berencana menggunakan AI untuk kontrol massa.",
+        "options": [
+          {"text": "Minta bukti", "next": "request_evidence"},
+          {"text": "Infiltrasi grup hacker", "next": "infiltrate_hackers"},
+          {"text": "Laporkan lokasi hacker ke polisi", "next": "report_hackers"}
+        ]
+      },
+      "report_to_police": {
+        "text": "Polisi tertarik dengan temuan Anda, tapi Anda curiga ada korupsi di kepolisian yang terkait dengan kasus ini.",
+        "options": [
+          {"text": "Selidiki korupsi di kepolisian", "next": "investigate_police_corruption"},
+          {"text": "Cari bantuan dari media", "next": "seek_media_help"},
+          {"text": "Bentuk tim investigasi independen", "next": "form_independent_team"}
+        ]
+      }
+    }
+  },
+  {
+    "id": "clean_city_mission",
+    "title": "Misi Bersih Kota Sinar",
+    "start": {
+      "text": "Anda adalah seorang petugas baru di Badan Narkotika Kota (BNK) Sinar, sebuah kota di provinsi Lampung. Kota ini sedang menghadapi masalah serius dengan peredaran narkoba. Kepala BNK memberi Anda misi pertama. Apa yang akan Anda lakukan?",
+      "options": [
+        {"text": "Lakukan penyelidikan di daerah rawan narkoba", "next": "investigate_hotspots"},
+        {"text": "Mulai program edukasi di sekolah-sekolah", "next": "start_education_program"},
+        {"text": "Koordinasi dengan kepolisian setempat", "next": "coordinate_with_police"}
+      ]
+    },
+    "nodes": {
+      "investigate_hotspots": {
+        "text": "Anda mengidentifikasi beberapa titik rawan peredaran narkoba di Kota Sinar. Salah satunya adalah sebuah klub malam bernama 'Melody'.",
+        "options": [
+          {"text": "Lakukan pengintaian di klub Melody", "next": "stake_out_club"},
+          {"text": "Rekrut informan dari dalam klub", "next": "recruit_informant"},
+          {"text": "Ajukan surat perintah penggeledahan", "next": "request_warrant"}
+        ]
+      },
+      "start_education_program": {
+        "text": "Program edukasi Anda di sekolah-sekolah mendapat sambutan positif. Seorang siswa mendekati Anda setelah sesi dan mengaku bahwa temannya terlibat peredaran narkoba.",
+        "options": [
+          {"text": "Bicara pribadi dengan siswa tersebut", "next": "talk_to_student"},
+          {"text": "Laporkan informasi ke pihak sekolah", "next": "report_to_school"},
+          {"text": "Selidiki teman yang disebutkan", "next": "investigate_friend"}
+        ]
+      },
+      "coordinate_with_police": {
+        "text": "Dalam rapat koordinasi, polisi memberi tahu tentang seseorang bernama 'Emi' yang dicurigai sebagai pemasok utama narkoba di kota.",
+        "options": [
+          {"text": "Usulkan operasi bersama", "next": "joint_operation"},
+          {"text": "Cari informasi lebih lanjut tentang 'Emi'", "next": "research_emi"},
+          {"text": "Pasang penyadap di tempat yang dicurigai", "next": "set_up_wiretap"}
+        ]
+      },
+      "stake_out_club": {
+        "text": "Selama pengintaian, Anda melihat beberapa transaksi mencurigakan di belakang klub. Anda juga mendengar nama 'Emi' disebut beberapa kali.",
+        "options": [
+          {"text": "Lanjutkan pengintaian", "next": "continue_stakeout"},
+          {"text": "Lakukan penggerebekan", "next": "raid_club"},
+          {"text": "Ikuti salah satu pelaku transaksi", "next": "follow_suspect"}
+        ]
+      },
+      "recruit_informant": {
+        "text": "Anda berhasil merekrut seorang pelayan klub sebagai informan. Dia memberi tahu bahwa 'Emi' adalah pemilik klub dan menggunakan tempat itu sebagai kedok.",
+        "options": [
+          {"text": "Minta informan mengumpulkan bukti", "next": "gather_evidence"},
+          {"text": "Rencanakan penggerebekan besar", "next": "plan_major_raid"},
+          {"text": "Selidiki koneksi Emi di luar klub", "next": "investigate_connections"}
+        ]
+      },
+      "request_warrant": {
+        "text": "Anda mendapatkan surat perintah penggeledahan. Saat tim Anda tiba di klub, tampaknya ada kebocoran informasi dan tempat itu sudah bersih.",
+        "options": [
+          {"text": "Cari petunjuk yang tersisa", "next": "search_for_clues"},
+          {"text": "Interogasi staff klub", "next": "interrogate_staff"},
+          {"text": "Selidiki kemungkinan kebocoran internal", "next": "investigate_leak"}
+        ]
+      },
+      "talk_to_student": {
+        "text": "Siswa tersebut memberi tahu bahwa temannya direkrut oleh seseorang bernama 'Emi' untuk mengedarkan narkoba di sekolah.",
+        "options": [
+          {"text": "Tawarkan perlindungan kepada siswa", "next": "offer_protection"},
+          {"text": "Minta siswa membantu penyelidikan", "next": "student_assistance"},
+          {"text": "Laporkan situasi ke unit khusus anak", "next": "report_to_youth_unit"}
+        ]
+      },
+      "report_to_school": {
+        "text": "Pihak sekolah terkejut dan berjanji akan bekerja sama. Mereka menyarankan untuk meningkatkan pengawasan dan program anti-narkoba.",
+        "options": [
+          {"text": "Implementasikan program pengawasan", "next": "implement_surveillance"},
+          {"text": "Adakan seminar untuk orang tua", "next": "parent_seminar"},
+          {"text": "Bentuk tim gabungan sekolah-BNK", "next": "form_joint_team"}
+        ]
+      },
+      "investigate_friend": {
+        "text": "Penyelidikan mengungkap bahwa teman siswa tersebut hanya kurir kecil dalam jaringan yang lebih besar. Dia ketakutan dan ingin keluar.",
+        "options": [
+          {"text": "Tawarkan kesepakatan untuk informasi", "next": "offer_deal"},
+          {"text": "Bantu dia keluar dengan aman", "next": "safe_exit"},
+          {"text": "Gunakan dia untuk menjebak pemasok", "next": "set_trap"}
+        ]
+      },
+      "joint_operation": {
+        "text": "Operasi bersama disetujui. Intel menunjukkan bahwa 'Emi' akan melakukan transaksi besar di pelabuhan minggu depan.",
+        "options": [
+          {"text": "Rencanakan penyergapan di pelabuhan", "next": "plan_port_ambush"},
+          {"text": "Pasang pengawasan di sekitar pelabuhan", "next": "set_port_surveillance"},
+          {"text": "Infiltrasi kelompok Emi", "next": "infiltrate_group"}
+        ]
+      },
+      "research_emi": {
+        "text": "Penelitian Anda mengungkap bahwa 'Emi' adalah julukan untuk Emimam, seorang pengusaha lokal dengan banyak koneksi politik.",
+        "options": [
+          {"text": "Selidiki koneksi politik Emimam", "next": "investigate_political_ties"},
+          {"text": "Awasi bisnis sah Emimam", "next": "monitor_legitimate_business"},
+          {"text": "Cari kelemahan dalam organisasi Emimam", "next": "find_organization_weakness"}
+        ]
+      },
+      "set_up_wiretap": {
+        "text": "Penyadapan berhasil dipasang. Anda mendengar rencana pengiriman besar narkoba melalui jalur laut.",
+        "options": [
+          {"text": "Koordinasi dengan penjaga pantai", "next": "coordinate_coast_guard"},
+          {"text": "Ikuti rantai distribusi", "next": "track_distribution_chain"},
+          {"text": "Identifikasi semua pihak yang terlibat", "next": "identify_involved_parties"}
+        ]
+      }
+    }
+  },
+  {
+    "id": "idol_world_journey",
+    "title": "Panggung Impian: Perjalanan Aldo JMK48",
+    "start": {
+      "text": "Aldo, member baru JMK48, baru saja bergabung dengan grup idol populer ini. Dia bersemangat tapi juga gugup menghadapi debutnya. Manajer memberi tahu bahwa JMK48 akan bersaing dengan grup rival, Sungut Lele, dalam konser besar minggu depan. Apa yang akan Aldo lakukan untuk mempersiapkan diri?",
+      "options": [
+        {"text": "Berlatih koreografi ekstra keras", "next": "practice_choreography"},
+        {"text": "Fokus pada latihan vokal", "next": "focus_vocal_training"},
+        {"text": "Pelajari lebih banyak tentang Sungut Lele", "next": "research_rival_group"}
+      ]
+    },
+    "nodes": {
+      "practice_choreography": {
+        "text": "Aldo berlatih koreografi hingga larut malam. Gerakannya membaik, tapi dia kelelahan. Keesokan harinya, dia mendengar rumor bahwa Sungut Lele punya tarian pembuka yang spektakuler.",
+        "options": [
+          {"text": "Usulkan koreografi baru pada grup", "next": "suggest_new_choreo"},
+          {"text": "Minta saran dari senior di JMK48", "next": "ask_senior_advice"},
+          {"text": "Istirahat untuk menjaga stamina", "next": "take_rest"}
+        ]
+      },
+      "focus_vocal_training": {
+        "text": "Latihan vokal Aldo menunjukkan peningkatan signifikan. Manajer mempertimbangkan untuk memberinya bagian solo. Namun, beberapa anggota tim tampak tidak senang.",
+        "options": [
+          {"text": "Terima bagian solo", "next": "accept_solo"},
+          {"text": "Tolak dengan sopan dan usulkan duet", "next": "suggest_duet"},
+          {"text": "Bicarakan dengan anggota tim yang tidak senang", "next": "talk_to_team"}
+        ]
+      },
+      "research_rival_group": {
+        "text": "Aldo mempelajari Sungut Lele dan menemukan bahwa mereka terkenal dengan lagu-lagu bertema sosial. Dia juga mengetahui bahwa vokalis utama mereka adalah teman masa kecilnya.",
+        "options": [
+          {"text": "Hubungi teman masa kecil di Sungut Lele", "next": "contact_childhood_friend"},
+          {"text": "Sarankan JMK48 membuat lagu bertema sosial", "next": "suggest_social_theme"},
+          {"text": "Fokus pada keunikan JMK48", "next": "focus_on_uniqueness"}
+        ]
+      },
+      "suggest_new_choreo": {
+        "text": "Ide koreografi Aldo diterima dengan baik. Grup mulai berlatih gerakan baru, tapi waktunya sangat terbatas sebelum konser.",
+        "options": [
+          {"text": "Dorong latihan intensif", "next": "intensive_practice"},
+          {"text": "Modifikasi koreografi agar lebih mudah", "next": "modify_choreo"},
+          {"text": "Kombinasikan dengan koreografi lama", "next": "combine_choreo"}
+        ]
+      },
+      "ask_senior_advice": {
+        "text": "Senior JMK48 memberi Aldo tips berharga dan mendorongnya untuk tetap percaya diri. Mereka juga memperingatkan tentang tekanan media yang akan datang.",
+        "options": [
+          {"text": "Fokus pada pengembangan diri", "next": "self_improvement"},
+          {"text": "Minta bantuan mengelola media sosial", "next": "social_media_help"},
+          {"text": "Ajak senior kolaborasi untuk konser", "next": "collaborate_with_senior"}
+        ]
+      },
+      "take_rest": {
+        "text": "Aldo beristirahat dan merasa lebih segar. Namun, dia mendengar bahwa anggota lain berlatih ekstra keras selama dia istirahat.",
+        "options": [
+          {"text": "Minta maaf dan tawarkan bantuan", "next": "apologize_and_help"},
+          {"text": "Jelaskan pentingnya istirahat pada tim", "next": "explain_importance_of_rest"},
+          {"text": "Berlatih dua kali lebih keras untuk mengejar ketinggalan", "next": "practice_harder"}
+        ]
+      },
+      "accept_solo": {
+        "text": "Aldo menerima bagian solo. Performanya meningkat, tapi ketegangan dalam grup mulai terasa. Seorang anggota bahkan mengancam untuk keluar.",
+        "options": [
+          {"text": "Bicarakan masalah ini dengan manajer", "next": "discuss_with_manager"},
+          {"text": "Bagi bagian solo dengan anggota lain", "next": "share_solo_part"},
+          {"text": "Adakan pertemuan tim untuk menyelesaikan masalah", "next": "team_meeting"}
+        ]
+      },
+      "suggest_duet": {
+        "text": "Ide duet Aldo diterima dengan antusias. Manajer memintanya memilih partner duet.",
+        "options": [
+          {"text": "Pilih anggota yang paling berbakat", "next": "choose_talented_partner"},
+          {"text": "Pilih anggota yang kurang mendapat sorotan", "next": "choose_underdog_partner"},
+          {"text": "Usulkan rotasi partner untuk setiap pertunjukan", "next": "suggest_rotation"}
+        ]
+      },
+      "talk_to_team": {
+        "text": "Diskusi dengan tim mengungkap kekhawatiran mereka tentang persaingan internal dan tekanan dari manajemen.",
+        "options": [
+          {"text": "Usulkan sistem pembagian part yang lebih adil", "next": "fair_part_distribution"},
+          {"text": "Ajak tim bicara dengan manajemen", "next": "approach_management"},
+          {"text": "Inisiasi proyek kolaborasi antar anggota", "next": "initiate_collaboration"}
+        ]
+      },
+      "contact_childhood_friend": {
+        "text": "Teman masa kecil Aldo di Sungut Lele senang mendengar kabarnya. Mereka membicarakan persaingan dan tekanan industri.",
+        "options": [
+          {"text": "Usulkan kolaborasi rahasia", "next": "secret_collaboration"},
+          {"text": "Minta tips menghadapi tekanan industri", "next": "ask_for_industry_tips"},
+          {"text": "Jaga jarak untuk menghindari kontroversi", "next": "maintain_distance"}
+        ]
+      },
+      "suggest_social_theme": {
+        "text": "JMK48 tertarik dengan ide lagu bertema sosial, tapi khawatir akan reaksi fans dan citra grup.",
+        "options": [
+          {"text": "Buat survei untuk mengetahui opini fans", "next": "conduct_fan_survey"},
+          {"text": "Tulis demo lagu bertema sosial", "next": "write_social_theme_demo"},
+          {"text": "Usulkan kampanye sosial terpisah dari musik", "next": "separate_social_campaign"}
+        ]
+      },
+      "focus_on_uniqueness": {
+        "text": "Aldo dan tim fokus pada keunikan JMK48. Mereka menemukan konsep 'idol futuristik' yang menarik, tapi butuh banyak persiapan.",
+        "options": [
+          {"text": "Desain kostum dan set panggung futuristik", "next": "design_futuristic_concept"},
+          {"text": "Latih koreografi dengan elemen robotik", "next": "robotic_dance_training"},
+          {"text": "Buat lagu dengan tema teknologi dan masa depan", "next": "futuristic_song_writing"}
+        ]
+      },
+      "intensive_practice": {
+        "text": "Latihan intensif meningkatkan kualitas penampilan, tapi beberapa anggota mulai menunjukkan tanda-tanda kelelahan.",
+        "options": [
+          {"text": "Dorong untuk tetap berlatih keras", "next": "push_through_fatigue"},
+          {"text": "Sesuaikan jadwal latihan", "next": "adjust_practice_schedule"},
+          {"text": "Konsultasi dengan pelatih kesehatan", "next": "health_trainer_consultation"}
+        ]
+      },
+      "modify_choreo": {
+        "text": "Koreografi yang dimodifikasi lebih mudah dikuasai, tapi beberapa fans di media sosial menyebutnya 'kurang menantang'.",
+        "options": [
+          {"text": "Abaikan kritik dan fokus pada performa", "next": "ignore_criticism"},
+          {"text": "Tambahkan beberapa gerakan sulit", "next": "add_difficult_moves"},
+          {"text": "Buat video di belakang layar untuk menunjukkan proses", "next": "behind_scenes_video"}
+        ]
+      },
+      "combine_choreo": {
+        "text": "Kombinasi koreografi baru dan lama menciptakan penampilan unik. Tim semangat, tapi butuh lebih banyak waktu berlatih.",
+        "options": [
+          {"text": "Minta tambahan waktu latihan pada manajemen", "next": "request_extra_time"},
+          {"text": "Latihan secara individual di luar jadwal", "next": "individual_practice"},
+          {"text": "Rekam dan analisis latihan untuk efisiensi", "next": "record_and_analyze"}
+        ]
+      }
+    }
+  },
+  {
+    "id": "mpl_id_journey",
+    "title": "Road to Glory: Squad MIND di MPL ID",
+    "start": {
+      "text": "Anda adalah kapten Squad MIND, tim underdog yang baru saja lolos ke MPL ID. Turnamen akan dimulai dalam sebulan, dan tim Anda harus mempersiapkan diri. Apa langkah pertama Anda?",
+      "options": [
+        {"text": "Fokus pada latihan intensif", "next": "intensive_training"},
+        {"text": "Rekrut pemain baru untuk memperkuat tim", "next": "recruit_new_player"},
+        {"text": "Analisis strategi tim-tim top", "next": "analyze_top_teams"}
+      ]
+    },
+    "nodes": {
+      "intensive_training": {
+        "text": "Tim berlatih keras selama seminggu. Kemampuan meningkat, tapi ada tanda-tanda burnout. Salah satu pemain mulai sering terlambat latihan.",
+        "options": [
+          {"text": "Bicarakan masalah dengan pemain tersebut", "next": "talk_to_player"},
+          {"text": "Sesuaikan jadwal latihan", "next": "adjust_schedule"},
+          {"text": "Tetap pertahankan intensitas latihan", "next": "maintain_intensity"}
+        ]
+      },
+      "recruit_new_player": {
+        "text": "Anda merekrut pemain berbakat, tapi dia kesulitan beradaptasi dengan strategi tim. Beberapa anggota lama merasa terancam posisinya.",
+        "options": [
+          {"text": "Fokus pada team building", "next": "team_building"},
+          {"text": "Beri waktu adaptasi pada pemain baru", "next": "give_adaptation_time"},
+          {"text": "Rotasi pemain untuk mencari kombinasi terbaik", "next": "player_rotation"}
+        ]
+      },
+      "analyze_top_teams": {
+        "text": "Analisis menunjukkan bahwa meta game saat ini didominasi strategi early aggression. Tim Anda lebih nyaman dengan late game. Apa yang akan Anda lakukan?",
+        "options": [
+          {"text": "Adaptasi ke meta early aggression", "next": "adapt_to_meta"},
+          {"text": "Sempurnakan strategi late game", "next": "perfect_late_game"},
+          {"text": "Kembangkan counter-strategy", "next": "develop_counter"}
+        ]
+      },
+      "talk_to_player": {
+        "text": "Pemain mengaku stress karena tekanan turnamen dan masalah pribadi. Dia meminta istirahat sejenak dari tim.",
+        "options": [
+          {"text": "Beri dia waktu istirahat", "next": "give_break"},
+          {"text": "Sarankan konseling mental", "next": "suggest_counseling"},
+          {"text": "Motivasi dia untuk tetap berlatih", "next": "motivate_player"}
+        ]
+      },
+      "adjust_schedule": {
+        "text": "Jadwal baru memberi lebih banyak waktu istirahat. Tim lebih segar, tapi ada kekhawatiran tentang kesiapan menghadapi turnamen.",
+        "options": [
+          {"text": "Tambah sesi latihan singkat", "next": "add_short_sessions"},
+          {"text": "Fokus pada kualitas latihan", "next": "focus_quality"},
+          {"text": "Adakan bootcamp intensif menjelang turnamen", "next": "pre_tournament_bootcamp"}
+        ]
+      },
+      "maintain_intensity": {
+        "text": "Tim mencapai performa puncak, tapi dua pemain mengalami cedera pergelangan tangan ringan.",
+        "options": [
+          {"text": "Istirahatkan pemain yang cedera", "next": "rest_injured_players"},
+          {"text": "Konsultasi dengan fisioterapis", "next": "physiotherapy_consult"},
+          {"text": "Latih pemain cadangan untuk menggantikan", "next": "train_substitutes"}
+        ]
+      },
+      "team_building": {
+        "text": "Kegiatan team building meningkatkan kekompakan, tapi mengurangi waktu latihan. Beberapa sponsor mulai mempertanyakan fokus tim.",
+        "options": [
+          {"text": "Jelaskan pentingnya kekompakan pada sponsor", "next": "explain_to_sponsors"},
+          {"text": "Kembali ke jadwal latihan normal", "next": "return_to_practice"},
+          {"text": "Gabungkan latihan dengan aktivitas team building", "next": "combine_practice_teambuilding"}
+        ]
+      },
+      "give_adaptation_time": {
+        "text": "Pemain baru mulai beradaptasi, tapi proses ini lambat. Turnamen semakin dekat dan tim belum menemukan ritme yang tepat.",
+        "options": [
+          {"text": "Tunda debut pemain baru", "next": "delay_debut"},
+          {"text": "Ubah strategi tim untuk akomodasi pemain baru", "next": "adjust_strategy"},
+          {"text": "Berikan tanggung jawab lebih pada pemain baru", "next": "increase_responsibility"}
+        ]
+      },
+      "player_rotation": {
+        "text": "Rotasi memberi insight baru tentang kekuatan tim, tapi mengorbankan sinergi. Salah satu kombinasi terlihat sangat menjanjikan.",
+        "options": [
+          {"text": "Tetapkan kombinasi menjanjikan sebagai tim utama", "next": "set_main_team"},
+          {"text": "Terus rotasi untuk fleksibilitas", "next": "continue_rotation"},
+          {"text": "Fokus pada dua kombinasi terbaik", "next": "focus_best_combinations"}
+        ]
+      },
+      "adapt_to_meta": {
+        "text": "Tim berusaha beradaptasi dengan strategi early aggression. Hasilnya beragam, beberapa pemain merasa tidak nyaman.",
+        "options": [
+          {"text": "Terus berlatih sampai mahir", "next": "persist_training"},
+          {"text": "Modifikasi strategi sesuai kekuatan tim", "next": "modify_strategy"},
+          {"text": "Cari kelemahan meta untuk dieksploitasi", "next": "exploit_meta_weakness"}
+        ]
+      },
+      "perfect_late_game": {
+        "text": "Tim memfokuskan pada strategi late game. Kemampuan bertahan meningkat, tapi tim sering kalah di early game saat latih tanding.",
+        "options": [
+          {"text": "Kembangkan taktik bertahan early game", "next": "develop_early_defense"},
+          {"text": "Cari pick hero yang kuat di semua fase", "next": "find_versatile_heroes"},
+          {"text": "Latih split pushing untuk mengulur waktu", "next": "train_split_pushing"}
+        ]
+      },
+      "develop_counter": {
+        "text": "Tim mengembangkan counter-strategy unik. Ini efektif dalam latihan, tapi belum teruji dalam pertandingan resmi.",
+        "options": [
+          {"text": "Uji strategi dalam turnamen kecil", "next": "test_in_small_tournament"},
+          {"text": "Rahasiakan strategi sampai MPL", "next": "keep_strategy_secret"},
+          {"text": "Bagikan strategi dengan tim lain untuk feedback", "next": "share_for_feedback"}
+        ]
+      },
+      "give_break": {
+        "text": "Pemain merasa lebih baik setelah istirahat, tapi ketinggalan banyak latihan. Tim harus segera menyesuaikan strategi untuk pertandingan pembuka MPL besok.",
+        "options": [
+          {"text": "Mainkan pemain cadangan", "next": "play_substitute"},
+          {"text": "Berikan peran support pada pemain tersebut", "next": "assign_support_role"},
+          {"text": "Tunda pertandingan (dengan penalti)", "next": "delay_match"}
+        ]
+      },
+      "suggest_counseling": {
+        "text": "Pemain setuju untuk konseling. Performanya membaik, tapi media mulai mempertanyakan kondisi mental tim jelang turnamen.",
+        "options": [
+          {"text": "Adakan konferensi pers untuk klarifikasi", "next": "press_conference"},
+          {"text": "Abaikan rumor dan fokus pada persiapan", "next": "ignore_rumors"},
+          {"text": "Gunakan isu ini untuk kampanye kesehatan mental", "next": "mental_health_campaign"}
+        ]
+      },
+      "motivate_player": {
+        "text": "Pemain kembali berlatih, tapi terlihat kurang fokus. Dalam latih tanding, dia membuat beberapa kesalahan kritis.",
+        "options": [
+          {"text": "Beri dia peran yang kurang berisiko", "next": "lower_risk_role"},
+          {"text": "Adakan sesi motivasi tim", "next": "team_motivation_session"},
+          {"text": "Berikan ultimatum performa", "next": "performance_ultimatum"}
+        ]
+      },
+      "add_short_sessions": {
+        "text": "Sesi latihan tambahan meningkatkan keterampilan tim, tapi menimbulkan ketegangan dengan manajer yang khawatir tentang kelelahan pemain.",
+        "options": [
+          {"text": "Jelaskan rencana latihan pada manajer", "next": "explain_to_manager"},
+          {"text": "Kurangi intensitas sesi tambahan", "next": "reduce_extra_sessions"},
+          {"text": "Minta pendapat dokter tim", "next": "consult_team_doctor"}
+        ]
+      },
+      "focus_quality": {
+        "text": "Latihan berkualitas tinggi, tapi dengan waktu yang lebih singkat. Tim merasa lebih siap, namun khawatir tentang stamina untuk turnamen panjang.",
+        "options": [
+          {"text": "Tambah latihan kardio di luar game", "next": "add_cardio_training"},
+          {"text": "Simulasikan jadwal turnamen dalam latihan", "next": "simulate_tournament"},
+          {"text": "Konsultasi dengan tim esports lain", "next": "consult_other_teams"}
+        ]
+      },
+      "pre_tournament_bootcamp": {
+        "text": "Bootcamp intensif meningkatkan kemampuan tim secara signifikan. Namun, konflik internal muncul karena tekanan tinggi.",
+        "options": [
+          {"text": "Adakan sesi mediasi tim", "next": "team_mediation"},
+          {"text": "Beri waktu bebas untuk meredakan ketegangan", "next": "give_free_time"},
+          {"text": "Fokus pada latihan individual", "next": "individual_training"}
+        ]
+      }
+    }
+  },
+  {
+    "id": "graveyard_pirates_journey",
+    "title": "Graveyard Pirates: Menuju Takhta Raja Bajak Laut",
+    "start": {
+      "text": "Anda adalah kapten Graveyard Pirates, sebuah kru bajak laut yang bercita-cita menjadi Raja Bajak Laut. Kapal Anda baru saja memasuki Grand Line, lautan paling berbahaya di dunia. Apa langkah pertama Anda dalam petualangan ini?",
+      "options": [
+        {"text": "Cari informasi tentang Poneglyph pertama", "next": "search_poneglyph"},
+        {"text": "Rekrut anggota kru baru di pulau terdekat", "next": "recruit_crew"},
+        {"text": "Tantang salah satu Yonko untuk membangun reputasi", "next": "challenge_yonko"}
+      ]
+    },
+    "nodes": {
+      "search_poneglyph": {
+        "text": "Anda mendengar rumor tentang Poneglyph di sebuah pulau terpencil. Namun, pulau tersebut dijaga oleh Angkatan Laut.",
+        "options": [
+          {"text": "Menyusup diam-diam ke pulau", "next": "infiltrate_island"},
+          {"text": "Negosiasi dengan penduduk lokal untuk bantuan", "next": "negotiate_locals"},
+          {"text": "Serang pangkalan Angkatan Laut secara langsung", "next": "attack_navy"}
+        ]
+      },
+      "recruit_crew": {
+        "text": "Di pulau terdekat, Anda menemukan tiga calon potensial: seorang navigator berbakat, seorang koki jenius, dan seorang penembak jitu.",
+        "options": [
+          {"text": "Rekrut navigator", "next": "recruit_navigator"},
+          {"text": "Rekrut koki", "next": "recruit_cook"},
+          {"text": "Rekrut penembak jitu", "next": "recruit_sniper"}
+        ]
+      },
+      "challenge_yonko": {
+        "text": "Anda menantang salah satu Yonko, tapi ternyata kekuatan Anda masih jauh di bawahnya. Yonko memberi Anda pilihan.",
+        "options": [
+          {"text": "Bergabung dengan aliansi Yonko", "next": "join_yonko_alliance"},
+          {"text": "Kabur dan berlatih lebih keras", "next": "flee_and_train"},
+          {"text": "Berjuang sampai akhir meski kalah", "next": "fight_to_end"}
+        ]
+      },
+      "infiltrate_island": {
+        "text": "Anda berhasil menyusup ke pulau dan menemukan Poneglyph. Namun, Anda tak bisa membacanya dan Angkatan Laut mulai mencurigai keberadaan Anda.",
+        "options": [
+          {"text": "Coba salin tulisan Poneglyph", "next": "copy_poneglyph"},
+          {"text": "Cari ahli sejarah untuk membantu", "next": "find_historian"},
+          {"text": "Ambil Poneglyph dan kabur", "next": "steal_poneglyph"}
+        ]
+      },
+      "negotiate_locals": {
+        "text": "Penduduk lokal bersedia membantu dengan syarat Anda mengalahkan monster laut yang mengganggu desa mereka.",
+        "options": [
+          {"text": "Hadapi monster laut", "next": "fight_sea_monster"},
+          {"text": "Cari cara untuk menjinakkan monster", "next": "tame_sea_monster"},
+          {"text": "Cari kelemahan monster dari legenda lokal", "next": "research_monster_weakness"}
+        ]
+      },
+      "attack_navy": {
+        "text": "Serangan Anda mengejutkan Angkatan Laut, tapi backup segera datang. Anda harus bertindak cepat.",
+        "options": [
+          {"text": "Terobos ke lokasi Poneglyph", "next": "break_through_to_poneglyph"},
+          {"text": "Tarik mundur kru dan rencanakan ulang", "next": "retreat_and_replan"},
+          {"text": "Gunakan pertempuran sebagai pengalihan", "next": "use_battle_as_diversion"}
+        ]
+      },
+      "recruit_navigator": {
+        "text": "Navigator baru memimpin Anda ke sebuah pulau tersembunyi. Di sana, Anda menemukan peta harta karun kuno.",
+        "options": [
+          {"text": "Ikuti peta harta karun", "next": "follow_treasure_map"},
+          {"text": "Jual informasi peta ke bajak laut lain", "next": "sell_map_info"},
+          {"text": "Gunakan pulau sebagai markas rahasia", "next": "use_island_as_base"}
+        ]
+      },
+      "recruit_cook": {
+        "text": "Koki baru membuat makanan yang meningkatkan stamina kru. Energi berlimpah, tapi persediaan bahan makanan menipis cepat.",
+        "options": [
+          {"text": "Singgah di pulau untuk mencari bahan makanan", "next": "forage_for_ingredients"},
+          {"text": "Curi persediaan dari kapal Angkatan Laut", "next": "steal_navy_supplies"},
+          {"text": "Tantang koki bajak laut lain untuk kontes memasak", "next": "cooking_contest"}
+        ]
+      },
+      "recruit_sniper": {
+        "text": "Penembak jitu membantu Anda mengalahkan kru bajak laut saingan. Bounty Anda meningkat, menarik perhatian Pemburu Bajak Laut.",
+        "options": [
+          {"text": "Hadapi Pemburu Bajak Laut", "next": "confront_bounty_hunters"},
+          {"text": "Bersembunyi di pulau kabut", "next": "hide_in_fog_island"},
+          {"text": "Menyamar dan menyusup ke kota", "next": "disguise_and_infiltrate"}
+        ]
+      },
+      "join_yonko_alliance": {
+        "text": "Anda bergabung dengan aliansi Yonko. Kekuatan Anda meningkat, tapi kebebasan terbatas. Yonko memberi misi berbahaya.",
+        "options": [
+          {"text": "Jalankan misi dengan setia", "next": "complete_yonko_mission"},
+          {"text": "Gunakan misi untuk mengumpulkan informasi rahasia", "next": "gather_secret_info"},
+          {"text": "Berkhianat dan serang Yonko saat lengah", "next": "betray_yonko"}
+        ]
+      },
+      "flee_and_train": {
+        "text": "Anda melarikan diri dan berlatih di sebuah pulau tersembunyi. Seorang mantan Raja Bajak Laut menawarkan untuk melatih Anda.",
+        "options": [
+          {"text": "Terima tawaran latihan", "next": "accept_training"},
+          {"text": "Cari kekuatan legenda tersembunyi di pulau", "next": "search_hidden_power"},
+          {"text": "Bentuk aliansi dengan kru bajak laut lain", "next": "form_pirate_alliance"}
+        ]
+      },
+      "fight_to_end": {
+        "text": "Meski kalah, semangat juang Anda mengesankan Yonko. Dia menawarkan untuk memberi tahu rahasia One Piece, tapi Anda harus meninggalkan kru.",
+        "options": [
+          {"text": "Tolak tawaran dan tetap setia pada kru", "next": "stay_loyal_to_crew"},
+          {"text": "Terima tawaran demi impian", "next": "accept_yonko_offer"},
+          {"text": "Tawar untuk membawa seluruh kru", "next": "negotiate_for_crew"}
+        ]
+      },
+      "copy_poneglyph": {
+        "text": "Anda berhasil menyalin tulisan Poneglyph, tapi tak bisa membacanya. Seorang arkeolog misterius menawarkan bantuan dengan imbalan bergabung dengan kru Anda.",
+        "options": [
+          {"text": "Terima arkeolog ke dalam kru", "next": "accept_archaeologist"},
+          {"text": "Cari cara lain untuk menerjemahkan", "next": "find_translation_method"},
+          {"text": "Simpan salinan untuk nanti", "next": "save_copy_for_later"}
+        ]
+      },
+      "find_historian": {
+        "text": "Anda menemukan seorang ahli sejarah yang bisa membantu, tapi dia ditawan oleh Pemerintah Dunia.",
+        "options": [
+          {"text": "Selamatkan ahli sejarah", "next": "rescue_historian"},
+          {"text": "Negosiasi dengan Pemerintah Dunia", "next": "negotiate_with_government"},
+          {"text": "Cari ahli sejarah lain", "next": "find_another_historian"}
+        ]
+      },
+      "steal_poneglyph": {
+        "text": "Anda berhasil mencuri Poneglyph, tapi beratnya membuat kapal Anda lambat. Angkatan Laut mulai mengejar.",
+        "options": [
+          {"text": "Buang Poneglyph untuk melarikan diri", "next": "discard_poneglyph"},
+          {"text": "Hadapi Angkatan Laut", "next": "confront_navy"},
+          {"text": "Sembunyikan kapal di kabut tebal", "next": "hide_in_thick_fog"}
+        ]
+      },
+      "fight_sea_monster": {
+        "text": "Pertarungan dengan monster laut sangat sengit. Anda menang, tapi kapal rusak parah.",
+        "options": [
+          {"text": "Perbaiki kapal dengan bantuan penduduk", "next": "repair_with_locals"},
+          {"text": "Cari kapal baru di pulau", "next": "find_new_ship"},
+          {"text": "Modifikasi kapal dengan bagian monster", "next": "modify_ship_with_monster_parts"}
+        ]
+      },
+      "tame_sea_monster": {
+        "text": "Secara mengejutkan, Anda berhasil menjinakkan monster laut. Sekarang Anda punya 'peliharaan' raksasa.",
+        "options": [
+          {"text": "Gunakan monster untuk melindungi pulau", "next": "use_monster_as_guardian"},
+          {"text": "Ajak monster bergabung dalam perjalanan", "next": "bring_monster_along"},
+          {"text": "Minta monster mencari harta karun di laut", "next": "monster_treasure_hunt"}
+        ]
+      },
+      "research_monster_weakness": {
+        "text": "Legenda mengungkap bahwa monster takut pada suara tertentu. Anda menemukan alat musik kuno di desa.",
+        "options": [
+          {"text": "Gunakan musik untuk mengusir monster", "next": "use_music_against_monster"},
+          {"text": "Kombinasikan musik dengan serangan", "next": "combine_music_and_attack"},
+          {"text": "Ajarkan penduduk cara menggunakan alat musik", "next": "teach_locals_music"}
+        ]
+      }
+    }
+  },
+  {
+    "id": "carpenter_president_journey",
+    "title": "Dari Bengkel ke Istana: Perjuangan Tukang Kayu Menuju Kursi Presiden",
+    "start": {
+      "text": "Anda adalah Pak Joko, seorang tukang kayu terampil di sebuah desa di Jawa Tengah. Suatu hari, setelah menyelesaikan proyek renovasi balai desa, Anda memutuskan untuk mengejar impian menjadi Presiden Indonesia. Langkah pertama apa yang akan Anda ambil?",
+      "options": [
+        {"text": "Mulai aktif di organisasi desa", "next": "join_village_org"},
+        {"text": "Daftar kuliah ilmu politik", "next": "enroll_political_science"},
+        {"text": "Bangun bisnis furnitur untuk modal politik", "next": "start_furniture_business"}
+      ]
+    },
+    "nodes": {
+      "join_village_org": {
+        "text": "Anda menjadi anggota aktif BPD (Badan Permusyawaratan Desa). Kepala desa terkesan dengan ide-ide Anda untuk pembangunan desa.",
+        "options": [
+          {"text": "Ajukan program pelatihan keterampilan untuk pemuda desa", "next": "youth_skill_program"},
+          {"text": "Usulkan pembangunan koperasi desa", "next": "propose_village_cooperative"},
+          {"text": "Pimpin gerakan kebersihan dan penghijauan desa", "next": "lead_village_cleanup"}
+        ]
+      },
+      "enroll_political_science": {
+        "text": "Anda mendaftar kuliah ilmu politik. Biaya kuliah cukup mahal, dan waktu Anda terbagi antara belajar dan bekerja.",
+        "options": [
+          {"text": "Fokus pada studi dan cari beasiswa", "next": "focus_on_study"},
+          {"text": "Seimbangkan kerja dan kuliah", "next": "balance_work_study"},
+          {"text": "Bergabung dengan organisasi mahasiswa", "next": "join_student_org"}
+        ]
+      },
+      "start_furniture_business": {
+        "text": "Bisnis furnitur Anda berkembang pesat. Seorang pengusaha besar tertarik berinvestasi, tapi dengan syarat Anda fokus pada bisnis.",
+        "options": [
+          {"text": "Terima investasi dan ekspansi bisnis", "next": "accept_investment"},
+          {"text": "Tolak dan pertahankan skala UKM", "next": "maintain_small_business"},
+          {"text": "Negosiasi untuk mendapatkan jaringan politik investor", "next": "negotiate_political_network"}
+        ]
+      },
+      "youth_skill_program": {
+        "text": "Program pelatihan sukses. Bupati menawari Anda posisi di dinas tenaga kerja kabupaten.",
+        "options": [
+          {"text": "Terima tawaran posisi di kabupaten", "next": "accept_regency_position"},
+          {"text": "Tolak dan fokus mengembangkan program di desa", "next": "focus_village_development"},
+          {"text": "Usulkan kemitraan desa-kabupaten", "next": "propose_village_regency_partnership"}
+        ]
+      },
+      "propose_village_cooperative": {
+        "text": "Koperasi desa berjalan baik dan meningkatkan ekonomi lokal. Media lokal meliput kesuksesan ini.",
+        "options": [
+          {"text": "Gunakan perhatian media untuk promosi diri", "next": "use_media_attention"},
+          {"text": "Ajak desa lain meniru model koperasi", "next": "spread_cooperative_model"},
+          {"text": "Kembangkan koperasi ke bisnis yang lebih besar", "next": "expand_cooperative_business"}
+        ]
+      },
+      "lead_village_cleanup": {
+        "text": "Gerakan Anda sukses dan desa menjadi contoh kebersihan. LSM lingkungan menawarkan kerjasama untuk proyek yang lebih besar.",
+        "options": [
+          {"text": "Kerjasama dengan LSM untuk proyek nasional", "next": "collaborate_with_ngo"},
+          {"text": "Gunakan kesuksesan ini untuk maju sebagai calon kepala desa", "next": "run_for_village_head"},
+          {"text": "Buat program lingkungan berbasis teknologi", "next": "create_eco_tech_program"}
+        ]
+      },
+      "focus_on_study": {
+        "text": "Anda mendapat beasiswa dan lulus dengan predikat cum laude. Beberapa partai politik tertarik merekrut Anda.",
+        "options": [
+          {"text": "Bergabung dengan partai besar", "next": "join_major_party"},
+          {"text": "Bergabung dengan partai kecil tapi idealis", "next": "join_idealist_party"},
+          {"text": "Tetap independen dan bangun jaringan sendiri", "next": "stay_independent"}
+        ]
+      },
+      "balance_work_study": {
+        "text": "Menyeimbangkan kerja dan kuliah sulit, tapi Anda mendapat banyak pengalaman praktis. Seorang dosen menawarkan posisi asisten peneliti.",
+        "options": [
+          {"text": "Terima posisi asisten peneliti", "next": "accept_research_assistant"},
+          {"text": "Fokus pada proyek pemberdayaan masyarakat", "next": "focus_community_project"},
+          {"text": "Cari magang di lembaga pemerintahan", "next": "seek_government_internship"}
+        ]
+      },
+      "join_student_org": {
+        "text": "Anda menjadi pemimpin organisasi mahasiswa yang vokal. Aksi protes yang Anda pimpin menarik perhatian nasional.",
+        "options": [
+          {"text": "Negosiasi dengan pemerintah", "next": "negotiate_with_government"},
+          {"text": "Perluas gerakan ke tingkat nasional", "next": "expand_movement_nationally"},
+          {"text": "Moderat aksi dan bangun dialog", "next": "moderate_actions"}
+        ]
+      },
+      "accept_investment": {
+        "text": "Bisnis Anda meroket, tapi tuntutan pekerjaan menjauhkan Anda dari cita-cita politik. Investor menyarankan Anda masuk dunia politik melalui asosiasi pengusaha.",
+        "options": [
+          {"text": "Ikuti saran investor dan masuk asosiasi pengusaha", "next": "join_business_association"},
+          {"text": "Gunakan kekayaan untuk filantropi dan bangun citra", "next": "use_wealth_for_philanthropy"},
+          {"text": "Jual sebagian bisnis dan fokus ke politik", "next": "sell_business_focus_politics"}
+        ]
+      },
+      "maintain_small_business": {
+        "text": "UKM Anda stabil dan memberi Anda fleksibilitas. Anda dikenal sebagai pengusaha yang peduli pada komunitas lokal.",
+        "options": [
+          {"text": "Bentuk asosiasi UKM dan pimpin advokasi", "next": "lead_sme_association"},
+          {"text": "Mulai program magang untuk generasi muda", "next": "start_youth_internship"},
+          {"text": "Kampanyekan ekonomi berbasis komunitas", "next": "campaign_community_economy"}
+        ]
+      },
+      "negotiate_political_network": {
+        "text": "Investor setuju membantu jaringan politik. Anda diperkenalkan pada beberapa tokoh berpengaruh, tapi mereka meminta komitmen tertentu.",
+        "options": [
+          {"text": "Setuju dengan komitmen untuk akses politik", "next": "agree_to_commitments"},
+          {"text": "Tolak komitmen dan cari jalan sendiri", "next": "reject_commitments"},
+          {"text": "Negosiasi ulang untuk syarat yang lebih sesuai", "next": "renegotiate_terms"}
+        ]
+      },
+      "accept_regency_position": {
+        "text": "Sebagai pejabat kabupaten, Anda punya pengaruh lebih besar tapi juga tantangan birokrasi. Anda menemukan beberapa praktik korupsi.",
+        "options": [
+          {"text": "Laporkan korupsi ke KPK", "next": "report_corruption"},
+          {"text": "Coba perbaiki sistem dari dalam", "next": "reform_from_within"},
+          {"text": "Kumpulkan bukti diam-diam untuk digunakan nanti", "next": "gather_evidence_quietly"}
+        ]
+      },
+      "focus_village_development": {
+        "text": "Desa Anda menjadi model pembangunan. Gubernur ingin mereplikasi kesuksesan ini dan menawarkan Anda posisi penasehat.",
+        "options": [
+          {"text": "Terima posisi penasehat gubernur", "next": "accept_governor_advisor"},
+          {"text": "Tolak dan calonkan diri sebagai kepala desa", "next": "run_for_village_head"},
+          {"text": "Buat LSM untuk menyebarkan model pembangunan", "next": "create_development_ngo"}
+        ]
+      },
+      "propose_village_regency_partnership": {
+        "text": "Kemitraan berhasil dan menjadi contoh nasional. Kementerian Desa tertarik mengadopsi model Anda.",
+        "options": [
+          {"text": "Terima tawaran bekerja di kementerian", "next": "work_for_ministry"},
+          {"text": "Jadikan ini platform untuk pencalonan legislatif", "next": "use_as_legislative_platform"},
+          {"text": "Kembangkan model ke skala provinsi", "next": "expand_to_provincial_scale"}
+        ]
+      }
+    }
+  },
+  {
+    "id": "minion_to_demon_king_journey",
+    "title": "Dari Kroco ke Raja Iblis: Kebangkitan Sang Penguasa Kegelapan",
+    "start": {
+      "text": "Anda adalah Luke, kroco level rendah di pasukan Raja Iblis. Suatu hari, Anda menyaksikan Raja Iblis dikalahkan oleh sekelompok pahlawan. Di tengah kekacauan, Anda menemukan pecahan kristal kekuatan Raja Iblis. Apa yang Anda lakukan?",
+      "options": [
+        {"text": "Serap kekuatan kristal", "next": "absorb_crystal"},
+        {"text": "Sembunyikan kristal dan pelajari diam-diam", "next": "hide_study_crystal"},
+        {"text": "Cari kroco lain untuk membentuk aliansi", "next": "form_minion_alliance"}
+      ]
+    },
+    "nodes": {
+      "absorb_crystal": {
+        "text": "Anda menyerap kekuatan kristal dan merasakan ledakan energi dahsyat. Namun, kontrol atas kekuatan baru ini sulit. Beberapa iblis mulai memperhatikan perubahan Anda.",
+        "options": [
+          {"text": "Berlatih mengendalikan kekuatan secara rahasia", "next": "train_secretly"},
+          {"text": "Pamer kekuatan untuk menakuti iblis lain", "next": "show_off_power"},
+          {"text": "Cari guru untuk membantu mengendalikan kekuatan", "next": "seek_mentor"}
+        ]
+      },
+      "hide_study_crystal": {
+        "text": "Anda menyembunyikan kristal dan mulai mempelajarinya. Pengetahuan Anda tentang sihir hitam meningkat pesat. Seorang iblis senior mencurigai aktivitas Anda.",
+        "options": [
+          {"text": "Tawarkan untuk berbagi pengetahuan dengan iblis senior", "next": "share_knowledge"},
+          {"text": "Tipu iblis senior dan curi pengetahuannya", "next": "deceive_senior_demon"},
+          {"text": "Tinggalkan wilayah untuk menghindari kecurigaan", "next": "leave_territory"}
+        ]
+      },
+      "form_minion_alliance": {
+        "text": "Anda berhasil membentuk aliansi dengan beberapa kroco. Bersama-sama, kalian lebih kuat, tapi ada perselisihan internal tentang kepemimpinan.",
+        "options": [
+          {"text": "Ambil alih kepemimpinan dengan paksa", "next": "forceful_leadership"},
+          {"text": "Buat sistem kepemimpinan bersama", "next": "shared_leadership"},
+          {"text": "Manipulasi dari balik layar", "next": "behind_scenes_manipulation"}
+        ]
+      },
+      "train_secretly": {
+        "text": "Latihan rahasia Anda membuahkan hasil. Kekuatan Anda meningkat drastis, tapi Anda kesulitan menyembunyikannya. Rumor tentang iblis kuat misterius mulai menyebar.",
+        "options": [
+          {"text": "Ungkap identitas dan klaim wilayah", "next": "reveal_claim_territory"},
+          {"text": "Bentuk kelompok kultus rahasia", "next": "form_secret_cult"},
+          {"text": "Tantang pemimpin iblis lokal", "next": "challenge_local_leader"}
+        ]
+      },
+      "show_off_power": {
+        "text": "Demonstrasi kekuatan Anda menimbulkan ketakutan dan kekaguman. Banyak iblis ingin bergabung dengan Anda, tapi beberapa mulai melihat Anda sebagai ancaman.",
+        "options": [
+          {"text": "Terima pengikut dan bentuk pasukan", "next": "accept_followers"},
+          {"text": "Eliminasi mereka yang mengancam", "next": "eliminate_threats"},
+          {"text": "Gunakan kekuatan untuk 'melindungi' wilayah", "next": "protect_territory"}
+        ]
+      },
+      "seek_mentor": {
+        "text": "Anda menemukan mentor, seorang iblis kuno yang diasingkan. Dia menawarkan untuk mengajari Anda, tapi dengan harga yang mencurigakan.",
+        "options": [
+          {"text": "Terima tawaran mentoring", "next": "accept_mentorship"},
+          {"text": "Curi pengetahuan dan khianati mentor", "next": "betray_mentor"},
+          {"text": "Negosiasi syarat yang lebih menguntungkan", "next": "negotiate_terms"}
+        ]
+      },
+      "share_knowledge": {
+        "text": "Iblis senior tertarik dengan pengetahuan Anda. Dia menawarkan posisi di lingkaran dalamnya, tapi Anda harus menyerahkan kristal.",
+        "options": [
+          {"text": "Terima tawaran dan serahkan kristal", "next": "accept_inner_circle"},
+          {"text": "Tolak dan tantang iblis senior", "next": "challenge_senior_demon"},
+          {"text": "Pura-pura setuju dan rencanakan pengkhianatan", "next": "plan_betrayal"}
+        ]
+      },
+      "deceive_senior_demon": {
+        "text": "Anda berhasil menipu iblis senior dan mencuri pengetahuannya. Kekuatan Anda meningkat, tapi Anda kini diburu.",
+        "options": [
+          {"text": "Sembunyi dan tingkatkan kekuatan", "next": "hide_and_power_up"},
+          {"text": "Hadapi para pemburu", "next": "confront_hunters"},
+          {"text": "Cari perlindungan dari faksi iblis lain", "next": "seek_protection"}
+        ]
+      },
+      "leave_territory": {
+        "text": "Anda meninggalkan wilayah dan menemukan tanah terlantar yang dulu dikuasai Raja Iblis. Sisa-sisa kekuatannya masih terasa.",
+        "options": [
+          {"text": "Bangun benteng di tanah terlantar", "next": "build_fortress"},
+          {"text": "Serap sisa kekuatan Raja Iblis", "next": "absorb_residual_power"},
+          {"text": "Cari artefak kuno tersembunyi", "next": "search_ancient_artifacts"}
+        ]
+      },
+      "forceful_leadership": {
+        "text": "Anda mengambil alih kepemimpinan dengan paksa. Aliansi menjadi lebih kuat, tapi beberapa anggota merencanakan kudeta.",
+        "options": [
+          {"text": "Terapkan sistem teror untuk mencegah kudeta", "next": "implement_terror"},
+          {"text": "Beri penghargaan pada pengikut setia", "next": "reward_loyalists"},
+          {"text": "Tantang pembelot untuk duel sampai mati", "next": "challenge_traitors"}
+        ]
+      },
+      "shared_leadership": {
+        "text": "Sistem kepemimpinan bersama membuat aliansi stabil, tapi lambat dalam mengambil keputusan. Ancaman dari luar semakin mendekat.",
+        "options": [
+          {"text": "Usulkan struktur militer untuk efisiensi", "next": "propose_military_structure"},
+          {"text": "Bentuk dewan rahasia yang Anda kontrol", "next": "form_secret_council"},
+          {"text": "Gabungkan aliansi dengan faksi yang lebih besar", "next": "merge_with_larger_faction"}
+        ]
+      },
+      "behind_scenes_manipulation": {
+        "text": "Manipulasi Anda berhasil, aliansi menjadi kuat tanpa menyadari pengaruh Anda. Namun, seorang anggota mulai curiga.",
+        "options": [
+          {"text": "Singkirkan anggota yang curiga", "next": "eliminate_suspicious_member"},
+          {"text": "Rekrut dia sebagai kaki tangan", "next": "recruit_as_confidant"},
+          {"text": "Alihkan kecurigaan ke rival", "next": "divert_suspicion"}
+        ]
+      },
+      "reveal_claim_territory": {
+        "text": "Anda mengungkap identitas dan mengklaim wilayah. Banyak iblis terkejut dan ketakutan, tapi beberapa bersedia bergabung. Raja Iblis lain mulai memperhatikan Anda.",
+        "options": [
+          {"text": "Siapkan pertahanan untuk serangan", "next": "prepare_defenses"},
+          {"text": "Kirim utusan ke Raja Iblis lain", "next": "send_envoys"},
+          {"text": "Serang wilayah tetangga untuk ekspansi", "next": "attack_neighbors"}
+        ]
+      },
+      "form_secret_cult": {
+        "text": "Kultus rahasia Anda berkembang pesat. Para pengikut sangat setia, tapi aktivitas kultus menarik perhatian Ksatria Suci.",
+        "options": [
+          {"text": "Pindahkan kultus ke dimensi lain", "next": "move_to_other_dimension"},
+          {"text": "Ubah kultus menjadi 'agama' resmi", "next": "convert_to_official_religion"},
+          {"text": "Lakukan ritual besar untuk tingkatkan kekuatan", "next": "perform_grand_ritual"}
+        ]
+      },
+      "challenge_local_leader": {
+        "text": "Anda menantang dan mengalahkan pemimpin iblis lokal. Wilayahnya kini menjadi milik Anda, tapi pengikutnya terbagi antara loyal dan memberontak.",
+        "options": [
+          {"text": "Tawarkan pengampunan pada pengikut lama", "next": "offer_amnesty"},
+          {"text": "Ganti semua pengikut dengan yang baru", "next": "replace_followers"},
+          {"text": "Adakan kontes untuk posisi dalam pemerintahan", "next": "hold_contest"}
+        ]
+      }
+    }
+  },
+  {
+    "id": "trapped_in_minecraft",
+    "title": "Terjebak di Dunia Kubus: Petualangan Minecraft",
+    "start": {
+      "text": "Anda adalah Steve, seorang gamer biasa yang tiba-tiba terbangun di dunia Minecraft. Di sekitar Anda hanya ada pohon dan padang rumput sejauh mata memandang. Hari mulai gelap dan Anda mendengar suara monster di kejauhan. Apa yang Anda lakukan?",
+      "options": [
+        {"text": "Mulai menebang pohon untuk kayu", "next": "gather_wood"},
+        {"text": "Cari gua untuk berlindung", "next": "find_cave"},
+        {"text": "Buat alat sederhana dari batu", "next": "craft_stone_tools"}
+      ]
+    },
+    "nodes": {
+      "gather_wood": {
+        "text": "Anda berhasil mengumpulkan beberapa kayu. Malam semakin dekat dan Anda melihat zombie di kejauhan.",
+        "options": [
+          {"text": "Buat rumah kayu sederhana", "next": "build_wooden_house"},
+          {"text": "Buat obor dan jelajahi area", "next": "craft_torch_explore"},
+          {"text": "Naik ke atas pohon untuk keamanan", "next": "climb_tree"}
+        ]
+      },
+      "find_cave": {
+        "text": "Anda menemukan gua kecil. Di dalam gelap, tapi Anda mendengar suara air mengalir dan melihat kilau batu bara.",
+        "options": [
+          {"text": "Tambang batu bara untuk penerangan", "next": "mine_coal"},
+          {"text": "Ikuti suara air", "next": "follow_water_sound"},
+          {"text": "Tutup pintu masuk gua untuk keamanan", "next": "seal_cave_entrance"}
+        ]
+      },
+      "craft_stone_tools": {
+        "text": "Anda membuat kapak dan sekop batu. Dengan alat baru, Anda merasa lebih siap. Tiba-tiba, Anda melihat sebuah desa di kejauhan.",
+        "options": [
+          {"text": "Pergi ke desa", "next": "go_to_village"},
+          {"text": "Gali lubang dan bersembunyi sampai pagi", "next": "dig_hole_hide"},
+          {"text": "Mulai membangun rumah dengan alat baru", "next": "build_house_new_tools"}
+        ]
+      },
+      "build_wooden_house": {
+        "text": "Anda berhasil membangun rumah kayu kecil tepat sebelum malam tiba. Dari dalam, Anda mendengar monster di luar.",
+        "options": [
+          {"text": "Tunggu sampai pagi di dalam rumah", "next": "wait_until_morning"},
+          {"text": "Buat jendela untuk mengintip keluar", "next": "make_windows"},
+          {"text": "Gali ke bawah untuk mencari sumber daya", "next": "dig_for_resources"}
+        ]
+      },
+      "craft_torch_explore": {
+        "text": "Dengan obor di tangan, Anda menjelajahi area. Anda menemukan sebuah dungeon kecil dengan peti harta karun, tapi juga melihat spawner skeleton.",
+        "options": [
+          {"text": "Coba rampok peti harta karun", "next": "loot_chest"},
+          {"text": "Hancurkan spawner skeleton", "next": "destroy_spawner"},
+          {"text": "Tandai lokasi dan kembali saat lebih siap", "next": "mark_location_return"}
+        ]
+      },
+      "climb_tree": {
+        "text": "Dari atas pohon, Anda melihat pemandangan luas. Di kejauhan, Anda melihat gunung dengan salju dan hutan bamboo.",
+        "options": [
+          {"text": "Menuju gunung bersalju", "next": "head_to_snowy_mountain"},
+          {"text": "Jelajahi hutan bamboo", "next": "explore_bamboo_forest"},
+          {"text": "Buat rumah pohon", "next": "build_treehouse"}
+        ]
+      },
+      "mine_coal": {
+        "text": "Anda berhasil menambang beberapa batu bara dan membuat obor. Gua menjadi terang, dan Anda melihat bijih besi tak jauh dari sana.",
+        "options": [
+          {"text": "Tambang bijih besi", "next": "mine_iron_ore"},
+          {"text": "Jelajahi gua lebih dalam", "next": "explore_deeper_cave"},
+          {"text": "Kembali ke permukaan dengan sumber daya", "next": "return_to_surface"}
+        ]
+      },
+      "follow_water_sound": {
+        "text": "Anda menemukan sumber air bawah tanah dengan air terjun kecil. Di dekatnya, Anda melihat kilauan merah - bijih redstone.",
+        "options": [
+          {"text": "Tambang redstone", "next": "mine_redstone"},
+          {"text": "Buat sistem irigasi", "next": "create_irrigation"},
+          {"text": "Cari sumber air untuk jalan keluar", "next": "find_water_exit"}
+        ]
+      },
+      "seal_cave_entrance": {
+        "text": "Anda menutup pintu masuk gua, merasa aman dari monster. Namun, Anda juga terjebak dalam kegelapan.",
+        "options": [
+          {"text": "Coba buat obor dari bahan seadanya", "next": "improvise_torch"},
+          {"text": "Gali jalan keluar baru", "next": "dig_new_exit"},
+          {"text": "Meditasi dan tunggu sampai pagi", "next": "meditate_wait"}
+        ]
+      },
+      "go_to_village": {
+        "text": "Anda tiba di desa. Para villager menyambut Anda, dan Anda melihat berbagai bangunan termasuk blacksmith dan perpustakaan.",
+        "options": [
+          {"text": "Kunjungi blacksmith untuk upgrade peralatan", "next": "visit_blacksmith"},
+          {"text": "Periksa perpustakaan untuk informasi", "next": "check_library"},
+          {"text": "Bantu villager untuk mendapatkan kepercayaan", "next": "help_villagers"}
+        ]
+      },
+      "dig_hole_hide": {
+        "text": "Anda menggali lubang dan bersembunyi. Sepanjang malam, Anda mendengar suara monster di atas. Pagi tiba, dan Anda menemukan beberapa bijih besi di dinding lubang Anda.",
+        "options": [
+          {"text": "Tambang bijih besi", "next": "mine_found_iron"},
+          {"text": "Keluar dan mulai hari baru", "next": "start_new_day"},
+          {"text": "Perluas lubang menjadi bunker bawah tanah", "next": "expand_underground_base"}
+        ]
+      },
+      "build_house_new_tools": {
+        "text": "Dengan alat baru, Anda membangun rumah kokoh dari batu. Saat membangun, Anda menemukan sebuah ruang bawah tanah kuno.",
+        "options": [
+          {"text": "Jelajahi ruang bawah tanah", "next": "explore_ancient_basement"},
+          {"text": "Tutup ruang bawah tanah dan lanjutkan membangun", "next": "seal_continue_building"},
+          {"text": "Gunakan ruang bawah tanah sebagai gudang", "next": "use_basement_storage"}
+        ]
+      },
+      "wait_until_morning": {
+        "text": "Anda bertahan sepanjang malam. Pagi tiba, dan Anda melihat beberapa hewan di sekitar rumah Anda - sapi, ayam, dan domba.",
+        "options": [
+          {"text": "Buat kandang dan kumpulkan hewan", "next": "build_animal_pen"},
+          {"text": "Berburu untuk makanan", "next": "hunt_for_food"},
+          {"text": "Mulai membuat kebun", "next": "start_farming"}
+        ]
+      },
+      "make_windows": {
+        "text": "Anda membuat jendela dan melihat keluar. Di kejauhan, Anda melihat cahaya - sepertinya ada struktur lain di sana.",
+        "options": [
+          {"text": "Tunggu sampai pagi dan jelajahi", "next": "wait_explore_structure"},
+          {"text": "Coba pergi ke sana sekarang", "next": "go_to_structure_night"},
+          {"text": "Perkuat rumah untuk eksplorasi besok", "next": "fortify_house"}
+        ]
+      },
+      "dig_for_resources": {
+        "text": "Anda menggali ke bawah dan menemukan gua kecil. Ada beberapa bijih besi dan sebuah minecart terbengkalai.",
+        "options": [
+          {"text": "Tambang bijih besi", "next": "mine_iron_underground"},
+          {"text": "Periksa minecart", "next": "check_abandoned_minecart"},
+          {"text": "Jelajahi gua lebih jauh", "next": "explore_small_cave"}
+        ]
+      }
+    }
   }
 ]
