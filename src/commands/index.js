@@ -16,6 +16,7 @@ export { adventure } from './adventureCommand.js';
 export { default as getpp } from './getProfilePicture.js';
 export { default as stats } from './stats.js';
 export { default as jadwalSholat } from './jadwalSholat.js';
+
 export const GENERAL_COMMANDS = [
     'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 
     'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat'

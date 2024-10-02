@@ -2,31 +2,29 @@ import * as commands from '../commands/index.js';
 import { PREFIX, ADMIN_COMMANDS, GENERAL_COMMANDS } from '../config/constants.js';
 import { isAdmin } from '../utils/adminChecker.js';
 import logger from '../utils/logger.js';
-import * as commands from '../commands/index.js';
 
 export const handleRegularCommand = async (message, chat, sender) => {
   const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
   const commandName = command.toLowerCase();
 
-  logger.info(`Regular command received: ${commandName}`);
+  console.log(`Attempting to execute command: ${commandName}`);
 
-  const commandFunction = commands[commandName];
-  if (commandFunction) {
-    if (ADMIN_COMMANDS.includes(commandName) && !isAdmin(chat, sender)) {
-      await message.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
-      return;
-    }
-
-    logger.info(`Executing command: ${commandName}`);
-    try {
-      await commandFunction(message, args);
-      logger.info(`Command ${commandName} executed successfully`);
-    } catch (error) {
-      logger.error(`Error executing command ${commandName}:`, error);
-      await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
+  if (GENERAL_COMMANDS.includes(commandName)) {
+    const commandFunction = commands[commandName];
+    if (commandFunction) {
+      try {
+        await commandFunction(message, args);
+        console.log(`Command ${commandName} executed successfully`);
+      } catch (error) {
+        console.error(`Error executing command ${commandName}:`, error);
+        await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
+      }
+    } else {
+      console.warn(`Command function not found for: ${commandName}`);
+      await message.reply('Perintah tidak dapat dieksekusi. Mohon hubungi admin bot.');
     }
   } else {
-    logger.warn(`Unknown command: ${commandName}`);
+    console.warn(`Unknown command: ${commandName}`);
     await message.reply('Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
   }
 };
