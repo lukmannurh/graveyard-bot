@@ -5,7 +5,10 @@ import { isGroupAuthorized } from '../utils/authorizedGroups.js';
 import { OWNER_NUMBER, PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
 import adventureManager from '../utils/adventureManager.js';
+import groupStats from '../utils/groupStats.js';
 import { handleAdventureChoice } from '../commands/adventureCommand.js';
+
+await groupStats.loadStats();
 
 const messageHandler = async (message) => {
   try {
@@ -15,6 +18,10 @@ const messageHandler = async (message) => {
     const sender = await message.getContact();
     const groupId = chat.id._serialized;
     const userId = sender.id._serialized;
+
+    // Log pesan untuk statistik
+    groupStats.logMessage(groupId, userId);
+    await groupStats.saveStats();
 
     logger.debug(`Message received - Type: ${message.type}, From: ${userId}, Group: ${groupId}, Body: ${message.body}`);
 

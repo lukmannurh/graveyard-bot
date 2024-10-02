@@ -18,7 +18,8 @@ const menu = async (message) => {
       { name: 'bandarsabu', description: 'Mendapatkan kontak Imam Bandar Sabu Lampung' },
       { name: 'cekjomok', description: 'Mengecek tingkat jomok Anda' },
       { name: 'adventure', description: 'Memulai petualangan teks interaktif' },
-      { name: 'getpp @user', description: 'Mengambil dan mengirim foto profil pengguna yang di-tag' }
+      { name: 'getpp @user', description: 'Mengambil dan mengirim foto profil pengguna yang di-tag' },
+      { name: 'stats', description: 'Menampilkan statistik aktivitas grup untuk bulan ini' }
     ];
 
     const adminCommands = [

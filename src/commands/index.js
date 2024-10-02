@@ -13,7 +13,6 @@ export { default as random } from './random.js';
 export { bandarsabu } from './contactCommands.js';
 export { cekjomok } from './funCommands.js';
 export { adventure } from './adventureCommand.js';
-// ... (import lainnya tetap sama)
 export { default as getpp } from './getProfilePicture.js';
-
-// ... (ekspor lainnya tetap sama)
+export { default as stats } from './stats.js';
+export const GENERAL_COMMANDS = ['menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats'];
