@@ -17,7 +17,8 @@ const menu = async (message) => {
       { name: 'waifu [jumlah]', description: 'Mendapatkan gambar waifu acak (1-10 gambar)' },
       { name: 'bandarsabu', description: 'Mendapatkan kontak Imam Bandar Sabu Lampung' },
       { name: 'cekjomok', description: 'Mengecek tingkat jomok Anda' },
-      { name: 'adventure', description: 'Memulai petualangan teks interaktif' }
+      { name: 'adventure', description: 'Memulai petualangan teks interaktif' },
+      { name: 'getpp @user', description: 'Mengambil dan mengirim foto profil pengguna yang di-tag' }
     ];
 
     const adminCommands = [
@@ -25,8 +26,7 @@ const menu = async (message) => {
       { name: 'tagall', description: 'Menandai semua anggota grup' },
       { name: 'kick @user', description: 'Mengeluarkan anggota dari grup' },
       { name: 'ban @user', description: 'Mem-ban pengguna dari grup' },
-      { name: 'unban @user', description: 'Menghapus ban pengguna dari grup' },
-      { name: 'getpp @user', description: 'Mengambil dan mengirim foto profil pengguna yang di-tag' }
+      { name: 'unban @user', description: 'Menghapus ban pengguna dari grup' }
     ];
 
     const ownerCommands = [
