@@ -915,13 +915,37 @@
         ]
       },
       "accept_solo": {
-        "text": "Aldo menerima bagian solo. Performanya meningkat, tapi ketegangan dalam grup mulai terasa. Seorang anggota bahkan mengancam untuk keluar.",
-        "options": [
-          {"text": "Bicarakan masalah ini dengan manajer", "next": "discuss_with_manager"},
-          {"text": "Bagi bagian solo dengan anggota lain", "next": "share_solo_part"},
-          {"text": "Adakan pertemuan tim untuk menyelesaikan masalah", "next": "team_meeting"}
-        ]
-      },
+      "text": "Aldo menerima bagian solo. Performanya meningkat, tapi ketegangan dalam grup mulai terasa. Seorang anggota bahkan mengancam untuk keluar.",
+      "options": [
+        {"text": "Bicarakan masalah ini dengan manajer", "next": "discuss_with_manager"},
+        {"text": "Bagi bagian solo dengan anggota lain", "next": "share_solo_part"},
+        {"text": "Adakan pertemuan tim untuk menyelesaikan masalah", "next": "team_meeting"}
+      ]
+    },
+    "discuss_with_manager": {
+      "text": "Anda membicarakan masalah ini dengan manajer. Manajer menyarankan untuk mengadakan sesi team building.",
+      "options": [
+        {"text": "Setuju dan adakan sesi team building", "next": "team_building_session"},
+        {"text": "Usulkan rotasi bagian solo", "next": "suggest_solo_rotation"},
+        {"text": "Minta manajer bicara langsung dengan anggota yang tidak puas", "next": "manager_talk_to_members"}
+      ]
+    },
+    "share_solo_part": {
+      "text": "Anda memutuskan untuk membagi bagian solo dengan anggota lain. Ini mengurangi ketegangan, tapi beberapa penggemar kecewa.",
+      "options": [
+        {"text": "Jelaskan keputusan kepada penggemar", "next": "explain_to_fans"},
+        {"text": "Fokus pada peningkatan kualitas penampilan grup", "next": "focus_on_group_performance"},
+        {"text": "Cari cara kreatif untuk memuaskan penggemar", "next": "creative_fan_satisfaction"}
+      ]
+    },
+    "team_meeting": {
+      "text": "Anda mengadakan pertemuan tim untuk menyelesaikan masalah. Semua anggota mendapat kesempatan untuk mengutarakan pendapat mereka.",
+      "options": [
+        {"text": "Buat sistem pembagian bagian yang lebih adil", "next": "fair_part_distribution"},
+        {"text": "Usulkan proyek kolaborasi antar anggota", "next": "collaborative_project"},
+        {"text": "Bentuk komite untuk menangani konflik internal", "next": "form_conflict_committee"}
+      ]
+    },
       "suggest_duet": {
         "text": "Ide duet Aldo diterima dengan antusias. Manajer memintanya memilih partner duet.",
         "options": [
