@@ -5,6 +5,7 @@ import { isGroupAuthorized } from '../utils/authorizedGroups.js';
 import { OWNER_NUMBER, PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
 import adventureManager from '../utils/adventureManager.js';
+import { handleAdventureChoice } from '../commands/adventureCommand.js';
 
 const messageHandler = async (message) => {
   try {
@@ -24,8 +25,6 @@ const messageHandler = async (message) => {
       // Handle adventure choice if there's an active game and the message is a number
       logger.debug('Processing adventure choice');
       await handleAdventureChoice(message);
-      adventureManager.resetTimeout(groupId, 
-        (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
     } else if (message.body.startsWith(PREFIX)) {
       if (isOwner) {
         await handleOwnerCommand(message, groupId);

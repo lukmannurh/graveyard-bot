@@ -71,16 +71,21 @@ class AdventureManager {
     this.timeouts.set(groupId, timeout);
   }
 
+  resetTimeout(groupId, callback) {
+    this.clearTimeout(groupId);
+    const timeout = setTimeout(() => {
+      logger.debug(`Timeout reached for group ${groupId}`);
+      callback(groupId);
+    }, 60000); // 1 minute
+    this.timeouts.set(groupId, timeout);
+  }
+
   clearTimeout(groupId) {
     const existingTimeout = this.timeouts.get(groupId);
     if (existingTimeout) {
       clearTimeout(existingTimeout);
       this.timeouts.delete(groupId);
     }
-  }
-
-  resetTimeout(groupId, callback) {
-    this.startTimeout(groupId, callback);
   }
 }
 
