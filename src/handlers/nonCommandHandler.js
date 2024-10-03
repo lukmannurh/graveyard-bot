@@ -8,6 +8,8 @@ export const handleNonCommandMessage = async (message, chat, sender) => {
   const groupId = chat.id._serialized;
   const userId = sender.id._serialized;
 
+  logger.debug(`Handling non-command message: ${message.body} in group ${groupId} from user ${userId}`);
+
   // Check if user is banned
   if (isUserBanned(groupId, userId)) {
     logger.info(`Banned user ${sender.id.user} attempted to send a message in group ${chat.name}`);
@@ -25,15 +27,23 @@ export const handleNonCommandMessage = async (message, chat, sender) => {
   }
 
   // Check for adventure choice
-  if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
-    logger.debug(`Processing adventure choice: ${message.body} for group ${groupId}`);
-    try {
-      await handleAdventureChoice(message);
-      return; // Tambahkan return di sini untuk menghentikan eksekusi lebih lanjut
-    } catch (error) {
-      logger.error('Error processing adventure choice:', error);
+  if (adventureManager.isGameActive(groupId)) {
+    logger.debug(`Active game found for group ${groupId}`);
+    if (/^\d+$/.test(message.body.trim())) {
+      logger.debug(`Processing adventure choice: ${message.body} for group ${groupId} from user ${userId}`);
+      try {
+        await handleAdventureChoice(message);
+        return; // Return here to prevent further processing
+      } catch (error) {
+        logger.error('Error processing adventure choice:', error);
+      }
+    } else {
+      logger.debug(`Non-numeric message received during active game: ${message.body}`);
     }
+  } else {
+    logger.debug(`No active game for group ${groupId}`);
   }
+
   // Check for forbidden words
   const forbiddenCheck = checkForbiddenWord(message.body, userId);
   if (forbiddenCheck.found) {
