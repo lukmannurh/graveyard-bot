@@ -34,9 +34,7 @@ const messageHandler = async (message) => {
 
     if (isOwnerUser) {
       // Owner can always use all commands and send messages
-      if (message.body.startsWith(PREFIX)) {
-        await handleOwnerCommand(message, groupId);
-      }
+      await handleOwnerCommand(message, groupId);
       return;
     }
 

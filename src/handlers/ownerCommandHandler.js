@@ -6,6 +6,7 @@ import authorizeGroup from '../commands/authorizeGroup.js';
 import { handleRegularCommand } from './regularCommandHandler.js';
 import { handleNonCommandMessage } from './nonCommandHandler.js';
 import adventureManager from '../utils/adventureManager.js';
+import { handleAdventureChoice } from '../commands/adventureCommand.js';
 
 export const handleOwnerCommand = async (message, groupId) => {
   const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
@@ -41,16 +42,19 @@ export const handleOwnerCommand = async (message, groupId) => {
     const chat = await message.getChat();
     const sender = await message.getContact();
     await handleRegularCommand(message, chat, sender, true);
-  } else if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
-    // Handle adventure choice for owner
-    logger.debug(`Processing owner's adventure choice: ${message.body} for group ${groupId}`);
-    try {
-      await handleNonCommandMessage(message, await message.getChat(), await message.getContact());
-    } catch (error) {
-      logger.error('Error processing owner\'s adventure choice:', error);
-    }
   } else {
-    // Handle other non-command messages from owner
-    await handleNonCommandMessage(message, await message.getChat(), await message.getContact());
+    // Handle non-command messages from owner, including adventure choices
+    const chat = await message.getChat();
+    const sender = await message.getContact();
+    if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
+      logger.debug(`Processing owner's adventure choice: ${message.body} for group ${groupId}`);
+      try {
+        await handleAdventureChoice(message);
+      } catch (error) {
+        logger.error('Error processing owner\'s adventure choice:', error);
+      }
+    } else {
+      await handleNonCommandMessage(message, chat, sender);
+    }
   }
 };
