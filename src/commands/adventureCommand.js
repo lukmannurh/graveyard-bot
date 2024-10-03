@@ -82,13 +82,14 @@ export const handleAdventureChoice = async (message) => {
       return;
     }
 
+    logger.debug(`Updating node to: ${nextNodeId}`);
     adventureManager.updateCurrentNode(groupId, nextNodeId);
     await sendAdventureMessage(message, nextNode, groupId);
   } catch (error) {
     logger.error('Error in handling adventure choice:', error);
     await message.reply('Terjadi kesalahan saat memproses pilihan. Mohon coba lagi.');
   }
-};
+}
 
 const sendAdventureMessage = async (message, node, groupId) => {
   try {

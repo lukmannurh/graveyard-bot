@@ -29,12 +29,11 @@ export const handleNonCommandMessage = async (message, chat, sender) => {
     logger.debug(`Processing adventure choice: ${message.body} for group ${groupId}`);
     try {
       await handleAdventureChoice(message);
+      return; // Tambahkan return di sini untuk menghentikan eksekusi lebih lanjut
     } catch (error) {
       logger.error('Error processing adventure choice:', error);
     }
-    return;
   }
-
   // Check for forbidden words
   const forbiddenCheck = checkForbiddenWord(message.body, userId);
   if (forbiddenCheck.found) {
