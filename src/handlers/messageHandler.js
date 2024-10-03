@@ -32,14 +32,15 @@ const messageHandler = async (message) => {
     const isAuthorized = isGroupAuthorized(groupId);
     logger.debug(`Group authorization status: ${isAuthorized}`);
 
-    if (isOwnerUser) {
-      // Owner can always use all commands and send messages
-      await handleOwnerCommand(message, groupId);
+    if (isUserBanned(groupId, userId)) {
+      await deleteBannedUserMessage(message);
+      await chat.sendMessage(`@${userId.split('@')[0]}, Anda sedang dalam status ban di grup ini. Pesan Anda telah dihapus. Ban akan berakhir dalam 1 jam.`);
       return;
     }
 
-    if (isUserBanned(groupId, userId)) {
-      await deleteBannedUserMessage(message);
+    if (isOwnerUser) {
+      // Owner can always use all commands and send messages
+      await handleOwnerCommand(message, groupId);
       return;
     }
 

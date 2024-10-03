@@ -1,6 +1,47 @@
 import adventureManager from '../utils/adventureManager.js';
 import logger from '../utils/logger.js';
 
+export const adventure = async (message) => {
+  try {
+    const chat = await message.getChat();
+    const sender = await message.getContact();
+    const groupId = chat.id._serialized;
+    const userId = sender.id._serialized;
+
+    logger.debug(`Adventure command called - Group: ${groupId}, User: ${userId}`);
+
+    const isActive = adventureManager.isGameActive(groupId);
+    logger.debug(`Is game active: ${isActive}`);
+
+    if (!isActive) {
+      logger.debug('Starting new adventure');
+      const startNode = await adventureManager.startAdventure(groupId, userId, 
+        (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
+      if (startNode) {
+        logger.debug('Adventure started successfully');
+        await sendAdventureMessage(message, startNode, groupId);
+      } else {
+        logger.error('Failed to start adventure');
+        throw new Error("Failed to start adventure");
+      }
+    } else {
+      const activeGame = adventureManager.getActiveGame(groupId);
+      logger.debug(`Active game: ${JSON.stringify(activeGame)}`);
+      if (activeGame.userId !== userId) {
+        logger.debug('Another user is playing');
+        await message.reply('Ada petualangan yang sedang berlangsung. Tunggu hingga selesai untuk memulai yang baru.');
+      } else {
+        logger.debug('Current user is already playing');
+        const currentNode = adventureManager.getCurrentNode(groupId);
+        await sendAdventureMessage(message, currentNode, groupId);
+      }
+    }
+  } catch (error) {
+    logger.error('Error in adventure command:', error);
+    await message.reply('Terjadi kesalahan saat memulai petualangan. Mohon coba lagi.');
+  }
+};
+
 export const handleAdventureChoice = async (message) => {
   try {
     const chat = await message.getChat();
@@ -107,4 +148,3 @@ export const handleAdventureTimeout = async (message, groupId) => {
     logger.error('Error in handling adventure timeout:', error);
   }
 };
-

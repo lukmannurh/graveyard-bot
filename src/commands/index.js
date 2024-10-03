@@ -12,7 +12,7 @@ import waifu from './waifu.js';
 import random from './random.js';
 import { bandarsabu } from './contactCommands.js';
 import { cekjomok } from './funCommands.js';
-import { adventure } from './adventureCommand.js';
+import { adventure, handleAdventureChoice } from './adventureCommand.js';
 import getpp from './getProfilePicture.js';
 import stats from './stats.js';
 import jadwalsholat from './jadwalsholat.js';
@@ -34,6 +34,7 @@ export {
   bandarsabu,
   cekjomok,
   adventure,
+  handleAdventureChoice,
   getpp,
   stats,
   jadwalsholat
