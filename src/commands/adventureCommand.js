@@ -105,7 +105,7 @@ const sendAdventureMessage = async (message, node, groupId) => {
     
     let replyMessage = `*${adventureTitle}*\n\n${node.text}`;
     if (options) {
-      replyMessage += `\n\nPilihan:\n${options}\n\nBalas dengan nomor pilihan Anda untuk melanjutkan.\nAnda memiliki waktu 1 menit untuk menjawab.`;
+      replyMessage += `\n\nPilihan:\n${options}\n\nBalas dengan nomor pilihan Anda untuk melanjutkan.\nAnda memiliki waktu 5 menit untuk menjawab.`;
     }
     
     await message.reply(replyMessage);
@@ -133,7 +133,7 @@ export const handleAdventureTimeout = async (message, groupId) => {
   try {
     logger.debug(`Adventure timeout for group ${groupId}`);
     const chat = await message.getChat();
-    await chat.sendMessage('Waktu habis! Petualangan telah berakhir karena tidak ada respon dalam 1 menit.');
+    await chat.sendMessage('Waktu habis! Petualangan telah berakhir karena tidak ada respon dalam 5 menit.');
     adventureManager.endGame(groupId);
   } catch (error) {
     logger.error('Error in handling adventure timeout:', error);

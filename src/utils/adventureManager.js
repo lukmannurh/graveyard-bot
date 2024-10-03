@@ -6,6 +6,8 @@ import logger from './logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const TIMEOUT_DURATION = 5 * 60 * 1000; // 5 minutes
+
 class AdventureManager {
   constructor() {
     this.adventures = [];
@@ -88,7 +90,7 @@ class AdventureManager {
     const timeout = setTimeout(() => {
       logger.debug(`Timeout reached for group ${groupId}`);
       callback(groupId);
-    }, 60000); // 1 minute
+    }, TIMEOUT_DURATION);
     this.timeouts.set(groupId, timeout);
   }
 
@@ -97,7 +99,7 @@ class AdventureManager {
     const timeout = setTimeout(() => {
       logger.debug(`Timeout reached for group ${groupId}`);
       callback(groupId);
-    }, 60000); // 1 minute
+    }, TIMEOUT_DURATION);
     this.timeouts.set(groupId, timeout);
   }
 

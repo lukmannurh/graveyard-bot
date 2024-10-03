@@ -2,6 +2,7 @@ import { checkForbiddenWord, getForbiddenWordResponse } from '../utils/wordFilte
 import { warnUser, isUserBanned, checkUserStatus, logViolation } from '../utils/enhancedModerationSystem.js';
 import adventureManager from '../utils/adventureManager.js';
 import logger from '../utils/logger.js';
+import { handleAdventureChoice } from '../commands/adventureCommand.js';
 
 export const handleNonCommandMessage = async (message, chat, sender) => {
   const groupId = chat.id._serialized;
@@ -23,13 +24,13 @@ export const handleNonCommandMessage = async (message, chat, sender) => {
     return;
   }
 
-  // Check for adventure choice via poll
-  if (message.type === 'poll_vote' && adventureManager.isGameActive(groupId)) {
-    const activeGame = adventureManager.getActiveGame(groupId);
-    if (activeGame.userId === userId) {
-      const pollData = await message.getPollData();
-      const selectedOption = pollData.selectedOptions[0];
-      await handleAdventureChoice(message, selectedOption);
+  // Check for adventure choice
+  if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
+    logger.debug(`Processing adventure choice: ${message.body} for group ${groupId}`);
+    try {
+      await handleAdventureChoice(message);
+    } catch (error) {
+      logger.error('Error processing adventure choice:', error);
     }
     return;
   }
