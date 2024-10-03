@@ -1,0 +1,144 @@
+[
+    {
+        "id": "clean_city_mission",
+        "title": "Misi Bersih Kota Sinar",
+        "start": {
+          "text": "Anda adalah seorang petugas baru di Badan Narkotika Kota (BNK) Sinar, sebuah kota di provinsi Lampung. Kota ini sedang menghadapi masalah serius dengan peredaran narkoba. Kepala BNK memberi Anda misi pertama. Apa yang akan Anda lakukan?",
+          "options": [
+            {"text": "Lakukan penyelidikan di daerah rawan narkoba", "next": "investigate_hotspots"},
+            {"text": "Mulai program edukasi di sekolah-sekolah", "next": "start_education_program"},
+            {"text": "Koordinasi dengan kepolisian setempat", "next": "coordinate_with_police"}
+          ]
+        },
+        "nodes": {
+          "investigate_hotspots": {
+            "text": "Anda mengidentifikasi beberapa titik rawan peredaran narkoba di Kota Sinar. Salah satunya adalah sebuah klub malam bernama 'Melody'.",
+            "options": [
+              {"text": "Lakukan pengintaian di klub Melody", "next": "stake_out_club"},
+              {"text": "Rekrut informan dari dalam klub", "next": "recruit_informant"},
+              {"text": "Ajukan surat perintah penggeledahan", "next": "request_warrant"}
+            ]
+          },
+          "stake_out_club": {
+            "text": "Pengintaian Anda berhasil. Anda mengumpulkan bukti kuat tentang operasi narkoba di klub dan menangkap para pelaku utama. Kota Sinar menjadi lebih aman berkat upaya Anda.",
+            "end": true,
+            "win": true
+          },
+          "recruit_informant": {
+            "text": "Informan yang Anda rekrut ternyata double agent. Dia membocorkan rencana Anda ke bandar narkoba. Misi Anda gagal dan identitas Anda terungkap.",
+            "end": true,
+            "win": false
+          },
+          "request_warrant": {
+            "text": "Proses birokrasi memakan waktu terlalu lama. Ketika Anda akhirnya mendapatkan surat perintah, bandar narkoba sudah menghilang. Operasi gagal.",
+            "end": true,
+            "win": false
+          },
+          "start_education_program": {
+            "text": "Program edukasi Anda berjalan dengan baik, tapi hasilnya lambat. Sementara itu, peredaran narkoba terus meningkat. BNK menilai pendekatan Anda kurang efektif.",
+            "end": true,
+            "win": false
+          },
+          "coordinate_with_police": {
+            "text": "Koordinasi dengan kepolisian menghasilkan operasi besar-besaran. Banyak bandar narkoba tertangkap, tapi beberapa berhasil melarikan diri.",
+            "options": [
+              {"text": "Fokus pada penangkapan bandar yang melarikan diri", "next": "chase_escapees"},
+              {"text": "Tingkatkan keamanan kota untuk mencegah masuknya narkoba baru", "next": "increase_security"}
+            ]
+          },
+          "chase_escapees": {
+            "text": "Pengejaran intensif membuat Anda lalai terhadap aspek lain. Bandar baru muncul dan situasi kembali memburuk.",
+            "end": true,
+            "win": false
+          },
+          "increase_security": {
+            "text": "Peningkatan keamanan berhasil mencegah masuknya narkoba baru, tapi beberapa bandar masih bebas. Kota lebih aman, tapi belum sepenuhnya bersih.",
+            "end": true,
+            "win": false
+          }
+        }
+      },
+      {
+        "id": "mpl_id_journey",
+        "title": "Road to Glory: Squad MIND di MPL ID",
+        "start": {
+          "text": "Anda adalah kapten Squad MIND, tim underdog yang baru saja lolos ke MPL ID. Turnamen akan dimulai dalam sebulan, dan tim Anda harus mempersiapkan diri. Apa langkah pertama Anda?",
+          "options": [
+            {"text": "Fokus pada latihan intensif", "next": "intensive_training"},
+            {"text": "Rekrut pemain baru untuk memperkuat tim", "next": "recruit_new_player"},
+            {"text": "Analisis strategi tim-tim top", "next": "analyze_top_teams"}
+          ]
+        },
+        "nodes": {
+          "intensive_training": {
+            "text": "Tim berlatih keras selama seminggu. Kemampuan meningkat, tapi ada tanda-tanda burnout. Salah satu pemain mulai sering terlambat latihan.",
+            "options": [
+              {"text": "Bicarakan masalah dengan pemain tersebut", "next": "talk_to_player"},
+              {"text": "Sesuaikan jadwal latihan", "next": "adjust_schedule"},
+              {"text": "Tetap pertahankan intensitas latihan", "next": "maintain_intensity"}
+            ]
+          },
+          "talk_to_player": {
+            "text": "Diskusi Anda berhasil. Pemain tersebut merasa dihargai dan kembali berkomitmen. Tim menjadi lebih solid dan berhasil mencapai grand final MPL ID, memenangkan turnamen!",
+            "end": true,
+            "win": true
+          },
+          "adjust_schedule": {
+            "text": "Jadwal baru memberi lebih banyak waktu istirahat. Tim lebih segar, tapi kurang siap menghadapi intensitas turnamen. MIND tersingkir di fase grup.",
+            "end": true,
+            "win": false
+          },
+          "maintain_intensity": {
+            "text": "Tim mencapai performa puncak, tapi dua pemain mengalami cedera. MIND terpaksa bermain dengan formasi yang tidak optimal dan kalah di babak perempat final.",
+            "end": true,
+            "win": false
+          },
+          "recruit_new_player": {
+            "text": "Anda merekrut pemain berbakat, tapi dia kesulitan beradaptasi dengan strategi tim. Beberapa anggota lama merasa terancam posisinya.",
+            "options": [
+              {"text": "Fokus pada team building", "next": "team_building"},
+              {"text": "Beri waktu adaptasi pada pemain baru", "next": "give_adaptation_time"},
+              {"text": "Rotasi pemain untuk mencari kombinasi terbaik", "next": "player_rotation"}
+            ]
+          },
+          "team_building": {
+            "text": "Kegiatan team building meningkatkan kekompakan, tapi mengurangi waktu latihan. Tim MIND bermain bagus tapi kurang konsisten, finish di posisi 6.",
+            "end": true,
+            "win": false
+          },
+          "give_adaptation_time": {
+            "text": "Pemain baru mulai beradaptasi, tapi proses ini lambat. Turnamen sudah dimulai sebelum tim menemukan ritme yang tepat. MIND tersingkir di babak playoff.",
+            "end": true,
+            "win": false
+          },
+          "player_rotation": {
+            "text": "Rotasi memberi insight baru tentang kekuatan tim, tapi mengorbankan sinergi. MIND bermain tidak stabil dan gagal lolos ke playoff.",
+            "end": true,
+            "win": false
+          },
+          "analyze_top_teams": {
+            "text": "Analisis menunjukkan bahwa meta game saat ini didominasi strategi early aggression. Tim Anda lebih nyaman dengan late game. Apa yang akan Anda lakukan?",
+            "options": [
+              {"text": "Adaptasi ke meta early aggression", "next": "adapt_to_meta"},
+              {"text": "Sempurnakan strategi late game", "next": "perfect_late_game"},
+              {"text": "Kembangkan counter-strategy", "next": "develop_counter"}
+            ]
+          },
+          "adapt_to_meta": {
+            "text": "Tim berusaha beradaptasi dengan strategi early aggression. Hasilnya beragam, beberapa pemain merasa tidak nyaman. MIND finish di posisi tengah klasemen.",
+            "end": true,
+            "win": false
+          },
+          "perfect_late_game": {
+            "text": "Strategi late game yang sempurna membuat MIND menjadi dark horse turnamen. Tim mencapai final tapi kalah tipis dari juara bertahan.",
+            "end": true,
+            "win": false
+          },
+          "develop_counter": {
+            "text": "Counter-strategy berhasil mengejutkan tim-tim top. MIND menjadi sensasi turnamen dan memenangkan MPL ID!",
+            "end": true,
+            "win": false
+          }
+        }
+      }
+]
