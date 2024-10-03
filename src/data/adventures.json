@@ -453,230 +453,6 @@
     }
   },
   {
-    "id": "space_odyssey",
-    "title": "Odyssey Luar Angkasa",
-    "start": {
-      "text": "Anda adalah kapten pesawat luar angkasa yang sedang dalam misi eksplorasi. Tiba-tiba, sistem navigasi Anda mengalami kerusakan dan Anda tersesat di galaksi asing. Apa yang akan Anda lakukan?",
-      "options": [
-        {"text": "Mendarat di planet terdekat", "next": "planet_landing"},
-        {"text": "Kirim sinyal bantuan", "next": "send_signal"},
-        {"text": "Coba perbaiki sistem navigasi", "next": "fix_navigation"}
-      ]
-    },
-    "nodes": {
-      "planet_landing": {
-        "text": "Anda berhasil mendarat di planet misterius. Atmosfernya dapat bernapas, tapi lingkungannya sangat asing.",
-        "options": [
-          {"text": "Eksplorasi sekitar", "next": "explore_surroundings"},
-          {"text": "Tetap di dalam pesawat", "next": "stay_in_ship"},
-          {"text": "Bangun kamp sementara", "next": "build_camp"}
-        ]
-      },
-      "send_signal": {
-        "text": "Anda mengirim sinyal bantuan. Beberapa saat kemudian, Anda menerima respons dari stasiun luar angkasa terdekat.",
-        "options": [
-          {"text": "Minta petunjuk navigasi", "next": "navigation_help"},
-          {"text": "Minta bantuan evakuasi", "next": "request_evacuation"},
-          {"text": "Tanyakan tentang lokasi Anda", "next": "ask_location"}
-        ]
-      },
-      "fix_navigation": {
-        "text": "Anda mencoba memperbaiki sistem navigasi. Saat memeriksa mesin, Anda menemukan komponen asing yang tidak dikenal.",
-        "options": [
-          {"text": "Coba singkirkan komponen asing", "next": "remove_component"},
-          {"text": "Analisis komponen asing", "next": "analyze_component"},
-          {"text": "Abaikan dan lanjutkan perbaikan", "next": "continue_repair"}
-        ]
-      },
-      "explore_surroundings": {
-        "text": "Anda menemukan reruntuhan kota alien kuno. Di tengahnya ada sebuah menara yang memancarkan cahaya aneh.",
-        "options": [
-          {"text": "Masuk ke menara", "next": "enter_tower"},
-          {"text": "Selidiki reruntuhan", "next": "investigate_ruins"},
-          {"text": "Kembali ke pesawat", "next": "return_to_ship"}
-        ]
-      },
-      "enter_tower": {
-        "text": "Di dalam menara, Anda menemukan teknologi canggih yang dapat memperbaiki pesawat Anda dan membawa Anda pulang.",
-        "end": true,
-        "win": true
-      },
-      "investigate_ruins": {
-        "text": "Anda menemukan artefak alien yang memberi Anda pengetahuan tentang galaksi ini. Namun, radiasi dari artefak tersebut membahayakan kesehatan Anda.",
-        "end": true,
-        "win": false
-      },
-      "return_to_ship": {
-        "text": "Anda kembali ke pesawat dengan selamat dan memutuskan untuk mencoba opsi lain.",
-        "options": [
-          {"text": "Kirim sinyal bantuan", "next": "send_signal"},
-          {"text": "Coba perbaiki sistem navigasi", "next": "fix_navigation"}
-        ]
-      },
-      "stay_in_ship": {
-        "text": "Anda memutuskan untuk tetap di dalam pesawat. Tiba-tiba, sekelompok makhluk alien mengetuk pintu pesawat Anda.",
-        "options": [
-          {"text": "Buka pintu dan sapa mereka", "next": "greet_aliens"},
-          {"text": "Abaikan dan tetap di dalam", "next": "ignore_aliens"},
-          {"text": "Siapkan senjata untuk berjaga-jaga", "next": "prepare_weapons"}
-        ]
-      },
-      "greet_aliens": {
-        "text": "Alien tersebut ternyata ramah dan membantu Anda memperbaiki pesawat. Mereka juga memberi Anda peta galaksi untuk pulang.",
-        "end": true,
-        "win": true
-      },
-      "ignore_aliens": {
-        "text": "Alien-alien tersebut akhirnya pergi, tapi mereka meninggalkan pesan bahwa planet ini akan segera hancur. Anda terjebak tanpa bantuan.",
-        "end": true,
-        "win": false
-      },
-      "prepare_weapons": {
-        "text": "Ketika Anda membuka pintu dengan senjata, alien-alien tersebut panik dan menyerang. Pertempuran tidak dapat dihindari.",
-        "end": true,
-        "win": false
-      },
-      "build_camp": {
-        "text": "Anda membangun kamp sementara. Saat malam tiba, Anda melihat cahaya aneh di langit.",
-        "options": [
-          {"text": "Selidiki cahaya", "next": "investigate_lights"},
-          {"text": "Tetap di kamp", "next": "stay_at_camp"},
-          {"text": "Hubungi pesawat induk", "next": "contact_mothership"}
-        ]
-      },
-      "investigate_lights": {
-        "text": "Cahaya tersebut berasal dari pesawat penyelamat yang mencari Anda. Anda diselamatkan!",
-        "end": true,
-        "win": true
-      },
-      "stay_at_camp": {
-        "text": "Anda tetap di kamp dan terlelap. Saat bangun, Anda menemukan diri Anda dikelilingi oleh alien yang tidak ramah.",
-        "end": true,
-        "win": false
-      },
-      "contact_mothership": {
-        "text": "Anda berhasil menghubungi pesawat induk. Mereka memberikan koordinat untuk kembali dengan selamat.",
-        "end": true,
-        "win": true
-      },
-      "navigation_help": {
-        "text": "Dengan bantuan navigasi, Anda berhasil menemukan jalan pulang melalui rute yang aman.",
-        "end": true,
-        "win": true
-      },
-      "request_evacuation": {
-        "text": "Tim evakuasi tiba tepat waktu dan membawa Anda kembali dengan selamat.",
-        "end": true,
-        "win": true
-      },
-      "ask_location": {
-        "text": "Informasi lokasi membantu Anda memahami situasi, tapi Anda masih harus mencari jalan pulang sendiri.",
-        "options": [
-          {"text": "Coba perbaiki sistem navigasi", "next": "fix_navigation"},
-          {"text": "Mendarat di planet terdekat", "next": "planet_landing"}
-        ]
-      },
-      "remove_component": {
-        "text": "Saat Anda menyingkirkan komponen asing, pesawat mengalami malfungsi parah dan tidak dapat diperbaiki.",
-        "end": true,
-        "win": false
-      },
-      "analyze_component": {
-        "text": "Analisis komponen asing memungkinkan Anda mengintegrasikannya ke sistem navigasi, memberi Anda kemampuan perjalanan antar-galaksi.",
-        "end": true,
-        "win": true
-      },
-      "continue_repair": {
-        "text": "Anda berhasil memperbaiki sistem navigasi tanpa menyentuh komponen asing. Pesawat kembali berfungsi normal.",
-        "end": true,
-        "win": true
-      }
-    }
-  },
-  {
-    "id": "cyberpunk_detective",
-    "title": "Detektif di Neo-Jakarta 2077",
-    "start": {
-      "text": "Anda adalah detektif swasta di kota futuristik Neo-Jakarta tahun 2077. Suatu malam, Anda menerima panggilan darurat dari seorang klien misterius. Dia meminta Anda untuk menyelidiki hilangnya seorang eksekutif perusahaan teknologi terkemuka, MegaCorp. Apa yang akan Anda lakukan?",
-      "options": [
-        {"text": "Terima kasus dan temui klien", "next": "meet_client"},
-        {"text": "Selidiki MegaCorp terlebih dahulu", "next": "investigate_megacorp"},
-        {"text": "Hubungi kontak di kepolisian", "next": "contact_police"}
-      ]
-    },
-    "nodes": {
-      "meet_client": {
-        "text": "Anda menemui klien di sebuah bar holografik. Dia adalah istri eksekutif yang hilang dan memberikan Anda chip data berisi informasi terakhir suaminya. Namun, Anda merasa ada yang janggal dengan ceritanya.",
-        "options": [
-          {"text": "Tanyakan lebih lanjut tentang suaminya", "next": "ask_about_husband"},
-          {"text": "Analisis chip data", "next": "analyze_chip"},
-          {"text": "Selidiki latar belakang klien", "next": "investigate_client"}
-        ]
-      },
-      "investigate_megacorp": {
-        "text": "Anda menyusup ke sistem keamanan MegaCorp dan menemukan bahwa eksekutif tersebut terlibat dalam proyek rahasia bernama 'Lazarus'. Tiba-tiba, alarm berbunyi!",
-        "options": [
-          {"text": "Coba dapatkan lebih banyak data", "next": "get_more_data"},
-          {"text": "Keluar dari sistem segera", "next": "exit_system"},
-          {"text": "Tinggalkan jejak palsu", "next": "leave_false_trail"}
-        ]
-      },
-      "contact_police": {
-        "text": "Kontak Anda di kepolisian memberi tahu bahwa kasus ini lebih rumit dari yang terlihat. Ada keterlibatan sindikat kejahatan cyber yang berbahaya.",
-        "options": [
-          {"text": "Minta bantuan polisi", "next": "request_police_help"},
-          {"text": "Selidiki sindikat kejahatan", "next": "investigate_syndicate"},
-          {"text": "Kembali ke klien untuk informasi lebih lanjut", "next": "back_to_client"}
-        ]
-      },
-      "get_more_data": {
-        "text": "Anda berhasil mengunduh lebih banyak data tentang Proyek Lazarus. Ternyata, proyek ini adalah upaya untuk mengunggah kesadaran manusia ke dalam jaringan komputer. Anda memecahkan misteri dan mengungkap konspirasi besar.",
-        "end": true,
-        "win": true
-      },
-      "exit_system": {
-        "text": "Anda berhasil keluar dari sistem, tapi jejak digital Anda terdeteksi. Tim keamanan MegaCorp mengejar Anda dan Anda tertangkap. Misi gagal.",
-        "end": true,
-        "win": false
-      },
-      "leave_false_trail": {
-        "text": "Anda meninggalkan jejak palsu, tapi MegaCorp terlalu cerdas. Mereka melacak Anda dan mengancam keselamatan keluarga Anda. Anda terpaksa menghentikan penyelidikan.",
-        "end": true,
-        "win": false
-      },
-      "request_police_help": {
-        "text": "Polisi membantu Anda, tapi ternyata ada korupsi di dalam kepolisian. Informasi Anda bocor ke sindikat dan Anda menjadi target. Anda harus melarikan diri dari kota.",
-        "end": true,
-        "win": false
-      },
-      "investigate_syndicate": {
-        "text": "Penyelidikan Anda membongkar operasi sindikat, tapi Anda terjebak dalam perang gang. Anda selamat, tapi harus hidup dalam persembunyian.",
-        "end": true,
-        "win": false
-      },
-      "back_to_client": {
-        "text": "Klien Anda ternyata adalah bagian dari sindikat. Anda dijebak dan difitnah sebagai penculik eksekutif MegaCorp. Karir Anda hancur.",
-        "end": true,
-        "win": false
-      },
-      "ask_about_husband": {
-        "text": "Istri eksekutif memberikan informasi yang membingungkan. Anda menyadari bahwa dia menyembunyikan sesuatu dan memutuskan untuk menghentikan penyelidikan karena terlalu berisiko.",
-        "end": true,
-        "win": false
-      },
-      "analyze_chip": {
-        "text": "Analisis chip mengungkapkan lokasi rahasia, tapi itu adalah jebakan. Anda diserang oleh agen MegaCorp dan terluka parah.",
-        "end": true,
-        "win": false
-      },
-      "investigate_client": {
-        "text": "Penyelidikan Anda mengungkap bahwa klien adalah agen ganda. Anda terlibat dalam permainan berbahaya antara MegaCorp dan sindikat. Anda memutuskan untuk keluar dari kasus ini.",
-        "end": true,
-        "win": false
-      }
-    }
-  },
-  {
     "id": "clean_city_mission",
     "title": "Misi Bersih Kota Sinar",
     "start": {
@@ -1226,5 +1002,1272 @@
         "win": false
       }
     }
+  },
+  {
+    "id": "rebuild_shattered_world_complex",
+  "title": "Membangun Kembali Dunia yang Hancur: Odyssey Rezyan dan Fiqri",
+  "start": {
+    "text": "Setelah kekalahan Zorc Necrophades, dunia fana hancur lebur. Rezyan dan Fiqri, dua pahlawan yang selamat, berdiri di antara puing-puing peradaban. Mereka harus memutuskan langkah pertama mereka dalam membangun kembali dunia.",
+    "options": [
+      {"text": "Mencari survivors dan membentuk aliansi", "next": "form_alliance"},
+      {"text": "Mencari artefak kuno Lazarus untuk membangkitkan dunia", "next": "seek_lazarus"},
+      {"text": "Menyelidiki sisa-sisa laboratorium MegaCorp", "next": "investigate_megacorp"}
+    ]
+  },
+  "nodes": {
+    "form_alliance": {
+      "text": "Rezyan dan Fiqri berhasil mengumpulkan sekelompok survivor yang beragam. Namun, perbedaan pendapat tentang cara terbaik untuk membangun kembali dunia mulai muncul.",
+      "options": [
+        {"text": "Bentuk sistem demokrasi untuk pengambilan keputusan", "next": "establish_democracy"},
+        {"text": "Terapkan kepemimpinan tegas untuk efisiensi", "next": "strong_leadership"},
+        {"text": "Bagi kelompok berdasarkan keahlian", "next": "specialized_groups"}
+      ]
+    },
+    "seek_lazarus": {
+      "text": "Pencarian artefak Lazarus membawa mereka ke kuil kuno yang dijaga oleh Fufufafa, penjaga elemental yang kuat. Dia menantang mereka untuk membuktikan kelayakan.",
+      "options": [
+        {"text": "Hadapi ujian kebijaksanaan Fufufafa", "next": "wisdom_trial"},
+        {"text": "Tawarkan untuk membantu Fufufafa memulihkan wilayahnya", "next": "restore_fufufafa_realm"},
+        {"text": "Coba curi artefak Lazarus", "next": "steal_lazarus"}
+      ]
+    },
+    "investigate_megacorp": {
+      "text": "Di reruntuhan MegaCorp, mereka menemukan teknologi canggih dan data tentang proyek rahasia 'Genesis'. Namun, sistem keamanan masih aktif.",
+      "options": [
+        {"text": "Hack sistem untuk mendapatkan data Genesis", "next": "hack_genesis"},
+        {"text": "Cari survivor MegaCorp untuk bantuan", "next": "find_megacorp_survivors"},
+        {"text": "Gunakan teknologi untuk membangun sanctuary", "next": "build_tech_sanctuary"}
+      ]
+    },
+    "establish_democracy": {
+      "text": "Sistem demokrasi dibentuk, tapi pengambilan keputusan menjadi lambat dan sering deadlock. Sebuah faksi radikal mulai mendapatkan dukungan.",
+      "options": [
+        {"text": "Pertahankan demokrasi dan atasi ketidakpuasan", "next": "address_discontent"},
+        {"text": "Ubah sistem menjadi oligarki para ahli", "next": "form_oligarchy"},
+        {"text": "Lakukan kudeta untuk mengambil alih kendali", "next": "stage_coup"}
+      ]
+    },
+    "strong_leadership": {
+      "text": "Kepemimpinan tegas Rezyan dan Fiqri membawa kemajuan cepat, tapi mulai muncul ketidakpuasan dan rumors pemberontakan.",
+      "options": [
+        {"text": "Tingkatkan keamanan dan tekan pemberontakan", "next": "increase_security"},
+        {"text": "Buka dialog dengan kelompok tidak puas", "next": "open_dialogue"},
+        {"text": "Desentralisasi kekuasaan ke pemimpin lokal", "next": "decentralize_power"}
+      ]
+    },
+    "specialized_groups": {
+      "text": "Kelompok-kelompok ahli dibentuk dan membuat kemajuan di bidang masing-masing, tapi koordinasi antar kelompok menjadi tantangan.",
+      "options": [
+        {"text": "Bentuk dewan koordinasi antar kelompok", "next": "coordination_council"},
+        {"text": "Fokus pada proyek lintas disiplin", "next": "cross_disciplinary_projects"},
+        {"text": "Satukan kelompok untuk mega-proyek pembangunan kota", "next": "megacity_project"}
+      ]
+    },
+    "wisdom_trial": {
+      "text": "Ujian kebijaksanaan Fufufafa mengungkap kebenaran mengejutkan: artefak Lazarus membutuhkan pengorbanan jiwa untuk berfungsi.",
+      "options": [
+        {"text": "Tolak menggunakan artefak dan cari alternatif", "next": "seek_alternative"},
+        {"text": "Coba modifikasi artefak untuk menghindari pengorbanan", "next": "modify_artifact"},
+        {"text": "Terima persyaratan dan cari sukarelawan", "next": "find_volunteer"}
+      ]
+    },
+    "restore_fufufafa_realm": {
+      "text": "Upaya memulihkan wilayah Fufufafa membuahkan hasil. Kekuatan elemental mulai stabil, tapi menarik perhatian entitas kuno yang terbangun.",
+      "options": [
+        {"text": "Hadapi entitas kuno", "next": "confront_entity"},
+        {"text": "Coba komunikasi dan negosiasi dengan entitas", "next": "negotiate_entity"},
+        {"text": "Gunakan kekuatan elemental untuk menyegel entitas", "next": "seal_entity"}
+      ]
+    },
+    "steal_lazarus": {
+      "text": "Upaya pencurian gagal. Fufufafa murka dan mengutuk Rezyan dan Fiqri, mengubah mereka menjadi patung batu.",
+      "end": true,
+      "win": false
+    },
+    "hack_genesis": {
+      "text": "Berhasil membobol sistem, mereka menemukan bahwa Proyek Genesis adalah rencana untuk mentransfer kesadaran manusia ke dunia virtual.",
+      "options": [
+        {"text": "Lanjutkan Proyek Genesis", "next": "continue_genesis"},
+        {"text": "Modifikasi proyek untuk memulihkan dunia fisik", "next": "modify_genesis"},
+        {"text": "Hancurkan data proyek", "next": "destroy_genesis_data"}
+      ]
+    },
+    "find_megacorp_survivors": {
+      "text": "Mereka menemukan sekelompok ilmuwan MegaCorp yang bertahan. Para ilmuwan menawarkan bantuan, tapi dengan syarat kontroversial.",
+      "options": [
+        {"text": "Terima syarat dan rekrut ilmuwan", "next": "recruit_scientists"},
+        {"text": "Negosiasi ulang syarat", "next": "renegotiate_terms"},
+        {"text": "Tolak dan cari cara lain", "next": "reject_megacorp_help"}
+      ]
+    },
+    "build_tech_sanctuary": {
+      "text": "Sanctuary teknologi tinggi berhasil dibangun, melindungi sekelompok kecil manusia. Namun, keterbatasan sumber daya menciptakan dilema etis.",
+      "options": [
+        {"text": "Perluas sanctuary dengan risiko kelebihan kapasitas", "next": "expand_sanctuary"},
+        {"text": "Pertahankan ukuran tapi tingkatkan teknologi", "next": "advance_sanctuary_tech"},
+        {"text": "Bangun sanctuary tambahan di lokasi lain", "next": "multiple_sanctuaries"}
+      ]
+    },
+    "address_discontent": {
+      "text": "Upaya mengatasi ketidakpuasan berhasil meredakan ketegangan, tapi memperlambat kemajuan. Tiba-tiba, bencana alam besar mengancam komunitas.",
+      "options": [
+        {"text": "Evakuasi dan cari lokasi baru", "next": "evacuate_community"},
+        {"text": "Gunakan sumber daya untuk membangun pertahanan", "next": "build_defenses"},
+        {"text": "Minta bantuan faksi radikal untuk menghadapi bencana", "next": "radical_alliance"}
+      ]
+    },
+    "form_oligarchy": {
+      "text": "Oligarki para ahli meningkatkan efisiensi, tapi kesenjangan sosial melebar. Protes mulai pecah di berbagai wilayah.",
+      "options": [
+        {"text": "Terapkan kebijakan redistribusi sumber daya", "next": "resource_redistribution"},
+        {"text": "Tingkatkan program pendidikan untuk semua", "next": "education_for_all"},
+        {"text": "Gunakan kekuatan untuk memadamkan protes", "next": "suppress_protests"}
+      ]
+    },
+    "stage_coup": {
+      "text": "Kudeta berhasil, tapi menciptakan perpecahan dalam komunitas. Sebagian mendukung, sebagian menentang rezim baru.",
+      "options": [
+        {"text": "Jalankan pemerintahan dengan tangan besi", "next": "iron_fist_rule"},
+        {"text": "Coba rekonsiliasi dengan pihak oposisi", "next": "reconciliation_attempt"},
+        {"text": "Adakan pemilu baru untuk melegitimasi kekuasaan", "next": "new_elections"}
+      ]
+    },
+    "increase_security": {
+      "text": "Peningkatan keamanan menekan pemberontakan, tapi menciptakan atmosfer ketakutan. Produktivitas menurun dan inovasi terhambat.",
+      "end": true,
+      "win": false
+    },
+    "open_dialogue": {
+      "text": "Dialog terbuka menghasilkan kompromi dan ide-ide baru. Muncul proposal untuk sistem pemerintahan hibrida yang menyeimbangkan efisiensi dan partisipasi.",
+      "options": [
+        {"text": "Terapkan sistem hibrida", "next": "implement_hybrid_system"},
+        {"text": "Tetap dengan sistem lama tapi adopsi beberapa ide baru", "next": "adapt_current_system"},
+        {"text": "Serahkan keputusan ke referendum publik", "next": "public_referendum"}
+      ]
+    },
+    "decentralize_power": {
+      "text": "Desentralisasi kekuasaan menciptakan dinamika baru. Beberapa wilayah berkembang pesat, sementara yang lain mengalami kesulitan.",
+      "options": [
+        {"text": "Bentuk sistem federal untuk menyeimbangkan perkembangan", "next": "federal_system"},
+        {"text": "Fokus bantuan ke wilayah yang kesulitan", "next": "targeted_aid"},
+        {"text": "Biarkan kompetisi alami antar wilayah", "next": "natural_competition"}
+      ]
+    },
+    "coordination_council": {
+      "text": "Dewan koordinasi meningkatkan sinergi antar kelompok. Sebuah proyek ambisius untuk menciptakan 'Mesin Dunia' yang dapat mempercepat pemulihan planet diusulkan.",
+      "options": [
+        {"text": "Setujui dan mulai Proyek Mesin Dunia", "next": "world_engine_project"},
+        {"text": "Tolak karena terlalu berisiko dan fokus pada proyek lebih kecil", "next": "smaller_projects"},
+        {"text": "Modifikasi proposal untuk pendekatan bertahap", "next": "phased_approach"}
+      ]
+    },
+    "cross_disciplinary_projects": {
+      "text": "Proyek lintas disiplin menghasilkan terobosan dalam teknologi bio-regeneratif. Namun, ada kekhawatiran tentang dampak etis dan ekologisnya.",
+      "options": [
+        {"text": "Terapkan teknologi secara luas", "next": "widespread_application"},
+        {"text": "Lakukan uji coba terbatas", "next": "limited_trials"},
+        {"text": "Kembangkan regulasi ketat sebelum penerapan", "next": "strict_regulations"}
+      ]
+    },
+    "megacity_project": {
+      "text": "Proyek megacity berjalan lancar, menciptakan tempat perlindungan yang luar biasa. Namun, muncul laporan tentang komunitas di luar kota yang menderita.",
+      "options": [
+        {"text": "Perluas megacity untuk mencakup lebih banyak orang", "next": "expand_megacity"},
+        {"text": "Kirim bantuan ke komunitas luar", "next": "aid_outside_communities"},
+        {"text": "Relokasi semua orang ke dalam megacity", "next": "forced_relocation"}
+      ]
+    },
+    "seek_alternative": {
+      "text": "Pencarian alternatif membawa tim ke Oasis Tersembunyi, tempat keajaiban alam yang mampu memulihkan diri. Namun, Oasis dijaga oleh suku kuno yang menolak intervensi luar.",
+      "options": [
+        {"text": "Negosiasi dengan suku untuk akses ke Oasis", "next": "negotiate_tribe"},
+        {"text": "Coba pelajari dan replikasi kekuatan Oasis", "next": "study_oasis"},
+        {"text": "Tawarkan pertukaran teknologi dengan suku", "next": "tech_exchange"}
+      ]
+    },
+    "modify_artifact": {
+      "text": "Upaya modifikasi artefak Lazarus berhasil mengurangi kebutuhan pengorbanan, tapi kekuatannya menjadi tidak stabil dan sulit dikendalikan.",
+      "options": [
+        {"text": "Gunakan artefak dengan resiko", "next": "use_unstable_artifact"},
+        {"text": "Cari cara untuk menstabilkan artefak", "next": "stabilize_artifact"},
+        {"text": "Segel artefak dan cari solusi lain", "next": "seal_artifact"}
+      ]
+    },
+    "find_volunteer": {
+      "text": "Setelah pencarian panjang, seorang sukarelawan ditemukan. Namun, saat ritual dimulai, keraguan mulai muncul di hati semua yang terlibat.",
+      "options": [
+        {"text": "Lanjutkan ritual pengorbanan", "next": "continue_sacrifice"},
+        {"text": "Hentikan ritual di saat-saat terakhir", "next": "stop_ritual"},
+        {"text": "Cari cara untuk membagi pengorbanan di antara banyak orang", "next": "shared_sacrifice"}
+      ]
+    },
+    "use_unstable_artifact": {
+      "text": "Penggunaan artefak yang tidak stabil memicu ledakan energi yang luar biasa. Sebagian dunia pulih seketika, tapi menciptakan anomali berbahaya di tempat lain.",
+      "options": [
+        {"text": "Fokus mengatasi anomali", "next": "address_anomalies"},
+        {"text": "Manfaatkan daerah yang pulih sebagai basis", "next": "exploit_restored_areas"},
+        {"text": "Coba kendalikan energi artefak yang tersisa", "next": "control_remaining_energy"}
+      ]
+    },
+    "stabilize_artifact": {
+      "text": "Usaha menstabilkan artefak membutuhkan riset intensif. Tim menemukan bahwa stabilisasi memerlukan sumber energi yang sangat langka.",
+      "options": [
+        {"text": "Cari sumber energi langka", "next": "quest_for_energy"},
+        {"text": "Kembangkan teknologi untuk menggantikan sumber energi", "next": "develop_alternative_tech"},
+        {"text": "Gunakan energi vital Rezyan atau Fiqri", "next": "use_hero_energy"}
+      ]
+    },
+    "seal_artifact": {
+      "text": "Artefak berhasil disegel, tapi proses penyegelan melepaskan gelombang energi yang mempengaruhi alam sekitar. Hutan-hutan mulai tumbuh dengan cepat, tapi bersifat ganas dan berbahaya.",
+      "options": [
+        {"text": "Jelajahi dan jinakkan hutan baru", "next": "explore_wild_forests"},
+        {"text": "Bangun perlindungan dari pertumbuhan hutan", "next": "build_forest_defenses"},
+        {"text": "Coba komunikasi dengan 'kesadaran' hutan", "next": "commune_with_forest"}
+      ]
+    },
+    "continue_sacrifice": {
+      "text": "Ritual pengorbanan selesai, artefak Lazarus aktif sepenuhnya. Dunia mulai pulih dengan cepat, tapi bayangan pengorbanan menghantui survivors.",
+      "options": [
+        {"text": "Rahasiakan detil pengorbanan", "next": "keep_sacrifice_secret"},
+        {"text": "Buat memorial untuk menghormati pengorbanan", "next": "create_memorial"},
+        {"text": "Gunakan kekuatan Lazarus untuk menghidupkan kembali yang dikorbankan", "next": "resurrect_sacrificed"}
+      ]
+    },
+    "stop_ritual": {
+      "text": "Ritual dihentikan, meninggalkan artefak Lazarus dalam keadaan setengah aktif. Efeknya mulai terlihat: beberapa area pulih sementara yang lain mengalami distorsi realitas.",
+      "options": [
+        {"text": "Coba selesaikan aktivasi tanpa pengorbanan", "next": "complete_activation"},
+        {"text": "Manfaatkan area yang pulih dan tinggalkan sisanya", "next": "utilize_restored_zones"},
+        {"text": "Cari cara untuk menonaktifkan artefak sepenuhnya", "next": "deactivate_artifact"}
+      ]
+    },
+    "shared_sacrifice": {
+      "text": "Metode untuk membagi pengorbanan ditemukan. Seluruh populasi yang tersisa harus menyumbangkan sebagian kecil energi hidup mereka.",
+      "options": [
+        {"text": "Lakukan ritual pembagian pengorbanan massal", "next": "mass_shared_ritual"},
+        {"text": "Cari sukarelawan untuk pengorbanan yang lebih besar", "next": "seek_more_volunteers"},
+        {"text": "Tunda keputusan dan cari alternatif lain", "next": "postpone_decision"}
+      ]
+    },
+    "address_anomalies": {
+      "text": "Tim fokus mengatasi anomali. Mereka menemukan bahwa anomali ini sebenarnya adalah kantong-kantong realitas alternatif.",
+      "options": [
+        {"text": "Coba satukan realitas yang terpecah", "next": "merge_realities"},
+        {"text": "Isolasi dan pelajari anomali", "next": "study_anomalies"},
+        {"text": "Gunakan anomali sebagai portal ke sumber daya baru", "next": "exploit_anomalies"}
+      ]
+    },
+    "exploit_restored_areas": {
+      "text": "Daerah yang pulih dijadikan basis. Namun, gelombang pengungsi dari zona berbahaya mulai berdatangan, menciptakan krisis kemanusiaan.",
+      "options": [
+        {"text": "Bangun infrastruktur untuk menampung pengungsi", "next": "build_refugee_infrastructure"},
+        {"text": "Kirim ekspedisi untuk memulihkan zona berbahaya", "next": "restore_danger_zones"},
+        {"text": "Terapkan kebijakan imigrasi ketat", "next": "strict_immigration"}
+      ]
+    },
+    "control_remaining_energy": {
+      "text": "Upaya mengendalikan energi artefak yang tersisa berhasil, tapi dengan konsekuensi tidak terduga. Tim mendapatkan kemampuan untuk memanipulasi realitas dalam skala kecil.",
+      "options": [
+        {"text": "Gunakan kekuatan untuk mempercepat pemulihan", "next": "accelerate_recovery"},
+        {"text": "Latih tim elit pengendali realitas", "next": "train_reality_controllers"},
+        {"text": "Segel kekuatan karena terlalu berbahaya", "next": "seal_reality_power"}
+      ]
+    },
+    "quest_for_energy": {
+      "text": "Pencarian sumber energi langka membawa tim ke lokasi ledakan Zorc Necrophades. Area tersebut sangat berbahaya tapi kaya akan energi yang dibutuhkan.",
+      "options": [
+        {"text": "Lakukan ekstraksi energi dengan resiko tinggi", "next": "high_risk_extraction"},
+        {"text": "Bangun fasilitas penelitian di dekat lokasi", "next": "build_research_facility"},
+        {"text": "Coba netralisasi area terlebih dahulu", "next": "neutralize_area"}
+      ]
+    },
+    "develop_alternative_tech": {
+      "text": "Pengembangan teknologi alternatif membuahkan hasil. Tim menciptakan generator energi yang memanfaatkan perbedaan realitas, tapi penggunaannya beresiko memicu ketidakstabilan dimensi.",
+      "options": [
+        {"text": "Gunakan generator dengan pengawasan ketat", "next": "monitored_generator_use"},
+        {"text": "Bagikan teknologi ke komunitas lain", "next": "share_generator_tech"},
+        {"text": "Sempurnakan generator sebelum digunakan", "next": "perfect_generator"}
+      ]
+    },
+    "use_hero_energy": {
+      "text": "Rezyan dan Fiqri sepakat untuk menggunakan energi vital mereka. Proses ini akan sangat berbahaya bagi mereka.",
+      "options": [
+        {"text": "Rezyan mengorbankan dirinya", "next": "rezyan_sacrifice"},
+        {"text": "Fiqri mengorbankan dirinya", "next": "fiqri_sacrifice"},
+        {"text": "Keduanya menyumbangkan sebagian energi", "next": "both_partial_sacrifice"}
+      ]
+    },
+    "mass_shared_ritual": {
+      "text": "Ritual pembagian pengorbanan massal dilakukan. Dunia mulai pulih dengan cepat, tapi seluruh populasi merasa lemah dan rentan.",
+      "options": [
+        {"text": "Fokus pada pemulihan kesehatan populasi", "next": "focus_population_health"},
+        {"text": "Percepat pembangunan dengan populasi yang ada", "next": "accelerate_rebuilding"},
+        {"text": "Cari cara untuk mengembalikan energi yang dikorbankan", "next": "restore_sacrificed_energy"}
+      ]
+    },
+    "merge_realities": {
+      "text": "Upaya menyatukan realitas yang terpecah berhasil, menciptakan dunia baru yang merupakan gabungan dari berbagai realitas. Tantangan baru muncul saat populasi dari berbagai versi realitas harus beradaptasi satu sama lain.",
+      "options": [
+        {"text": "Bentuk pemerintahan multi-realitas", "next": "multireality_government"},
+        {"text": "Pisahkan populasi berdasarkan realitas asal", "next": "segregate_realities"},
+        {"text": "Dorong integrasi penuh antar populasi", "next": "full_integration"}
+      ]
+    },
+    "multireality_government": {
+      "text": "Pemerintahan multi-realitas dibentuk, menyatukan perspektif dan teknologi dari berbagai versi dunia. Hasilnya adalah kemajuan pesat dalam pembangunan kembali peradaban.",
+      "end": true,
+      "win": true
+    },
+    "segregate_realities": {
+      "text": "Pemisahan populasi menciptakan kedamaian sementara, tapi menghalangi pertukaran ide dan sumber daya. Pemulihan dunia berjalan lambat dan tidak merata.",
+      "end": true,
+      "win": false
+    },
+    "full_integration": {
+      "text": "Integrasi penuh menciptakan konflik dan kebingungan awalnya, tapi akhirnya menghasilkan masyarakat yang sangat adaptif dan inovatif. Dunia bangkit kembali dengan kekuatan dan kreativitas yang belum pernah ada sebelumnya.",
+      "end": true,
+      "win": true
+    }
+  }
+  },
+  {
+    "id": "light_vs_darkness_odyssey",
+  "title": "Pertarungan Cahaya dan Kegelapan: Odyssey Para Pahlawan",
+  "start": {
+    "text": "Dunia Alvarez berada di ambang kehancuran. Azazul, Raja Iblis, telah bangkit kembali dan mengancam keseimbangan antara Cahaya dan Kegelapan. Sebagai pemimpin Aliansi Cahaya, Anda harus memimpin para pahlawan untuk menghentikan invasi kegelapan. Langkah pertama apa yang akan Anda ambil?",
+    "options": [
+      {"text": "Kumpulkan para pahlawan di Kota Suci Luminara", "next": "gather_heroes"},
+      {"text": "Cari Artefak Suci yang tersembunyi", "next": "seek_artifact"},
+      {"text": "Serang markas Kerajaan Kegelapan", "next": "attack_darkness"}
+    ]
+  },
+  "nodes": {
+    "gather_heroes": {
+      "text": "Anda mengumpulkan para pahlawan di Kota Suci Luminara. Yudha sang Ksatria, Rezyan si Penyihir Elemental, Fiqri si Pemanah Elf, dan yang lainnya hadir. Namun, berita buruk datang: Kerajaan Elf diserang!",
+      "options": [
+        {"text": "Kirim tim untuk membantu Kerajaan Elf", "next": "help_elves"},
+        {"text": "Fokus pada pertahanan Luminara", "next": "defend_luminara"},
+        {"text": "Bagi pasukan untuk kedua tujuan", "next": "split_forces"}
+      ]
+    },
+    "seek_artifact": {
+      "text": "Anda memutuskan untuk mencari Artefak Suci. Informasi mengarah ke Gurun Abadi, tempat Tongkat Osiris dikabarkan tersembunyi. Namun, gurun dijaga oleh Sphinx yang mematikan.",
+      "options": [
+        {"text": "Hadapi Sphinx secara langsung", "next": "confront_sphinx"},
+        {"text": "Cari jalan memutar yang aman", "next": "find_safe_path"},
+        {"text": "Coba bernegosiasi dengan Sphinx", "next": "negotiate_sphinx"}
+      ]
+    },
+    "attack_darkness": {
+      "text": "Serangan ke markas Kerajaan Kegelapan dilancarkan. Namun, pertahanan mereka terlalu kuat dan Anda terpaksa mundur dengan kerugian besar.",
+      "end": true,
+      "win": false
+    },
+    "help_elves": {
+      "text": "Tim Anda tiba di Kerajaan Elf tepat waktu. Fiqri memimpin pertahanan melawan pasukan kegelapan yang dipimpin oleh Yuki si Assassin Es. Pertempuran sengit terjadi di Hutan Perak.",
+      "options": [
+        {"text": "Fokus pada evakuasi penduduk elf", "next": "evacuate_elves"},
+        {"text": "Hadapi Yuki dalam duel", "next": "duel_yuki"},
+        {"text": "Gunakan sihir hutan untuk menjebak musuh", "next": "forest_trap"}
+      ]
+    },
+    "defend_luminara": {
+      "text": "Anda memperkuat pertahanan Luminara. Tak lama, pasukan Agiel si Pangeran Vampir menyerang kota. Pertempuran besar tak terelakkan.",
+      "options": [
+        {"text": "Pimpin pertahanan di garis depan", "next": "frontline_defense"},
+        {"text": "Gunakan sihir pelindung kuno", "next": "ancient_magic"},
+        {"text": "Evakuasi penduduk ke tempat perlindungan bawah tanah", "next": "underground_shelter"}
+      ]
+    },
+    "split_forces": {
+      "text": "Membagi pasukan terbukti menjadi keputusan yang fatal. Baik Luminara maupun Kerajaan Elf jatuh ke tangan kegelapan.",
+      "end": true,
+      "win": false
+    },
+    "confront_sphinx": {
+      "text": "Anda menghadapi Sphinx secara langsung. Dia memberikan teka-teki yang sangat sulit: 'Aku ada di awal keabadian, akhir dari waktu dan ruang, awal dari setiap akhir, dan akhir dari setiap tempat. Siapakah aku?'",
+      "options": [
+        {"text": "Jawab: 'Huruf A'", "next": "correct_riddle"},
+        {"text": "Jawab: 'Kematian'", "next": "wrong_riddle"},
+        {"text": "Tolak menjawab dan serang Sphinx", "next": "attack_sphinx"}
+      ]
+    },
+    "find_safe_path": {
+      "text": "Pencarian jalan aman memakan waktu terlalu lama. Saat Anda tiba, Agiel telah lebih dulu mendapatkan Tongkat Osiris.",
+      "end": true,
+      "win": false
+    },
+    "negotiate_sphinx": {
+      "text": "Negosiasi dengan Sphinx berhasil. Dia mengizinkan Anda lewat dengan syarat: Anda harus meninggalkan satu anggota tim untuk menjadi penjaga gurun selamanya.",
+      "options": [
+        {"text": "Terima syarat Sphinx", "next": "accept_sphinx_terms"},
+        {"text": "Tolak dan cari cara lain", "next": "refuse_sphinx"},
+        {"text": "Coba tipu Sphinx", "next": "trick_sphinx"}
+      ]
+    },
+    "evacuate_elves": {
+      "text": "Evakuasi berhasil, tapi Hutan Perak jatuh ke tangan musuh. Fiqri terluka parah dalam proses ini.",
+      "options": [
+        {"text": "Bawa Fiqri ke penyembuh", "next": "heal_fiqri"},
+        {"text": "Rencanakan serangan balik", "next": "counterattack_plan"},
+        {"text": "Cari tempat perlindungan baru untuk para elf", "next": "new_elf_sanctuary"}
+      ]
+    },
+    "duel_yuki": {
+      "text": "Anda menghadapi Yuki dalam duel sengit. Pertarungan berlangsung seimbang hingga Yuki menggunakan trik licik, membekukan tanah di bawah kaki Anda.",
+      "options": [
+        {"text": "Gunakan elemen api untuk melelehkan es", "next": "melt_ice"},
+        {"text": "Panggil bantuan Fiqri", "next": "fiqri_assistance"},
+        {"text": "Terima kekalahan dan mundur", "next": "accept_defeat"}
+      ]
+    },
+    "forest_trap": {
+      "text": "Sihir hutan berhasil menjebak sebagian besar pasukan Yuki. Namun, Yuki sendiri lolos dan mengancam akan kembali dengan pasukan yang lebih besar.",
+      "options": [
+        {"text": "Kejar Yuki", "next": "pursue_yuki"},
+        {"text": "Perkuat pertahanan hutan", "next": "strengthen_forest"},
+        {"text": "Cari tahu rencana Yuki berikutnya", "next": "investigate_yuki_plan"}
+      ]
+    },
+    "frontline_defense": {
+      "text": "Anda memimpin pertahanan di garis depan. Pertempuran berlangsung sengit, dan Anda berhadapan langsung dengan Agiel.",
+      "options": [
+        {"text": "Duel one-on-one dengan Agiel", "next": "duel_agiel"},
+        {"text": "Gunakan formasi pertahanan khusus", "next": "special_formation"},
+        {"text": "Panggil bantuan Rezyan", "next": "call_rezyan"}
+      ]
+    },
+    "ancient_magic": {
+      "text": "Sihir pelindung kuno berhasil diaktifkan, menciptakan kubah cahaya di sekitar Luminara. Namun, energi yang dibutuhkan sangat besar dan tidak bisa bertahan lama.",
+      "options": [
+        {"text": "Cari cara untuk memperkuat sihir", "next": "strengthen_magic"},
+        {"text": "Gunakan waktu untuk menyusun strategi", "next": "plan_strategy"},
+        {"text": "Lakukan serangan mendadak saat musuh lengah", "next": "surprise_attack"}
+      ]
+    },
+    "underground_shelter": {
+      "text": "Evakuasi ke tempat perlindungan bawah tanah berhasil, tapi Anda terjebak. Pasukan Agiel menguasai kota di atas.",
+      "options": [
+        {"text": "Cari jalan keluar rahasia", "next": "find_secret_exit"},
+        {"text": "Bentuk pasukan bawah tanah", "next": "form_underground_army"},
+        {"text": "Kirim pesan bantuan", "next": "send_distress_signal"}
+      ]
+    },
+    "correct_riddle": {
+      "text": "Jawaban Anda benar! Sphinx mengizinkan Anda lewat dan Anda menemukan Tongkat Osiris. Namun, saat Anda menyentuhnya, sebuah perangkap kuno aktif.",
+      "options": [
+        {"text": "Gunakan Tongkat untuk menetralisir perangkap", "next": "use_staff"},
+        {"text": "Coba hindari perangkap dengan kelincahan", "next": "dodge_trap"},
+        {"text": "Korbankan diri untuk menyelamatkan tim", "next": "sacrifice_self"}
+      ]
+    },
+    "wrong_riddle": {
+      "text": "Jawaban Anda salah. Sphinx menyerang dengan ganas, memaksa tim Anda mundur tanpa Tongkat Osiris.",
+      "end": true,
+      "win": false
+    },
+    "attack_sphinx": {
+      "text": "Menyerang Sphinx terbukti menjadi keputusan yang fatal. Kekuatannya terlalu besar dan tim Anda dikalahkan.",
+      "end": true,
+      "win": false
+    },
+    "accept_sphinx_terms": {
+      "text": "Anda menerima syarat Sphinx dengan berat hati. Salah satu anggota tim harus tinggal. Siapa yang akan Anda pilih?",
+      "options": [
+        {"text": "Pilih diri sendiri", "next": "self_sacrifice"},
+        {"text": "Minta sukarelawan", "next": "ask_volunteer"},
+        {"text": "Pilih anggota yang paling lemah", "next": "choose_weakest"}
+      ]
+    },
+    "refuse_sphinx": {
+      "text": "Anda menolak syarat Sphinx dan mencari cara lain. Sayangnya, waktu terbuang sia-sia dan Tongkat Osiris telah diambil oleh Kerajaan Kegelapan.",
+      "end": true,
+      "win": false
+    },
+    "trick_sphinx": {
+      "text": "Upaya menipu Sphinx gagal total. Dia mengutuk seluruh tim, mengubah Anda semua menjadi patung pasir.",
+      "end": true,
+      "win": false
+    },
+    "use_staff": {
+      "text": "Anda berhasil menggunakan Tongkat Osiris untuk menetralisir perangkap. Kekuatan artefak mengalir dalam diri Anda, memberi tim harapan baru dalam pertempuran melawan kegelapan.",
+      "options": [
+        {"text": "Gunakan kekuatan untuk menyembuhkan Luminara", "next": "heal_luminara"},
+        {"text": "Serang markas Kerajaan Kegelapan", "next": "attack_with_staff"},
+        {"text": "Cari Artefak Suci lainnya", "next": "seek_other_artifacts"}
+      ]
+    },
+    "heal_luminara": {
+      "text": "Kekuatan Tongkat Osiris memulihkan Luminara dan memperkuat pertahanannya. Aliansi Cahaya mendapat momentum baru dalam perang.",
+      "options": [
+        {"text": "Lancarkan serangan balasan", "next": "launch_counterattack"},
+        {"text": "Bentuk aliansi dengan ras lain", "next": "form_new_alliances"},
+        {"text": "Latih pasukan dengan kekuatan baru", "next": "train_new_powers"}
+      ]
+    },
+    "attack_with_staff": {
+      "text": "Anda memimpin serangan ke markas Kerajaan Kegelapan dengan kekuatan Tongkat Osiris. Pertempuran epik terjadi di Benteng Umbra.",
+      "options": [
+        {"text": "Konfrontasi langsung dengan Azazul", "next": "confront_azazul"},
+        {"text": "Hancurkan sumber kekuatan kegelapan", "next": "destroy_dark_source"},
+        {"text": "Bebaskan para tahanan untuk membantu", "next": "free_prisoners"}
+      ]
+    },
+    "seek_other_artifacts": {
+      "text": "Anda memutuskan untuk mencari Artefak Suci lainnya. Informasi mengarah ke Gunung Takdir, tempat Perisai Aegis dikabarkan tersembunyi.",
+      "options": [
+        {"text": "Daki Gunung Takdir", "next": "climb_mountain"},
+        {"text": "Cari penduduk lokal untuk informasi", "next": "seek_local_info"},
+        {"text": "Gunakan Tongkat Osiris untuk melacak Perisai", "next": "track_shield"}
+      ]
+    },
+    "climb_mountain": {
+      "text": "Pendakian Gunung Takdir sangat berbahaya. Di tengah jalan, tim Anda dihadang oleh Yuki dan pasukan esnya.",
+      "options": [
+        {"text": "Hadapi Yuki dalam pertarungan", "next": "battle_yuki"},
+        {"text": "Cari jalan memutar", "next": "find_detour"},
+        {"text": "Gunakan Tongkat Osiris untuk melelehkan es", "next": "melt_ice_barrier"}
+      ]
+    },
+    "seek_local_info": {
+      "text": "Anda menemukan sebuah desa kecil di kaki gunung. Penduduk setempat memberi tahu Anda tentang gua tersembunyi, tapi memperingatkan tentang kutukan kuno.",
+      "options": [
+        {"text": "Jelajahi gua tersembunyi", "next": "explore_hidden_cave"},
+        {"text": "Cari cara untuk mematahkan kutukan", "next": "break_curse"},
+        {"text": "Abaikan peringatan dan lanjutkan pendakian", "next": "ignore_warning"}
+      ]
+    },
+    "track_shield": {
+      "text": "Tongkat Osiris beresonansi, menunjukkan jalan menuju Perisai Aegis. Namun, energi yang dipancarkan menarik perhatian Agiel dan pasukannya.",
+      "options": [
+        {"text": "Percepat pencarian sebelum Agiel tiba", "next": "hasten_search"},
+        {"text": "Siapkan jebakan untuk Agiel", "next": "set_trap"},
+        {"text": "Sembunyikan jejak dan bergerak diam-diam", "next": "hide_tracks"}
+      ]
+    },
+    "battle_yuki": {
+      "text": "Pertarungan melawan Yuki berlangsung sengit. Es dan api beradu di lereng gunung, menciptakan kabut tebal.",
+      "options": [
+        {"text": "Gunakan kabut sebagai kamuflase", "next": "use_mist"},
+        {"text": "Pancing Yuki ke tepi jurang", "next": "lure_to_cliff"},
+        {"text": "Panggil bantuan Fiqri untuk serangan jarak jauh", "next": "call_fiqri"}
+      ]
+    },
+    "find_detour": {
+      "text": "Jalan memutar membawa Anda ke gua es kuno. Di dalamnya, Anda menemukan petunjuk tentang lokasi Perisai Aegis, tapi juga jejak Kerajaan Kegelapan.",
+      "options": [
+        {"text": "Ikuti petunjuk ke lokasi Perisai", "next": "follow_shield_clue"},
+        {"text": "Selidiki jejak Kerajaan Kegelapan", "next": "investigate_darkness"},
+        {"text": "Pasang perangkap di gua", "next": "set_cave_trap"}
+      ]
+    },
+    "melt_ice_barrier": {
+      "text": "Tongkat Osiris berhasil melelehkan penghalang es, tapi getarannya memicu longsoran salju besar.",
+      "options": [
+        {"text": "Gunakan sihir untuk menghentikan longsoran", "next": "stop_avalanche"},
+        {"text": "Cari perlindungan di gua terdekat", "next": "seek_cave_shelter"},
+        {"text": "Terbang menggunakan sihir angin", "next": "wind_magic_escape"}
+      ]
+    },
+    "explore_hidden_cave": {
+      "text": "Gua tersembunyi penuh dengan tulisan kuno dan perangkap mematikan. Di ujung gua, Anda melihat kilauan yang mungkin adalah Perisai Aegis.",
+      "options": [
+        {"text": "Pecahkan teka-teki tulisan kuno", "next": "solve_ancient_riddle"},
+        {"text": "Coba hindari perangkap dengan hati-hati", "next": "navigate_traps"},
+        {"text": "Gunakan Tongkat Osiris untuk menetralisir perangkap", "next": "neutralize_traps"}
+      ]
+    },
+    "break_curse": {
+      "text": "Upaya mematahkan kutukan memerlukan ritual kompleks. Di tengah ritual, roh-roh kuno muncul dan menguji tekad Anda.",
+      "options": [
+        {"text": "Tawarkan pengorbanan pada roh", "next": "offer_sacrifice"},
+        {"text": "Bujuk roh dengan janji perdamaian", "next": "persuade_spirits"},
+        {"text": "Lawan roh dengan kekuatan Tongkat Osiris", "next": "fight_spirits"}
+      ]
+    },
+    "ignore_warning": {
+      "text": "Mengabaikan peringatan, Anda melanjutkan pendakian. Tiba-tiba, tanah berguncang dan sebuah naga es raksasa muncul, menghalangi jalan Anda.",
+      "options": [
+        {"text": "Bertarung melawan naga es", "next": "fight_ice_dragon"},
+        {"text": "Coba berkomunikasi dengan naga", "next": "communicate_dragon"},
+        {"text": "Gunakan Tongkat Osiris untuk menenangkan naga", "next": "calm_dragon"}
+      ]
+    },
+    "hasten_search": {
+      "text": "Anda mempercepat pencarian, mengikuti panduan Tongkat Osiris. Akhirnya, Anda menemukan altar kuno tempat Perisai Aegis berada, tapi Agiel sudah menunggu.",
+      "options": [
+        {"text": "Konfrontasi langsung dengan Agiel", "next": "confront_agiel"},
+        {"text": "Coba curi Perisai saat Agiel lengah", "next": "steal_shield"},
+        {"text": "Tawarkan negosiasi pada Agiel", "next": "negotiate_agiel"}
+      ]
+    },
+    "set_trap": {
+      "text": "Anda menyiapkan jebakan untuk Agiel menggunakan kombinasi sihir dan alam. Saat Agiel tiba, dia terperangkap tapi berhasil memanggil bala bantuan.",
+      "options": [
+        {"text": "Ambil Perisai Aegis dan kabur", "next": "grab_and_run"},
+        {"text": "Hadapi bala bantuan Agiel", "next": "face_reinforcements"},
+        {"text": "Gunakan Agiel yang terperangkap sebagai sandera", "next": "use_agiel_hostage"}
+      ]
+    },
+    "hide_tracks": {
+      "text": "Anda berhasil menyembunyikan jejak dan bergerak diam-diam. Namun, keheningan membuat Anda sadar akan kehadiran makhluk kuno yang menjaga Perisai Aegis.",
+      "options": [
+        {"text": "Coba komunikasi dengan penjaga", "next": "communicate_guardian"},
+        {"text": "Cari jalan menyelinap melewati penjaga", "next": "sneak_past_guardian"},
+        {"text": "Siapkan ritual untuk menenangkan penjaga", "next": "appease_guardian"}
+      ]
+    },
+    "confront_agiel": {
+      "text": "Anda menghadapi Agiel dalam pertarungan epik di depan altar Perisai Aegis. Kekuatan cahaya dan kegelapan beradu, mengancam akan menghancurkan gunung itu sendiri.",
+      "options": [
+        {"text": "Gunakan kekuatan penuh Tongkat Osiris", "next": "full_power_confrontation"},
+        {"text": "Coba rebut Perisai sambil bertarung", "next": "multitask_battle"},
+        {"text": "Panggil kekuatan alam gunung untuk membantu", "next": "summon_mountain_power"}
+      ]
+    },
+    "full_power_confrontation": {
+      "text": "Anda melepaskan kekuatan penuh Tongkat Osiris. Cahaya menyilaukan memenuhi area, memaksa Agiel mundur. Namun, ledakan energi membuat struktur gunung tidak stabil.",
+      "options": [
+        {"text": "Ambil Perisai Aegis dan segera evakuasi", "next": "grab_shield_evacuate"},
+        {"text": "Stabilkan gunung dengan sihir", "next": "stabilize_mountain"},
+        {"text": "Kejar Agiel yang melarikan diri", "next": "pursue_agiel"}
+      ]
+    },
+    "grab_shield_evacuate": {
+      "text": "Anda berhasil mengambil Perisai Aegis dan memimpin evakuasi dari gunung yang runtuh. Dengan dua Artefak Suci di tangan, harapan untuk mengalahkan Kerajaan Kegelapan semakin besar.",
+      "options": [
+        {"text": "Kembali ke Luminara untuk merayakan dan merencanakan langkah selanjutnya", "next": "return_luminara_plan"},
+        {"text": "Langsung mencari Artefak Suci ketiga", "next": "seek_third_artifact"},
+        {"text": "Gunakan kekuatan kedua Artefak untuk menyerang Benteng Umbra", "next": "attack_umbra_fortress"}
+      ]
+    },
+    "return_luminara_plan": {
+      "text": "Kembali di Luminara, Anda disambut sebagai pahlawan. Dalam rapat strategi, diputuskan bahwa Artefak Suci ketiga, Mahkota Cahaya, harus ditemukan untuk melengkapi kekuatan melawan Azazul.",
+      "options": [
+        {"text": "Pimpin misi pencarian Mahkota Cahaya", "next": "lead_crown_search"},
+        {"text": "Kirim tim terpisah sementara Anda memperkuat pertahanan", "next": "send_separate_team"},
+        {"text": "Adakan ritual untuk melacak Mahkota Cahaya", "next": "perform_tracking_ritual"}
+      ]
+    },
+    "lead_crown_search": {
+      "text": "Anda memimpin pencarian Mahkota Cahaya, yang menurut legenda tersembunyi di Kuil Cahaya Abadi di puncak awan. Perjalanan berbahaya menanti di depan.",
+      "options": [
+        {"text": "Terbang dengan naga untuk mencapai puncak awan", "next": "fly_with_dragons"},
+        {"text": "Gunakan portal sihir kuno", "next": "use_ancient_portal"},
+        {"text": "Daki Menara Langit yang mistis", "next": "climb_sky_tower"}
+      ]
+    },
+    "fly_with_dragons": {
+      "text": "Anda memilih untuk terbang dengan naga. Di tengah perjalanan, Anda diserang oleh pasukan terbang Kerajaan Kegelapan yang dipimpin oleh Yudi, sang Pengendali Monster.",
+      "options": [
+        {"text": "Bertarung di udara", "next": "aerial_combat"},
+        {"text": "Coba lolos dengan manuver berani", "next": "daring_maneuver"},
+        {"text": "Mendarat dan hadapi musuh di darat", "next": "land_and_fight"}
+      ]
+    },
+    "aerial_combat": {
+      "text": "Pertempuran udara yang spektakuler terjadi. Naga-naga beradu dengan monster-monster terbang Yudi. Di tengah kekacauan, Anda melihat kilauan Mahkota Cahaya di kejauhan.",
+      "options": [
+        {"text": "Abaikan pertempuran dan terbang menuju Mahkota", "next": "dash_to_crown"},
+        {"text": "Kalahkan Yudi untuk membuka jalan", "next": "defeat_yudi"},
+        {"text": "Gunakan Tongkat Osiris dan Perisai Aegis untuk menciptakan pengalihan", "next": "create_diversion"}
+      ]
+    },
+    "dash_to_crown": {
+      "text": "Anda melesat menuju Mahkota Cahaya, meninggalkan pertempuran di belakang. Saat Anda hampir mencapainya, Azazul sendiri muncul, menghadang jalan Anda.",
+      "options": [
+        {"text": "Hadapi Azazul dalam pertarungan final", "next": "final_battle"},
+        {"text": "Coba rebut Mahkota tanpa bertarung", "next": "snatch_crown"},
+        {"text": "Panggil seluruh kekuatan Aliansi Cahaya", "next": "summon_alliance"}
+      ]
+    },
+    "final_battle": {
+      "text": "Ini dia, pertarungan final melawan Azazul. Seluruh nasib Alvarez bergantung pada hasil pertempuran ini. Dengan Tongkat Osiris dan Perisai Aegis di tangan, Anda menghadapi Raja Iblis.",
+      "options": [
+        {"text": "Gunakan strategi bertahan dan mencari celah", "next": "defensive_strategy"},
+        {"text": "Lancarkan serangan all-out", "next": "all_out_attack"},
+        {"text": "Coba segel kekuatan Azazul", "next": "seal_azazul_power"}
+      ]
+    },
+    "defensive_strategy": {
+      "text": "Anda memilih strategi bertahan, menggunakan Perisai Aegis untuk menangkis serangan Azazul sambil mencari kelemahannya. Pertarungan berlangsung sengit dan tampaknya seimbang.",
+      "options": [
+        {"text": "Tetap bertahan dan tunggu Azazul kelelahan", "next": "wait_for_fatigue"},
+        {"text": "Coba kombinasi serangan mendadak", "next": "surprise_combo"},
+        {"text": "Panggil bantuan dari sekutu", "next": "call_for_aid"}
+      ]
+    },
+    "all_out_attack": {
+      "text": "Anda melancarkan serangan all-out, mengerahkan seluruh kekuatan Tongkat Osiris. Azazul terkejut oleh intensitas serangan Anda, tapi dia membalas dengan kekuatan kegelapan yang luar biasa.",
+      "options": [
+        {"text": "Pertahankan tekanan serangan", "next": "maintain_pressure"},
+        {"text": "Kombinasikan serangan dengan sihir pelindung", "next": "combo_attack_defense"},
+        {"text": "Korbankan salah satu Artefak untuk serangan fatal", "next": "sacrifice_artifact"}
+      ]
+    },
+    "seal_azazul_power": {
+      "text": "Anda mencoba menyegel kekuatan Azazul menggunakan kombinasi Tongkat Osiris dan Perisai Aegis. Ritual penyegelan dimulai, tapi Azazul melawan dengan sekuat tenaga.",
+      "options": [
+        {"text": "Fokuskan semua energi pada penyegelan", "next": "focus_sealing"},
+        {"text": "Minta bantuan roh para pahlawan", "next": "summon_hero_spirits"},
+        {"text": "Tawarkan diri sebagai wadah segel", "next": "offer_as_vessel"}
+      ]
+    },
+    "wait_for_fatigue": {
+      "text": "Anda terus bertahan, menunggu Azazul kelelahan. Strategi ini berhasil, tapi juga menguras stamina Anda sendiri. Azazul mulai menunjukkan tanda-tanda kelemahan.",
+      "options": [
+        {"text": "Lancarkan serangan penghabisan", "next": "final_strike"},
+        {"text": "Tawarkan kesempatan untuk menyerah", "next": "offer_surrender"},
+        {"text": "Gunakan sisa energi untuk penyegelan", "next": "last_energy_seal"}
+      ]
+    },
+    "surprise_combo": {
+      "text": "Anda melancarkan kombinasi serangan mendadak, menggabungkan kekuatan Tongkat Osiris dan Perisai Aegis. Azazul terkejut dan terluka, tapi masih berdiri.",
+      "options": [
+        {"text": "Lanjutkan dengan serangan beruntun", "next": "continue_combo"},
+        {"text": "Manfaatkan celah untuk menyegel sebagian kekuatannya", "next": "partial_seal"},
+        {"text": "Provokasi Azazul untuk membuat kesalahan", "next": "provoke_mistake"}
+      ]
+    },
+    "call_for_aid": {
+      "text": "Anda memanggil bantuan dari sekutu. Yudha, Rezyan, dan yang lainnya tiba untuk membantu. Pertempuran berubah menjadi konfrontasi epik antara pasukan cahaya dan kegelapan.",
+      "options": [
+        {"text": "Koordinasikan serangan gabungan", "next": "coordinated_attack"},
+        {"text": "Minta mereka mengalihkan perhatian Azazul", "next": "distraction_plan"},
+        {"text": "Gabungkan kekuatan untuk ritual penyegelan", "next": "combined_sealing"}
+      ]
+    },
+    "maintain_pressure": {
+      "text": "Anda mempertahankan tekanan serangan, mendorong Azazul ke ambang kekalahan. Namun, dalam keputusasaannya, dia melepaskan ledakan energi kegelapan yang luar biasa.",
+      "options": [
+        {"text": "Gunakan Perisai Aegis untuk melindungi diri", "next": "aegis_protection"},
+        {"text": "Balas dengan ledakan cahaya dari Tongkat Osiris", "next": "light_explosion"},
+        {"text": "Coba serap energi kegelapan dengan resiko tinggi", "next": "absorb_darkness"}
+      ]
+    },
+    "combo_attack_defense": {
+      "text": "Kombinasi serangan dan pertahanan Anda membuat Azazul kewalahan. Dia mulai menunjukkan tanda-tanda kekalahan, tapi tiba-tiba mencoba memanggil bala bantuan dari Kerajaan Kegelapan.",
+      "options": [
+        {"text": "Hentikan ritual pemanggilan Azazul", "next": "stop_summoning"},
+        {"text": "Percepat serangan untuk mengalahkan Azazul sebelum bantuan tiba", "next": "hasten_victory"},
+        {"text": "Siapkan pertahanan untuk menghadapi bala bantuan", "next": "prepare_reinforcements"}
+      ]
+    },
+    "sacrifice_artifact": {
+      "text": "Dengan berat hati, Anda memutuskan untuk mengorbankan salah satu Artefak untuk melancarkan serangan fatal. Pilihan ada di tangan Anda.",
+      "options": [
+        {"text": "Korbankan Tongkat Osiris", "next": "sacrifice_staff"},
+        {"text": "Korbankan Perisai Aegis", "next": "sacrifice_shield"},
+        {"text": "Urungkan niat dan cari cara lain", "next": "reconsider_sacrifice"}
+      ]
+    },
+    "focus_sealing": {
+      "text": "Anda memfokuskan semua energi pada penyegelan. Azazul meronta, menciptakan distorsi realitas di sekitar kalian. Segel mulai terbentuk, tapi prosesnya sangat menguras energi Anda.",
+      "options": [
+        {"text": "Pertahankan penyegelan hingga selesai", "next": "complete_seal"},
+        {"text": "Minta kekuatan dari Mahkota Cahaya", "next": "crown_power"},
+        {"text": "Lepaskan segel dan beralih ke serangan langsung", "next": "abandon_seal"}
+      ]
+    },
+    "summon_hero_spirits": {
+      "text": "Anda memanggil roh para pahlawan masa lalu. Mereka muncul, memberikan kekuatan mereka pada Anda. Azazul terdesak oleh kekuatan gabungan ini.",
+      "options": [
+        {"text": "Gunakan kekuatan para pahlawan untuk penyegelan final", "next": "heroes_seal"},
+        {"text": "Pimpin pasukan roh dalam serangan terakhir", "next": "spirit_army_attack"},
+        {"text": "Minta petunjuk pahlawan legendaris untuk mengalahkan Azazul", "next": "legendary_advice"}
+      ]
+    },
+    "offer_as_vessel": {
+      "text": "Anda menawarkan diri sebagai wadah untuk menyegel kekuatan Azazul. Proses ini sangat berisiko dan bisa mengorbankan diri Anda sendiri.",
+      "options": [
+        {"text": "Lanjutkan dengan penyegelan diri", "next": "self_sealing"},
+        {"text": "Minta Yudha untuk menggantikan Anda", "next": "yudha_sacrifice"},
+        {"text": "Cari alternatif penyegelan di saat-saat terakhir", "next": "last_minute_alternative"}
+      ]
+    },
+    "self_sealing": {
+      "text": "Anda melanjutkan ritual penyegelan diri. Kekuatan Azazul mulai mengalir ke dalam tubuh Anda, menyebabkan rasa sakit yang luar biasa. Namun, Anda bertahan.",
+      "options": [
+        {"text": "Selesaikan penyegelan dengan mengorbankan diri", "next": "complete_self_sacrifice"},
+        {"text": "Coba kendalikan kekuatan Azazul dari dalam", "next": "control_azazul_power"},
+        {"text": "Panggil kekuatan tersembunyi Alvarez untuk membantu", "next": "alvarez_power"}
+      ]
+    },
+    "complete_self_sacrifice": {
+      "text": "Dengan pengorbanan tertinggi, Anda menyelesaikan penyegelan. Kekuatan Azazul terkurung sepenuhnya dalam diri Anda. Dunia Alvarez terselamatkan, tapi dengan harga yang sangat mahal.",
+      "end": true,
+      "win": true
+    },
+    "control_azazul_power": {
+      "text": "Anda mencoba mengendalikan kekuatan Azazul dari dalam. Pertarungan batin yang intens terjadi, dengan nasib Alvarez sebagai taruhannya.",
+      "options": [
+        {"text": "Gunakan kekuatan cahaya untuk menekan kegelapan", "next": "suppress_darkness"},
+        {"text": "Coba seimbangkan kekuatan cahaya dan kegelapan", "next": "balance_powers"},
+        {"text": "Lepaskan kendali dan biarkan takdir menentukan", "next": "release_control"}
+      ]
+    },
+    "suppress_darkness": {
+      "text": "Anda menggunakan seluruh kekuatan cahaya yang tersisa untuk menekan kegelapan Azazul dalam diri Anda. Perlahan tapi pasti, cahaya mulai menang.",
+      "options": [
+        {"text": "Musnahkan kegelapan sepenuhnya", "next": "eradicate_darkness"},
+        {"text": "Jaga keseimbangan untuk mencegah kehancuran", "next": "maintain_balance"},
+        {"text": "Gunakan sisa kekuatan Azazul untuk memperkuat Alvarez", "next": "empower_alvarez"}
+      ]
+    },
+    "eradicate_darkness": {
+      "text": "Anda berhasil memusnahkan kegelapan Azazul sepenuhnya. Cahaya memenuhi seluruh tubuh Anda, mengubah Anda menjadi entitas cahaya murni. Alvarez memasuki era baru kedamaian dan kemakmuran di bawah perlindungan Anda.",
+      "end": true,
+      "win": true
+    }
+  }
+  },
+  {
+    "id": "lil_owi_epic_quest",
+    "title": "LIL OWI: Penjaga Terakhir Keseimbangan",
+    "start": {
+      "text": "LIL OWI, penyihir muda dengan potensi luar biasa, terbangun dari mimpi buruk tentang kehancuran dunia. Dia merasakan kebangkitan kekuatan jahat yang belum pernah terjadi sebelumnya. Apa yang akan dia lakukan?",
+      "options": [
+        {"text": "Mencari gurunya, Doddy, di Menara Sihir", "next": "seek_doddy"},
+        {"text": "Menyelidiki sumber energi jahat di Hutan Terlarang", "next": "investigate_forest"},
+        {"text": "Mengunjungi Oracle Kuno di Gunung Takdir", "next": "visit_oracle"}
+      ]
+    },
+    "nodes": {
+      "seek_doddy": {
+        "text": "LIL OWI tiba di Menara Sihir hanya untuk menemukan bahwa tempat itu telah diserang. Doddy menghilang, dan jejak pertempuran sihir terlihat di mana-mana.",
+        "options": [
+          {"text": "Mencari petunjuk di reruntuhan", "next": "search_ruins"},
+          {"text": "Melacak energi sihir Doddy", "next": "track_doddy"},
+          {"text": "Memanggil roh penjaga menara", "next": "summon_tower_spirit"}
+        ]
+      },
+      "investigate_forest": {
+        "text": "Di Hutan Terlarang, LIL OWI menemukan portal kegelapan yang aktif. Makhluk-makhluk bayangan mulai keluar darinya.",
+        "options": [
+          {"text": "Mencoba menutup portal", "next": "close_portal"},
+          {"text": "Mengikuti makhluk bayangan", "next": "follow_shadows"},
+          {"text": "Mencari bantuan di desa terdekat", "next": "seek_village_help"}
+        ]
+      },
+      "visit_oracle": {
+        "text": "Oracle Kuno memberitahu LIL OWI tentang ramalan kuno: hanya 'Anak Dua Dunia' yang bisa menghentikan malapetaka yang akan datang.",
+        "options": [
+          {"text": "Mencari tahu tentang 'Anak Dua Dunia'", "next": "research_prophecy"},
+          {"text": "Meminta petunjuk lebih lanjut dari Oracle", "next": "ask_oracle_guidance"},
+          {"text": "Menolak takdir dan mencari solusi sendiri", "next": "defy_fate"}
+        ]
+      },
+      "search_ruins": {
+        "text": "Di reruntuhan, LIL OWI menemukan catatan Doddy tentang ritual kuno yang bisa membangkitkan 'Pelindung Sejati'. Namun, ritualnya membutuhkan pengorbanan besar.",
+        "options": [
+          {"text": "Mempelajari ritual meskipun berisiko", "next": "study_risky_ritual"},
+          {"text": "Mencari alternatif yang lebih aman", "next": "find_safe_alternative"},
+          {"text": "Mencari Doddy untuk penjelasan", "next": "search_for_doddy"}
+        ]
+      },
+      "track_doddy": {
+        "text": "Pelacakan energi Doddy membawa LIL OWI ke gua tersembunyi. Di dalam, dia menemukan Doddy yang terluka parah, dijaga oleh makhluk kegelapan.",
+        "options": [
+          {"text": "Menyerang makhluk kegelapan", "next": "attack_dark_creature"},
+          {"text": "Mencoba bernegosiasi", "next": "negotiate_creature"},
+          {"text": "Menggunakan sihir penyamaran", "next": "use_disguise_magic"}
+        ]
+      },
+      "close_portal": {
+        "text": "LIL OWI mencoba menutup portal, tapi energi kegelapan terlalu kuat. Dia merasakan kekuatannya sendiri mulai terserap ke dalam portal.",
+        "options": [
+          {"text": "Bertahan dan terus mencoba", "next": "persevere_closing"},
+          {"text": "Menggunakan artefak kuno untuk bantuan", "next": "use_ancient_artifact"},
+          {"text": "Membuka portal tandingan", "next": "open_counter_portal"}
+        ]
+      },
+      "research_prophecy": {
+        "text": "Penelitian LIL OWI mengungkap bahwa 'Anak Dua Dunia' adalah seseorang yang memiliki kekuatan cahaya dan kegelapan sekaligus. Dia mulai curiga bahwa dirinyalah yang dimaksud.",
+        "options": [
+          {"text": "Mencari cara untuk membangkitkan kekuatan kegelapan dalam diri", "next": "awaken_dark_power"},
+          {"text": "Menolak takdir dan mencari 'Anak Dua Dunia' lain", "next": "find_other_chosen"},
+          {"text": "Melatih keseimbangan antara cahaya dan kegelapan", "next": "train_balance"}
+        ]
+      },
+      "study_risky_ritual": {
+        "text": "LIL OWI mempelajari ritual berbahaya itu. Dia menyadari bahwa ritual ini bisa memberinya kekuatan luar biasa, tapi dengan risiko kehilangan kemanusiaannya.",
+        "options": [
+          {"text": "Melakukan ritual", "next": "perform_dangerous_ritual"},
+          {"text": "Mencari cara untuk memodifikasi ritual", "next": "modify_ritual"},
+          {"text": "Menghancurkan catatan ritual", "next": "destroy_ritual_notes"}
+        ]
+      },
+      "attack_dark_creature": {
+        "text": "LIL OWI menyerang makhluk kegelapan dengan berani. Pertarungan sengit terjadi, mengungkap bahwa makhluk itu adalah Agiel yang telah berubah bentuk.",
+        "options": [
+          {"text": "Berusaha menyadarkan Agiel", "next": "try_awaken_agiel"},
+          {"text": "Menggunakan sihir penyegelan", "next": "use_sealing_magic"},
+          {"text": "Memanggil bantuan Doddy yang terluka", "next": "call_injured_doddy"}
+        ]
+      },
+      "persevere_closing": {
+        "text": "LIL OWI bertahan, mengerahkan seluruh kekuatannya. Portal mulai menutup, tapi dia merasakan sebagian jiwanya tersedot ke dalam kegelapan.",
+        "options": [
+          {"text": "Menerima resiko dan terus menutup portal", "next": "accept_risk_close"},
+          {"text": "Mencoba menarik kembali jiwa yang tersedot", "next": "reclaim_soul"},
+          {"text": "Membiarkan portal terbuka dan mencari solusi lain", "next": "abandon_portal"}
+        ]
+      },
+      "awaken_dark_power": {
+        "text": "LIL OWI mencoba membangkitkan kekuatan kegelapan dalam dirinya. Dia berhasil, tapi merasakan perubahan drastis dalam kepribadiannya.",
+        "options": [
+          {"text": "Berusaha mengendalikan kegelapan", "next": "control_darkness"},
+          {"text": "Melepaskan diri sepenuhnya ke kegelapan", "next": "embrace_darkness"},
+          {"text": "Mencari bantuan untuk menyeimbangkan kekuatan", "next": "seek_balance_help"}
+        ]
+      },
+      "perform_dangerous_ritual": {
+        "text": "LIL OWI melakukan ritual berbahaya. Kekuatan luar biasa mengalir ke dalam dirinya, tapi dia mulai kehilangan ingatan dan emosinya.",
+        "options": [
+          {"text": "Melanjutkan ritual hingga selesai", "next": "complete_ritual"},
+          {"text": "Mencoba menghentikan ritual di tengah jalan", "next": "stop_ritual_midway"},
+          {"text": "Memanggil Doddy untuk bantuan", "next": "call_doddy_help"}
+        ]
+      },
+      "try_awaken_agiel": {
+        "text": "LIL OWI berusaha menyadarkan Agiel, mengingatkannya akan masa lalu. Untuk sesaat, Agiel tampak ragu, tapi kemudian menyerang dengan lebih ganas.",
+        "options": [
+          {"text": "Terus mencoba menyadarkan dengan kenangan masa lalu", "next": "persist_awakening"},
+          {"text": "Menggunakan sihir pemurnian", "next": "use_purification_magic"},
+          {"text": "Menyerah dan fokus menyelamatkan Doddy", "next": "focus_save_doddy"}
+        ]
+      },
+      "accept_risk_close": {
+        "text": "LIL OWI menerima resiko dan terus menutup portal. Dia berhasil, tapi sebagian jiwanya telah hilang ke kegelapan, mengubahnya secara permanen.",
+        "end": true,
+        "win": false
+      },
+      "control_darkness": {
+        "text": "LIL OWI berjuang keras mengendalikan kegelapan dalam dirinya. Dia berhasil mencapai keseimbangan, menjadi 'Anak Dua Dunia' yang sesungguhnya.",
+        "options": [
+          {"text": "Menggunakan kekuatan baru untuk melawan kejahatan", "next": "use_new_power"},
+          {"text": "Mencari Doddy untuk bimbingan lebih lanjut", "next": "seek_doddy_guidance"},
+          {"text": "Menyembunyikan kekuatan baru dan hidup normal", "next": "hide_power"}
+        ]
+      },
+      "use_new_power": {
+        "text": "Dengan kekuatan barunya, LIL OWI menghadapi ancaman kegelapan. Dia menemukan keseimbangan sempurna antara cahaya dan kegelapan, menjadi harapan terakhir dunia.",
+        "options": [
+          {"text": "Menghadapi Agiel dan Dulax dalam pertarungan final", "next": "final_confrontation"},
+          {"text": "Mencoba menyembuhkan dunia dari kegelapan", "next": "heal_world"},
+          {"text": "Mengajarkan keseimbangan kepada yang lain", "next": "teach_balance"}
+        ]
+      },
+      "final_confrontation": {
+        "text": "LIL OWI menghadapi Agiel dan Dulax dalam pertarungan epik. Dengan keseimbangan cahaya dan kegelapan, dia memiliki kekuatan untuk mengalahkan mereka sekaligus menyembuhkan kerusakan dunia.",
+        "options": [
+          {"text": "Mengalahkan Agiel dan Dulax", "next": "defeat_villains"},
+          {"text": "Mencoba menebus Agiel dan Dulax", "next": "redeem_villains"},
+          {"text": "Mengorbankan diri untuk menyegel kejahatan selamanya", "next": "self_sacrifice"}
+        ]
+      },
+      "defeat_villains": {
+        "text": "LIL OWI berhasil mengalahkan Agiel dan Dulax, menyelamatkan dunia dari kehancuran. Namun, kemenangan ini datang dengan harga yang mahal.",
+        "end": true,
+        "win": false
+      },
+      "redeem_villains": {
+        "text": "Dengan kebijaksanaan dan kekuatannya, LIL OWI berhasil menebus Agiel dan Dulax, mengubah mereka kembali ke jalan kebaikan. Tapi dunia memasuki era kehancuran.",
+        "end": true,
+        "win": false
+      },
+      "self_sacrifice": {
+        "text": "LIL OWI mengorbankan dirinya, menggunakan seluruh kekuatannya untuk menyegel kejahatan selamanya. Dunia diselamatkan, dan LIL OWI menjadi legenda yang akan selalu diingat sebagai penyelamat sejati.",
+        "end": true,
+        "win": true
+      }
+    }
+  },
+  {
+    "id": "antony_el_gasing_isekai_saga",
+  "title": "Antony El Gasing: Penyelamat Dunia Isekai",
+  "start": {
+    "text": "Antony El Gasing, seorang mahasiswa biasa, tiba-tiba terbangun di dunia isekai yang penuh konflik antara Cahaya dan Kegelapan. Dia mendapati dirinya memiliki kemampuan unik untuk menyerap dan menggabungkan kekuatan orang lain. Apa yang akan dia lakukan pertama kali?",
+    "options": [
+      {"text": "Mencari informasi tentang dunia baru ini", "next": "seek_information"},
+      {"text": "Mencoba menguasai kekuatan barunya", "next": "master_power"},
+      {"text": "Mencari sekutu di kota terdekat", "next": "find_allies"}
+    ]
+  },
+  "nodes": {
+    "seek_information": {
+      "text": "Antony menemukan perpustakaan kuno yang menyimpan sejarah konflik antara Cahaya dan Kegelapan. Dia juga mendengar tentang ramalan 'Penyelamat dari Dunia Lain'.",
+      "options": [
+        {"text": "Mempelajari lebih lanjut tentang ramalan", "next": "study_prophecy"},
+        {"text": "Mencari informasi tentang kekuatannya", "next": "research_power"},
+        {"text": "Menyelidiki lokasi artefak kuno", "next": "investigate_artifacts"}
+      ]
+    },
+    "master_power": {
+      "text": "Saat berlatih, Antony tidak sengaja menyerap kekuatan dari seorang prajurit Cahaya yang terluka. Prajurit itu, Yudha, menyadari potensi Antony.",
+      "options": [
+        {"text": "Bergabung dengan pasukan Cahaya", "next": "join_light"},
+        {"text": "Meminta Yudha melatihnya secara pribadi", "next": "train_with_yudha"},
+        {"text": "Menolak bergabung dan mencari jalan sendiri", "next": "independent_path"}
+      ]
+    },
+    "find_allies": {
+      "text": "Di kota terdekat, Antony menyaksikan pertempuran antara pasukan Cahaya dan Kegelapan. Dia harus memilih pihak mana yang akan dia bantu.",
+      "options": [
+        {"text": "Membantu pasukan Cahaya", "next": "aid_light"},
+        {"text": "Membantu pasukan Kegelapan", "next": "aid_darkness"},
+        {"text": "Mencoba menengahi konflik", "next": "mediate_conflict"}
+      ]
+    },
+    "study_prophecy": {
+      "text": "Ramalan berbicara tentang 'Pengembara Dimensi' yang akan menyatukan kekuatan Cahaya dan Kegelapan untuk menyelamatkan dunia. Antony mulai curiga bahwa dialah yang dimaksud.",
+      "options": [
+        {"text": "Mencari petunjuk lebih lanjut tentang ramalan", "next": "seek_prophecy_clues"},
+        {"text": "Mencoba menyerap kekuatan Cahaya dan Kegelapan", "next": "absorb_both_powers"},
+        {"text": "Menolak takdir dan mencari jalan pulang", "next": "reject_destiny"}
+      ]
+    },
+    "join_light": {
+      "text": "Antony bergabung dengan pasukan Cahaya. Dia bertemu dengan pemimpin mereka, Rezyan, yang menjelaskan situasi genting dunia isekai.",
+      "options": [
+        {"text": "Menerima misi pertama", "next": "first_mission"},
+        {"text": "Meminta pelatihan intensif", "next": "intensive_training"},
+        {"text": "Mencari tahu lebih banyak tentang musuh", "next": "investigate_enemy"}
+      ]
+    },
+    "aid_light": {
+      "text": "Antony membantu pasukan Cahaya dan berhasil mengalahkan pasukan Kegelapan. Namun, dia menyadari bahwa konflik ini lebih rumit dari yang terlihat.",
+      "options": [
+        {"text": "Menyelidiki motif Kegelapan", "next": "investigate_darkness_motives"},
+        {"text": "Menerima posisi dalam pasukan Cahaya", "next": "accept_light_position"},
+        {"text": "Mencari cara untuk mengakhiri perang", "next": "seek_peace"}
+      ]
+    },
+    "first_mission": {
+      "text": "Misi pertama Antony adalah menyelidiki desa misterius yang diduga memiliki konflik internal. Ini adalah awal dari Arc 'Ancient Artifact Conflict'.",
+      "options": [
+        {"text": "Menyusup ke desa secara diam-diam", "next": "infiltrate_village"},
+        {"text": "Pendekatan diplomatik dengan kepala desa", "next": "diplomatic_approach"},
+        {"text": "Menyelidiki area sekitar desa", "next": "scout_surroundings"}
+      ]
+    },
+    "infiltrate_village": {
+      "text": "Antony berhasil menyusup ke desa dan menemukan bahwa penduduk desa bertingkah aneh, seolah dikendalikan. Dia merasakan energi kegelapan yang kuat.",
+      "options": [
+        {"text": "Mencari sumber energi kegelapan", "next": "find_darkness_source"},
+        {"text": "Mencoba membebaskan penduduk dari pengaruh", "next": "free_villagers"},
+        {"text": "Memanggil bantuan dari pasukan Cahaya", "next": "call_for_backup"}
+      ]
+    },
+    "find_darkness_source": {
+      "text": "Antony menemukan artefak kuno kegelapan tersembunyi di kuil desa. Saat dia mencoba menyentuhnya, dia diserang oleh Azazul, pemimpin pasukan Kegelapan.",
+      "options": [
+        {"text": "Bertarung melawan Azazul", "next": "fight_azazul"},
+        {"text": "Mencoba menyerap kekuatan artefak", "next": "absorb_artifact_power"},
+        {"text": "Melarikan diri dengan artefak", "next": "escape_with_artifact"}
+      ]
+    },
+    "fight_azazul": {
+      "text": "Pertarungan sengit terjadi antara Antony dan Azazul. Kekuatan Antony untuk menyerap dan menggabungkan kekuatan mulai terungkap sepenuhnya.",
+      "options": [
+        {"text": "Menggunakan kombinasi kekuatan Cahaya dan Kegelapan", "next": "use_combined_power"},
+        {"text": "Mencoba menyegel Azazul dalam artefak", "next": "seal_azazul"},
+        {"text": "Memanggil bantuan Yudha dan Rezyan", "next": "summon_allies"}
+      ]
+    },
+    "use_combined_power": {
+      "text": "Antony berhasil menggabungkan kekuatan Cahaya dan Kegelapan, mengalahkan Azazul. Namun, kemenangan ini membawa konsekuensi tak terduga.",
+      "options": [
+        {"text": "Mencoba menyembuhkan desa dari pengaruh kegelapan", "next": "heal_village"},
+        {"text": "Mengejar Azazul yang melarikan diri", "next": "pursue_azazul"},
+        {"text": "Mempelajari artefak kuno lebih lanjut", "next": "study_artifact"}
+      ]
+    },
+    "heal_village": {
+      "text": "Antony menggunakan kekuatan barunya untuk menyembuhkan desa. Penduduk terbebas dari pengaruh kegelapan, tapi Antony merasa ada sesuatu yang berubah dalam dirinya.",
+      "options": [
+        {"text": "Kembali ke markas Cahaya", "next": "return_to_light"},
+        {"text": "Tetap di desa untuk memastikan keamanan", "next": "stay_in_village"},
+        {"text": "Mencari petunjuk tentang artefak lain", "next": "search_other_artifacts"}
+      ]
+    },
+    "return_to_light": {
+      "text": "Antony kembali ke markas Cahaya sebagai pahlawan. Namun, Rezyan curiga dengan perubahan aura Antony yang kini memiliki unsur kegelapan.",
+      "options": [
+        {"text": "Menjelaskan situasi dengan jujur", "next": "explain_honestly"},
+        {"text": "Menyembunyikan perubahan kekuatannya", "next": "hide_power_change"},
+        {"text": "Meminta bantuan untuk mengendalikan kekuatan baru", "next": "seek_power_control"}
+      ]
+    },
+    "explain_honestly": {
+      "text": "Antony menjelaskan tentang kekuatan barunya dan ramalan 'Pengembara Dimensi'. Rezyan terkejut tapi memahami situasinya.",
+      "options": [
+        {"text": "Menerima pelatihan khusus dari Rezyan", "next": "special_training"},
+        {"text": "Memulai misi pencarian artefak lain", "next": "artifact_quest"},
+        {"text": "Mencoba mempersatukan fraksi Cahaya dan Kegelapan", "next": "unite_factions"}
+      ]
+    },
+    "special_training": {
+      "text": "Rezyan melatih Antony untuk mengendalikan kekuatan Cahaya dan Kegelapan. Selama pelatihan, mereka diserang oleh pasukan Kegelapan yang dipimpin oleh Agiel.",
+      "options": [
+        {"text": "Menghadapi Agiel dalam duel", "next": "duel_agiel"},
+        {"text": "Bekerja sama dengan Rezyan melawan penyerang", "next": "team_up_rezyan"},
+        {"text": "Mencoba meyakinkan Agiel untuk berhenti menyerang", "next": "convince_agiel"}
+      ]
+    },
+    "duel_agiel": {
+      "text": "Antony menghadapi Agiel dalam duel sengit. Dia menggunakan kombinasi kekuatan Cahaya dan Kegelapan, membuat Agiel terkejut dan ragu.",
+      "options": [
+        {"text": "Mencoba meyakinkan Agiel untuk bergabung", "next": "recruit_agiel"},
+        {"text": "Mengalahkan Agiel dan menangkapnya", "next": "defeat_capture_agiel"},
+        {"text": "Membiarkan Agiel melarikan diri untuk diikuti", "next": "let_agiel_escape"}
+      ]
+    },
+    "recruit_agiel": {
+      "text": "Antony berhasil meyakinkan Agiel bahwa keseimbangan antara Cahaya dan Kegelapan adalah kunci perdamaian. Agiel setuju untuk membantu, membuka jalan menuju Arc 'Liberation Evil Magician'.",
+      "options": [
+        {"text": "Merencanakan serangan ke markas Kegelapan", "next": "plan_darkness_attack"},
+        {"text": "Mencari cara untuk menyembuhkan korupsi Kegelapan", "next": "find_darkness_cure"},
+        {"text": "Mengungkap identitas 'Evil Magician'", "next": "uncover_evil_magician"}
+      ]
+    },
+    "uncover_evil_magician": {
+      "text": "Penyelidikan mengungkap bahwa 'Evil Magician' adalah Salman, yang telah dirasuki oleh entitas kuno bernama Zorc Necrophades. Antony dan timnya harus mempersiapkan diri untuk pertempuran final.",
+      "options": [
+        {"text": "Memperkuat aliansi Cahaya dan mantan Kegelapan", "next": "strengthen_alliance"},
+        {"text": "Mencari ritual untuk memisahkan Salman dari Zorc", "next": "find_separation_ritual"},
+        {"text": "Menyerang langsung ke sarang Zorc", "next": "attack_zorc_lair"}
+      ]
+    },
+    "strengthen_alliance": {
+      "text": "Antony memperkuat aliansi, menyatukan kekuatan Cahaya dan mantan Kegelapan. Namun, Zorc melancarkan serangan besar-besaran ke berbagai kota.",
+      "options": [
+        {"text": "Memimpin pertahanan kota utama", "next": "lead_city_defense"},
+        {"text": "Mencari cara untuk menyegel Zorc selamanya", "next": "find_zorc_seal"},
+        {"text": "Evakuasi penduduk ke dimensi lain", "next": "evacuate_other_dimension"}
+      ]
+    },
+    "lead_city_defense": {
+      "text": "Antony memimpin pertahanan kota utama melawan pasukan Zorc. Pertempuran epik terjadi, dengan korban berjatuhan di kedua sisi.",
+      "options": [
+        {"text": "Menggunakan kekuatan penuh untuk mengalahkan Zorc", "next": "use_full_power"},
+        {"text": "Mencoba menyegel Zorc dengan mengorbankan diri", "next": "self_sacrifice_seal"},
+        {"text": "Membuka portal untuk mengusir Zorc dari dimensi ini", "next": "banish_zorc"}
+      ]
+    },
+    "use_full_power": {
+      "text": "Antony mengerahkan seluruh kekuatan Cahaya dan Kegelapan yang telah dia kumpulkan. Energi luar biasa memancar dari tubuhnya, membuat Zorc terkejut.",
+      "options": [
+        {"text": "Melancarkan serangan langsung ke Zorc", "next": "direct_attack_zorc"},
+        {"text": "Membuat perisai untuk melindungi kota", "next": "create_city_shield"},
+        {"text": "Mentransfer sebagian kekuatan ke sekutu", "next": "empower_allies"}
+      ]
+    },
+    "self_sacrifice_seal": {
+      "text": "Antony memutuskan untuk mengorbankan dirinya demi menyegel Zorc. Dia mulai melakukan ritual penyegelan kuno yang dia pelajari dari gulungan rahasia.",
+      "options": [
+        {"text": "Melanjutkan ritual tanpa ragu", "next": "complete_sealing_ritual"},
+        {"text": "Meminta bantuan Rezyan untuk memperkuat segel", "next": "rezyan_seal_support"},
+        {"text": "Mengubah ritual di tengah jalan", "next": "modify_ritual"}
+      ]
+    },
+    "banish_zorc": {
+      "text": "Antony mencoba membuka portal dimensi untuk mengusir Zorc. Energi dimensi yang kacau mulai muncul, membuat situasi semakin berbahaya.",
+      "options": [
+        {"text": "Memperluas portal untuk menelan seluruh pasukan Zorc", "next": "expand_portal"},
+        {"text": "Fokus portal hanya pada Zorc", "next": "focus_portal_zorc"},
+        {"text": "Menggunakan portal sebagai pengalih perhatian", "next": "portal_distraction"}
+      ]
+    },
+    "direct_attack_zorc": {
+      "text": "Antony melesat ke arah Zorc, tubuhnya diselimuti energi Cahaya dan Kegelapan. Zorc membalas dengan serangan dahsyat, menciptakan gelombang kejut yang menghancurkan area sekitar.",
+      "options": [
+        {"text": "Terus menyerang tanpa henti", "next": "relentless_assault"},
+        {"text": "Mencoba menyerap kekuatan Zorc", "next": "absorb_zorc_power"},
+        {"text": "Menggunakan serangan untuk membuka celah di pertahanan Zorc", "next": "exploit_weakness"}
+      ]
+    },
+    "create_city_shield": {
+      "text": "Antony menciptakan perisai raksasa yang menyelimuti seluruh kota. Serangan Zorc terpantul, tapi mempertahankan perisai menguras energi Antony dengan cepat.",
+      "options": [
+        {"text": "Mempertahankan perisai sambil mencari cara menyerang", "next": "maintain_shield_attack"},
+        {"text": "Mengubah perisai menjadi senjata", "next": "weaponize_shield"},
+        {"text": "Meminta penduduk kota menyalurkan energi mereka", "next": "city_energy_contribution"}
+      ]
+    },
+    "empower_allies": {
+      "text": "Antony membagi kekuatannya kepada Yudha, Rezyan, dan sekutu lainnya. Mereka semua merasakan lonjakan kekuatan luar biasa.",
+      "options": [
+        {"text": "Memimpin serangan terkoordinasi", "next": "coordinated_assault"},
+        {"text": "Membentuk formasi untuk ritual penyegelan massal", "next": "mass_sealing_formation"},
+        {"text": "Menggabungkan kekuatan untuk serangan tunggal mematikan", "next": "combined_lethal_strike"}
+      ]
+    },
+    "complete_sealing_ritual": {
+      "text": "Antony melanjutkan ritual penyegelan. Tubuhnya mulai bercahaya dan perlahan-lahan menjadi wadah untuk mengurung Zorc. Rasa sakit luar biasa menyelimuti setiap sel tubuhnya.",
+      "options": [
+        {"text": "Menerima takdir dan menyelesaikan ritual", "next": "accept_fate"},
+        {"text": "Berusaha mempertahankan kesadaran", "next": "maintain_consciousness"},
+        {"text": "Meminta Agiel untuk mengambil alih di saat-saat terakhir", "next": "agiel_takeover"}
+      ]
+    },
+    "rezyan_seal_support": {
+      "text": "Rezyan bergabung dalam ritual, menambahkan kekuatannya untuk memperkuat segel. Proses menjadi lebih stabil, tapi Zorc melawan dengan lebih ganas.",
+      "options": [
+        {"text": "Mempercepat ritual dengan risiko lebih tinggi", "next": "accelerate_ritual"},
+        {"text": "Meminta lebih banyak sekutu bergabung", "next": "more_allies_join"},
+        {"text": "Menggunakan koneksi Antony dengan dunia asalnya", "next": "use_original_world_connection"}
+      ]
+    },
+    "modify_ritual": {
+      "text": "Di tengah ritual, Antony mendapat inspirasi untuk memodifikasinya. Dia mencoba menggabungkan teknik penyegelan dengan kekuatan dimensinya.",
+      "options": [
+        {"text": "Menciptakan segel multi-dimensi", "next": "multidimensional_seal"},
+        {"text": "Mengubah diri menjadi kunci segel hidup", "next": "living_seal_key"},
+        {"text": "Membelah Zorc menjadi beberapa entitas yang lebih lemah", "next": "split_zorc"}
+      ]
+    },
+    "expand_portal": {
+      "text": "Portal dimensi membesar dengan cepat, menarik pasukan Zorc ke dalamnya. Namun, tarikannya menjadi terlalu kuat dan mulai mengancam kota juga.",
+      "options": [
+        {"text": "Mencoba mengendalikan portal dari dalam", "next": "control_portal_inside"},
+        {"text": "Mengorbankan sebagian kota untuk menyelamatkan sisanya", "next": "sacrifice_part_city"},
+        {"text": "Menggunakan kekuatan gabungan untuk menutup portal", "next": "combined_portal_closure"}
+      ]
+    },
+    "focus_portal_zorc": {
+      "text": "Antony memfokuskan portal hanya pada Zorc, menciptakan tarikan yang sangat kuat dan spesifik. Zorc melawan dengan seluruh kekuatannya, menciptakan distorsi realitas di sekitar mereka.",
+      "options": [
+        {"text": "Mendorong Zorc ke dalam portal", "next": "push_zorc_portal"},
+        {"text": "Masuk bersama Zorc untuk memastikan pengusirannya", "next": "enter_with_zorc"},
+        {"text": "Menggunakan distorsi realitas sebagai senjata", "next": "weaponize_distortion"}
+      ]
+    },
+    "accept_fate": {
+      "text": "Antony menerima takdirnya dan menyelesaikan ritual. Tubuhnya berubah menjadi segel hidup, mengurung Zorc untuk selamanya. Dunia isekai selamat, tapi kehilangan pahlawannya.",
+      "end": true,
+      "win": false
+    },
+    "maintain_consciousness": {
+      "text": "Antony berjuang keras mempertahankan kesadarannya selama ritual. Dia berhasil menyegel Zorc sambil mempertahankan sebagian kecil dirinya, menjadi penjaga abadi yang sadar.",
+      "end": true,
+      "win": false
+    },
+    "multidimensional_seal": {
+      "text": "Antony menciptakan segel multi-dimensi yang mengurung Zorc di antara realitas. Segel ini memastikan Zorc tidak bisa kembali, tapi Antony harus tetap di dunia isekai untuk mempertahankannya.",
+      "end": true,
+      "win": false
+    },
+    "control_portal_inside": {
+      "text": "Antony melompat ke dalam portal untuk mengendalikannya dari dalam. Dengan pengorbanan dirinya, dia berhasil mengusir Zorc dan seluruh pasukannya, menyelamatkan dunia isekai selamanya.",
+      "end": true,
+      "win": true
+    },
+    "push_zorc_portal": {
+      "text": "Dalam pertarungan terakhir, Antony berhasil mendorong Zorc ke dalam portal. Zorc lenyap, tapi usaha ini menguras hampir seluruh kekuatan Antony, meninggalkannya di ambang kematian.",
+      "end": true,
+      "win": false
+    }
+  }
   }
 ]
