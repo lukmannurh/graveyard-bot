@@ -14,7 +14,7 @@ const menu = async (message) => {
       { name: 'tebak [skor]', description: 'Menebak skor pertandingan (contoh: .tebak 1-0)' },
       { name: 'list', description: 'Melihat daftar tebakan peserta' },
       { name: 'random [jumlah tim] [nama1] [nama2] ...', description: 'Membuat tim acak (minimal 2 tim dan 2 nama)' },
-      { name: 'waifu [jumlah]', description: 'Mendapatkan gambar waifu acak (1-10 gambar)' },
+      { name: 'waifu [jumlah]', description: 'Mendapatkan gambar waifu acak (1-20 gambar)' },
       { name: 'bandarsabu', description: 'Mendapatkan kontak Imam Bandar Sabu Lampung' },
       { name: 'cekjomok', description: 'Mengecek tingkat jomok Anda' },
       { name: 'adventure', description: 'Memulai petualangan teks interaktif' },
@@ -22,6 +22,14 @@ const menu = async (message) => {
       { name: 'stats', description: 'Menampilkan statistik aktivitas grup untuk bulan ini' },
       { name: 'jadwalsholat', description: 'Menampilkan jadwal sholat untuk WIB, WITA, dan WIT' },
       { name: 's', description: 'Mengubah gambar menjadi stiker (kirim gambar dengan caption .s)' }
+    ];
+
+    const animeCommands = [
+      { name: 'animek genre [nama_genre]', description: 'Mendapatkan rekomendasi anime berdasarkan genre' },
+      { name: 'animek season [tahun] [musim]', description: 'Melihat anime musim tertentu (spring/summer/fall/winter)' },
+      { name: 'animek top', description: 'Melihat daftar top 10 anime' },
+      { name: 'animek upcoming', description: 'Melihat daftar anime yang akan datang' },
+      { name: 'animek [kata_kunci]', description: 'Mencari anime berdasarkan kata kunci' }
     ];
 
     const adminCommands = [
@@ -38,6 +46,7 @@ const menu = async (message) => {
 
     let menuText = "🤖 *Menu Bot Graveyard* 🤖\n\n";
     menuText += createMenuSection('Perintah Umum', generalCommands) + '\n\n';
+    menuText += createMenuSection('Perintah Anime', animeCommands) + '\n\n';
     menuText += createMenuSection('Perintah Admin', adminCommands) + '\n\n';
     menuText += createMenuSection('Perintah Owner', ownerCommands) + '\n\n';
     menuText += "*Catatan Tambahan:*\n";

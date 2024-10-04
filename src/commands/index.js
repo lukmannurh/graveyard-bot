@@ -17,6 +17,7 @@ import getpp from './getProfilePicture.js';
 import stats from './stats.js';
 import jadwalsholat from './jadwalsholat.js';
 import stickerCommand from './stickerCommand.js';
+import animeRecommendation from './animeRecommendation.js';
 
 export {
   menu,
@@ -39,15 +40,41 @@ export {
   getpp,
   stats,
   jadwalsholat,
-  stickerCommand
+  stickerCommand,
+  animeRecommendation
 };
 
 export const GENERAL_COMMANDS = [
   'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 
-  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's'
+  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's', 'animek'
 ];
 
 export const OWNER_COMMANDS = ['authorize'];
 
 export const ADMIN_COMMANDS = ['end', 'kick', 'tagall', 'ban', 'unban'];
 
+const exportedCommands = {
+  menu,
+  start,
+  tebak,
+  end,
+  list,
+  kick,
+  tagall,
+  ai,
+  authorizeGroup,
+  ban,
+  unban,
+  waifu,
+  random,
+  bandarsabu,
+  cekjomok,
+  adventure,
+  getpp,
+  stats,
+  jadwalsholat,
+  s: stickerCommand,
+  animek: animeRecommendation
+};
+
+export default exportedCommands;
