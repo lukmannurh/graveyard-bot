@@ -16,20 +16,25 @@ const statsCommand = async (message) => {
     }
 
     const formatDate = (date) => {
-      return date.toLocaleDateString('id-ID', { 
+      const options = { 
         day: 'numeric', 
         month: 'long', 
         year: 'numeric',
-        weekday: 'long'
-      });
+        weekday: 'long',
+        timeZone: 'Asia/Jakarta'
+      };
+      return new Date(date).toLocaleDateString('id-ID', options);
     };
 
     const formatTime = (date) => {
-      return date.toLocaleTimeString('id-ID', {
+      const options = {
         hour: '2-digit',
         minute: '2-digit',
-        hour12: false
-      });
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Jakarta'
+      };
+      return new Date(date).toLocaleTimeString('id-ID', options);
     };
 
     let response = `*Statistik Grup*\n\n`;
@@ -50,7 +55,7 @@ const statsCommand = async (message) => {
     }
 
     const now = new Date();
-    response += `\n*Data ini diambil pada ${formatDate(now)} pada pukul ${formatTime(now)} WIB*`;
+    response += `\nData ini diambil pada ${formatDate(now)} pada pukul ${formatTime(now)} WIB`;
 
     await message.reply(response);
   } catch (error) {
