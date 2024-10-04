@@ -28,6 +28,10 @@ async function stickerCommand(message) {
       return;
     }
 
+    // Ensure the /temp directory exists
+    const tempDir = path.join(__dirname, '../../temp');
+    await fs.mkdir(tempDir, { recursive: true });
+
     // Process the image
     const imageBuffer = Buffer.from(media.data, 'base64');
     const stickerBuffer = await sharp(imageBuffer)
@@ -39,7 +43,7 @@ async function stickerCommand(message) {
       .toBuffer();
 
     // Save the sticker temporarily
-    const stickerPath = path.join(__dirname, '../../temp', `sticker_${Date.now()}.webp`);
+    const stickerPath = path.join(tempDir, `sticker_${Date.now()}.webp`);
     await fs.writeFile(stickerPath, stickerBuffer);
 
     // Send the sticker
