@@ -1,12 +1,10 @@
-import { getAllPrayerTimes, getCurrentDate } from '../utils/prayerTimes.js';
+import { getAllPrayerTimes } from '../utils/prayerTimes.js';
 
 const jadwalsholat = async (message, args) => {
   try {
     const prayerTimes = await getAllPrayerTimes();
-    const currentDate = getCurrentDate();
     
-    let response = `*Jadwal Sholat Hari Ini*\n`;
-    response += `${currentDate}\n\n`;
+    let response = "*Jadwal Sholat Hari Ini*\n\n";
     
     for (const [timezone, times] of Object.entries(prayerTimes)) {
       response += `*${timezone}*\n`;
