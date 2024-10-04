@@ -55,7 +55,7 @@ const statsCommand = async (message) => {
     }
 
     const now = new Date();
-    response += `\n*Data ini diambil pada ${formatDate(now)} \nPukul ${formatTime(now)} WIB*`;
+    response += `\n*Data ini diambil pada ${formatDate(now)}* \n*Pukul ${formatTime(now)} WIB*`;
 
     await message.reply(response);
   } catch (error) {
