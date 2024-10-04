@@ -1,5 +1,5 @@
+import { OWNER_COMMANDS, GENERAL_COMMANDS } from '../commands/index.js';
 import * as commands from '../commands/index.js';
-import { OWNER_COMMANDS } from '../commands/index.js';
 import { PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
 import authorizeGroup from '../commands/authorizeGroup.js';
@@ -33,10 +33,22 @@ export const handleOwnerCommand = async (message, groupId) => {
         logger.error(`Error executing owner command ${commandName}:`, error);
         await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
       }
-    } else {
-      logger.warn(`Unknown owner command: ${commandName}`);
-      await message.reply('Perintah owner tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
-    }
+    } } else if (GENERAL_COMMANDS.includes(commandName)) {
+      // Tambahkan ini untuk menangani perintah umum seperti 'animek'
+      const commandFunction = commands[commandName];
+      if (commandFunction) {
+        logger.info(`Executing general command for owner: ${commandName}`);
+        try {
+          await commandFunction(message, args);
+          logger.info(`General command ${commandName} executed successfully for owner`);
+        } catch (error) {
+          logger.error(`Error executing general command ${commandName} for owner:`, error);
+          await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
+        }
+      } else {
+        logger.warn(`Unknown general command: ${commandName}`);
+        await message.reply('Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.');
+      }
   } else if (message.body.startsWith(PREFIX)) {
     // If it's not an owner command but starts with prefix, handle it as a regular command
     const chat = await message.getChat();
