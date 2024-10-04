@@ -3,7 +3,9 @@ import FileType from 'file-type';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { MessageMedia } from 'whatsapp-web.js';
+import pkg from 'whatsapp-web.js';
+const { MessageMedia } = pkg;
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
