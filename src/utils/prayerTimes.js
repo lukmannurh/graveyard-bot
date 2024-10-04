@@ -1,4 +1,5 @@
 import axios from 'axios';
+import logger from './logger'
 
 const TIMEZONE_MAPPING = {
   'WIB': 'Asia/Jakarta',
@@ -34,7 +35,7 @@ async function getPrayerTimes(timezone) {
       Isya: timings.Isha
     };
   } catch (error) {
-    console.error('Error fetching prayer times:', error);
+    logger.error('Error fetching prayer times:', error);
     throw new Error('Gagal mendapatkan jadwal sholat. Silakan coba lagi nanti.');
   }
 }

@@ -51,28 +51,3 @@ export const OWNER_COMMANDS = ['authorize'];
 
 export const ADMIN_COMMANDS = ['end', 'kick', 'tagall', 'ban', 'unban'];
 
-const exportedCommands = {
-  menu,
-  start,
-  tebak,
-  end,
-  list,
-  kick,
-  tagall,
-  ai,
-  authorizeGroup,
-  ban,
-  unban,
-  waifu,
-  random,
-  bandarsabu,
-  cekjomok,
-  adventure,
-  getpp,
-  stats,
-  jadwalsholat,
-  stickerCommand
-};
-
-console.log('Exported commands:', Object.keys(exportedCommands).filter(key => key !== 'GENERAL_COMMANDS'));
-console.log('Owner commands:', OWNER_COMMANDS);

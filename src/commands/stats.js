@@ -24,12 +24,20 @@ const statsCommand = async (message) => {
       });
     };
 
+    const formatTime = (date) => {
+      return date.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+    };
+
     let response = `*Statistik Grup*\n\n`;
     response += `Periode: ${formatDate(stats.startDate)} - ${formatDate(stats.endDate)}\n\n`;
     response += `Total Pesan: ${stats.totalMessages}\n\n`;
-    response += `Top 5 Anggota Paling Aktif:\n`;
+    response += `Top 10 Anggota Paling Aktif:\n`;
     
-    for (let i = 0; i < stats.topUsers.length; i++) {
+    for (let i = 0; i < Math.min(stats.topUsers.length, 10); i++) {
       const user = stats.topUsers[i];
       try {
         const contact = await message.client.getContactById(user.userId);
@@ -40,6 +48,9 @@ const statsCommand = async (message) => {
         response += `${i + 1}. Unknown User: ${user.count} pesan\n`;
       }
     }
+
+    const now = new Date();
+    response += `\n*Data ini diambil pada ${formatDate(now)} pada pukul ${formatTime(now)} WIB*`;
 
     await message.reply(response);
   } catch (error) {

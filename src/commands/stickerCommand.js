@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import pkg from 'whatsapp-web.js';
 const { MessageMedia } = pkg;
+import logger from '../utils/logger';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -53,9 +54,9 @@ async function stickerCommand(message) {
       // Delete the temporary file
       await fs.unlink(stickerPath);
   
-      console.log('Sticker sent successfully');
+      logger.info('Sticker sent successfully');
     } catch (error) {
-      console.error('Error in stickerCommand:', error);
+      logger.error('Error in stickerCommand:', error);
       await message.reply('Terjadi kesalahan saat membuat stiker. Silakan coba lagi nanti.');
     }
   }

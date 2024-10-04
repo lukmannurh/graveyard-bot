@@ -82,11 +82,11 @@ class GroupStats {
   getGroupStats(groupId) {
     const groupStats = this.stats[groupId];
     if (!groupStats) return null;
-
+  
     const sortedUsers = Object.entries(groupStats.users)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
-
+      .slice(0, 10);  
+  
     return {
       totalMessages: groupStats.totalMessages,
       topUsers: sortedUsers.map(([userId, count]) => ({ userId, count })),
