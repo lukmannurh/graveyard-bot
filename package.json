@@ -20,7 +20,9 @@
     "whatsapp-web.js": "^1.25.0",
     "winston": "^3.8.2",
     "fluent-ffmpeg": "^2.1.2",
-    "@ffmpeg-installer/ffmpeg": "^1.1.0"
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "sharp": "^0.32.1",
+    "file-type": "^16.5.3"
   },
   "devDependencies": {
     "eslint": "^8.38.0",

@@ -16,6 +16,7 @@ import { adventure, handleAdventureChoice } from './adventureCommand.js';
 import getpp from './getProfilePicture.js';
 import stats from './stats.js';
 import jadwalsholat from './jadwalsholat.js';
+import stickerCommand from './stickerCommand.js';
 
 export {
   menu,
@@ -37,12 +38,13 @@ export {
   handleAdventureChoice,
   getpp,
   stats,
-  jadwalsholat
+  jadwalsholat,
+  stickerCommand
 };
 
 export const GENERAL_COMMANDS = [
   'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 
-  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat'
+  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's'
 ];
 
 export const OWNER_COMMANDS = ['authorize'];
@@ -68,7 +70,8 @@ const exportedCommands = {
   adventure,
   getpp,
   stats,
-  jadwalsholat
+  jadwalsholat,
+  stickerCommand
 };
 
 console.log('Exported commands:', Object.keys(exportedCommands).filter(key => key !== 'GENERAL_COMMANDS'));

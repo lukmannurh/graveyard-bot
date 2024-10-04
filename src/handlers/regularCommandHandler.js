@@ -15,7 +15,9 @@ export const handleRegularCommand = async (message, chat, sender, isGroupAdmin) 
     ...(isGroupAdmin ? ADMIN_COMMANDS : [])
   ];
 
-  if (availableCommands.includes(commandName)) {
+  if (commandName === 's') {
+    await commands.stickerCommand(message);
+  } else if (availableCommands.includes(commandName)) {
     const commandFunction = commands[commandName];
     if (commandFunction) {
       logger.info(`Found command function for: ${commandName}`);
