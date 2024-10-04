@@ -6,7 +6,6 @@ import { fileURLToPath } from 'url';
 import pkg from 'whatsapp-web.js';
 const { MessageMedia } = pkg;
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -46,9 +45,8 @@ async function stickerCommand(message) {
     const stickerPath = path.join(tempDir, `sticker_${Date.now()}.webp`);
     await fs.writeFile(stickerPath, stickerBuffer);
 
-    // Send the sticker
-    const chat = await message.getChat();
-    await chat.sendMessage(MessageMedia.fromFilePath(stickerPath), { sendMediaAsSticker: true });
+    // Send the sticker as a reply
+    await message.reply(MessageMedia.fromFilePath(stickerPath), { sendMediaAsSticker: true });
 
     // Delete the temporary file
     await fs.unlink(stickerPath);
