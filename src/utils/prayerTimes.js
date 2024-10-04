@@ -1,5 +1,5 @@
 import axios from 'axios';
-import logger from './logger'
+import logger from './logger.js';  // Ubah menjadi path relatif
 
 const TIMEZONE_MAPPING = {
   'WIB': 'Asia/Jakarta',
