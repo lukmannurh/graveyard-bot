@@ -16,7 +16,7 @@
       "banEndTime": null
     },
     "6285780808321@c.us": {
-      "warnings": 1,
+      "warnings": 4,
       "banned": false,
       "banEndTime": null
     },
@@ -70,7 +70,7 @@
   },
   "120363029264580525@g.us": {
     "6289646388153@c.us": {
-      "warnings": 0,
+      "warnings": 2,
       "banned": false,
       "banEndTime": null
     },
@@ -80,7 +80,7 @@
       "banEndTime": null
     },
     "6282154377106@c.us": {
-      "warnings": 0,
+      "warnings": 1,
       "banned": false,
       "banEndTime": null
     },
@@ -90,22 +90,22 @@
       "banEndTime": null
     },
     "6283151009833@c.us": {
-      "warnings": 3,
+      "warnings": 0,
       "banned": false,
       "banEndTime": null
     },
     "6281298140815@c.us": {
-      "warnings": 2,
+      "warnings": 3,
       "banned": false,
       "banEndTime": null
     },
     "6282113142112@c.us": {
-      "warnings": 0,
+      "warnings": 1,
       "banned": false,
       "banEndTime": null
     },
     "6289627046381@c.us": {
-      "warnings": 0,
+      "warnings": 4,
       "banned": false,
       "banEndTime": null
     },
@@ -121,6 +121,11 @@
     },
     "6282210371333@c.us": {
       "warnings": 3,
+      "banned": false,
+      "banEndTime": null
+    },
+    "6289509751933@c.us": {
+      "warnings": 1,
       "banned": false,
       "banEndTime": null
     }
