@@ -21,12 +21,12 @@ export const adventure = async (message) => {
       logger.debug(`Set pending selection for group ${groupId}, user ${userId}`);
       
       // Set timeout for selection
-      setTimeout(() => {
+      setTimeout(async () => {
         if (adventureManager.getPendingSelection(groupId) === userId) {
           adventureManager.clearPendingSelection(groupId);
-          message.reply('Waktu pemilihan petualangan habis. Silakan mulai ulang dengan .adventure');
+          await message.reply('Waktu pemilihan petualangan habis. Silakan mulai ulang dengan .adventure');
         }
-      }, 60000);  // 1 minute timeout
+      }, 60000); // 1 minute timeout
     } else {
       const activeGame = adventureManager.getActiveGame(groupId);
       logger.debug(`Active game: ${JSON.stringify(activeGame)}`);
