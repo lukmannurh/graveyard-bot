@@ -35,6 +35,7 @@ class AdventureManager {
 
   setPendingSelection(groupId, userId) {
     this.pendingSelections.set(groupId, userId);
+    logger.debug(`Set pending selection for group ${groupId}, user ${userId}`);
   }
 
   getPendingSelection(groupId) {
@@ -43,6 +44,7 @@ class AdventureManager {
 
   clearPendingSelection(groupId) {
     this.pendingSelections.delete(groupId);
+    logger.debug(`Cleared pending selection for group ${groupId}`);
   }
 
   selectAdventure(groupId, userId, selection, timeoutCallback) {

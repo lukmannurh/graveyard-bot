@@ -18,13 +18,15 @@ export const adventure = async (message) => {
       await message.reply(`Pilih petualangan yang ingin Anda jalani:\n\n${adventureList}\n\nBalas dengan nomor petualangan yang Anda pilih dalam 1 menit, atau ketik 'batal' untuk membatalkan.`);
       adventureManager.setPendingSelection(groupId, userId);
       
+      logger.debug(`Set pending selection for group ${groupId}, user ${userId}`);
+      
       // Set timeout for selection
       setTimeout(() => {
         if (adventureManager.getPendingSelection(groupId) === userId) {
           adventureManager.clearPendingSelection(groupId);
           message.reply('Waktu pemilihan petualangan habis. Silakan mulai ulang dengan .adventure');
         }
-      }, 60000); // 1 minute timeout
+      }, 60000);  // 1 minute timeout
     } else {
       const activeGame = adventureManager.getActiveGame(groupId);
       logger.debug(`Active game: ${JSON.stringify(activeGame)}`);
@@ -53,6 +55,8 @@ export const handleAdventureChoice = async (message) => {
     logger.debug(`Handling adventure choice - Group: ${groupId}, User: ${userId}, Choice: ${message.body}`);
 
     const pendingUserId = adventureManager.getPendingSelection(groupId);
+    logger.debug(`Pending selection for group ${groupId}: ${pendingUserId}`);
+
     if (pendingUserId === userId) {
       if (message.body.toLowerCase() === 'batal') {
         adventureManager.clearPendingSelection(groupId);

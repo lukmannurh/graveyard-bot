@@ -61,7 +61,6 @@ const messageHandler = async (message) => {
     }
   } catch (error) {
     logger.error('Error in messageHandler:', error);
-    // Do not send error message to avoid responding to banned users
   }
 };
 
