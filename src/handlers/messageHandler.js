@@ -5,7 +5,7 @@ import { isGroupAuthorized } from '../utils/authorizedGroups.js';
 import { PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
 import adventureManager from '../utils/adventureManager.js';
-import { handleAdventureChoice, adventure } from '../commands/adventureCommand.js';
+import { handleAdventureChoice } from '../commands/adventureCommand.js';
 import groupStats from '../utils/groupStats.js';
 import { isUserBanned, deleteBannedUserMessage, isOwner } from '../utils/enhancedModerationSystem.js';
 import { isAdmin } from '../utils/adminChecker.js';
@@ -39,14 +39,7 @@ const messageHandler = async (message) => {
     }
 
     if (message.body.startsWith(PREFIX)) {
-      const command = message.body.slice(PREFIX.length).trim().split(/ +/)[0].toLowerCase();
-      if (command === 'adventure') {
-        if (isAuthorized) {
-          await adventure(message);
-        } else {
-          logger.debug(`Unauthorized group ${groupId}, ignoring command from non-owner`);
-        }
-      } else if (isOwnerUser) {
+      if (isOwnerUser) {
         await handleOwnerCommand(message, groupId);
       } else if (isAuthorized) {
         await handleRegularCommand(message, chat, sender, isGroupAdmin);
