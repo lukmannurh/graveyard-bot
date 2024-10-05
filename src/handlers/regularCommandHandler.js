@@ -9,18 +9,19 @@ export const handleRegularCommand = async (message, chat, sender, isGroupAdmin) 
 
   logger.info(`Attempting to execute command: ${commandName}`);
   logger.info(`Available commands: ${Object.keys(commands)}`);
+  logger.info(`Is group admin: ${isGroupAdmin}`);
 
   const availableCommands = [
     ...GENERAL_COMMANDS,
     ...(isGroupAdmin ? ADMIN_COMMANDS : [])
   ];
 
-  if (commandName === 's') {
-    await commands.stickerCommand(message);
-  } else if (availableCommands.includes(commandName)) {
+  logger.info(`Available commands for this user: ${availableCommands}`);
+
+  if (availableCommands.includes(commandName)) {
     const commandFunction = commands[commandName];
+    logger.info(`Command function for ${commandName}: ${commandFunction ? 'Found' : 'Not found'}`);
     if (commandFunction) {
-      logger.info(`Found command function for: ${commandName}`);
       try {
         await commandFunction(message, args);
         logger.info(`Command ${commandName} executed successfully`);
