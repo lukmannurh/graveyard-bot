@@ -13,6 +13,7 @@ class AdventureManager {
     this.adventures = [];
     this.activeGames = new Map();
     this.timeouts = new Map();
+    this.pendingSelections = new Map();
   }
 
   async loadAdventures() {
@@ -26,6 +27,34 @@ class AdventureManager {
       logger.error('Error loading adventures:', error);
       throw error;
     }
+  }
+
+  getAdventureList() {
+    return this.adventures.map((adv, index) => `${index + 1}. ${adv.title}`).join('\n');
+  }
+
+  setPendingSelection(groupId, userId) {
+    this.pendingSelections.set(groupId, userId);
+  }
+
+  getPendingSelection(groupId) {
+    return this.pendingSelections.get(groupId);
+  }
+
+  clearPendingSelection(groupId) {
+    this.pendingSelections.delete(groupId);
+  }
+
+  selectAdventure(groupId, userId, selection, timeoutCallback) {
+    const index = parseInt(selection) - 1;
+    if (isNaN(index) || index < 0 || index >= this.adventures.length) {
+      return null;
+    }
+
+    const adventure = this.adventures[index];
+    this.activeGames.set(groupId, { adventure, currentNode: 'start', userId });
+    this.startTimeout(groupId, timeoutCallback);
+    return adventure.start;
   }
 
   updateCurrentNode(groupId, nextNode) {
@@ -45,21 +74,6 @@ class AdventureManager {
       return game.adventure.nodes[game.currentNode] || game.adventure.start;
     }
     return null;
-  }
-
-  startAdventure(groupId, userId, timeoutCallback) {
-    logger.debug(`Starting adventure for group ${groupId} and user ${userId}`);
-    if (this.adventures.length === 0) {
-      logger.error("No adventures loaded");
-      return null;
-    }
-    const randomIndex = Math.floor(Math.random() * this.adventures.length);
-    const adventure = this.adventures[randomIndex];
-    this.activeGames.set(groupId, { adventure, currentNode: 'start', userId });
-    logger.debug(`Adventure started: ${adventure.title}`);
-
-    this.startTimeout(groupId, timeoutCallback);
-    return adventure.start;
   }
 
   isGameActive(groupId) {

@@ -50,7 +50,8 @@ const messageHandler = async (message) => {
       } else {
         logger.debug(`Unauthorized group ${groupId}, ignoring command from non-owner`);
       }
-    } else if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
+    } else if (adventureManager.getPendingSelection(groupId) === userId || 
+               (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim()))) {
       if (isAuthorized) {
         logger.debug('Processing adventure choice');
         await handleAdventureChoice(message);

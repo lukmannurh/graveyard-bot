@@ -14,16 +14,17 @@ export const adventure = async (message) => {
     logger.debug(`Is game active: ${isActive}`);
 
     if (!isActive) {
-      logger.debug('Starting new adventure');
-      const startNode = await adventureManager.startAdventure(groupId, userId, 
-        (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
-      if (startNode) {
-        logger.debug('Adventure started successfully');
-        await sendAdventureMessage(message, startNode, groupId);
-      } else {
-        logger.error('Failed to start adventure');
-        throw new Error("Failed to start adventure");
-      }
+      const adventureList = adventureManager.getAdventureList();
+      await message.reply(`Pilih petualangan yang ingin Anda jalani:\n\n${adventureList}\n\nBalas dengan nomor petualangan yang Anda pilih dalam 1 menit, atau ketik 'batal' untuk membatalkan.`);
+      adventureManager.setPendingSelection(groupId, userId);
+      
+      // Set timeout for selection
+      setTimeout(() => {
+        if (adventureManager.getPendingSelection(groupId) === userId) {
+          adventureManager.clearPendingSelection(groupId);
+          message.reply('Waktu pemilihan petualangan habis. Silakan mulai ulang dengan .adventure');
+        }
+      }, 60000); // 1 minute timeout
     } else {
       const activeGame = adventureManager.getActiveGame(groupId);
       logger.debug(`Active game: ${JSON.stringify(activeGame)}`);
@@ -51,9 +52,28 @@ export const handleAdventureChoice = async (message) => {
 
     logger.debug(`Handling adventure choice - Group: ${groupId}, User: ${userId}, Choice: ${message.body}`);
 
+    const pendingUserId = adventureManager.getPendingSelection(groupId);
+    if (pendingUserId === userId) {
+      if (message.body.toLowerCase() === 'batal') {
+        adventureManager.clearPendingSelection(groupId);
+        await message.reply('Pemilihan petualangan dibatalkan.');
+        return;
+      }
+
+      const startNode = adventureManager.selectAdventure(groupId, userId, message.body, 
+        (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
+      
+      if (startNode) {
+        adventureManager.clearPendingSelection(groupId);
+        await sendAdventureMessage(message, startNode, groupId);
+      } else {
+        await message.reply('Pilihan tidak valid. Silakan pilih nomor yang sesuai atau ketik "batal".');
+      }
+      return;
+    }
+
     if (!adventureManager.isGameActive(groupId)) {
       logger.debug('No active game found');
-      await message.reply('Tidak ada petualangan aktif saat ini. Gunakan .adventure untuk memulai petualangan baru.');
       return;
     }
 
