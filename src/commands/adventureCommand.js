@@ -1,7 +1,7 @@
 import adventureManager from '../utils/adventureManager.js';
 import logger from '../utils/logger.js';
 
-export const adventure = async (message) => {
+export const adventure = async (message, args) => {
   try {
     const chat = await message.getChat();
     const sender = await message.getContact();
@@ -14,19 +14,34 @@ export const adventure = async (message) => {
     logger.debug(`Is game active: ${isActive}`);
 
     if (!isActive) {
-      const adventureList = adventureManager.getAdventureList();
-      await message.reply(`Pilih petualangan yang ingin Anda jalani:\n\n${adventureList}\n\nBalas dengan nomor petualangan yang Anda pilih dalam 1 menit, atau ketik 'batal' untuk membatalkan.`);
-      adventureManager.setPendingSelection(groupId, userId);
-      
-      logger.debug(`Set pending selection for group ${groupId}, user ${userId}`);
-      
-      // Set timeout for selection
-      setTimeout(async () => {
-        if (adventureManager.getPendingSelection(groupId) === userId) {
-          adventureManager.clearPendingSelection(groupId);
-          await message.reply('Waktu pemilihan petualangan habis. Silakan mulai ulang dengan .adventure');
+      if (args[0]?.toLowerCase() === 'random') {
+        const randomAdventure = adventureManager.getRandomAdventure();
+        if (randomAdventure) {
+          const startNode = adventureManager.startAdventure(groupId, userId, randomAdventure.id, 
+            (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
+          if (startNode) {
+            await sendAdventureMessage(message, startNode, groupId);
+          } else {
+            await message.reply('Terjadi kesalahan saat memulai petualangan acak. Mohon coba lagi.');
+          }
+        } else {
+          await message.reply('Tidak ada petualangan yang tersedia saat ini.');
         }
-      }, 60000); // 1 minute timeout
+      } else {
+        const adventureList = adventureManager.getAdventureList();
+        await message.reply(`Pilih petualangan yang ingin Anda jalani:\n\n${adventureList}\n\nBalas dengan nomor petualangan yang Anda pilih dalam 1 menit, ketik 'batal' untuk membatalkan, atau gunakan '.adventure random' untuk petualangan acak.`);
+        adventureManager.setPendingSelection(groupId, userId);
+        
+        logger.debug(`Set pending selection for group ${groupId}, user ${userId}`);
+        
+        // Set timeout for selection
+        setTimeout(async () => {
+          if (adventureManager.getPendingSelection(groupId) === userId) {
+            adventureManager.clearPendingSelection(groupId);
+            await message.reply('Waktu pemilihan petualangan habis. Silakan mulai ulang dengan .adventure');
+          }
+        }, 60000); // 1 minute timeout
+      }
     } else {
       const activeGame = adventureManager.getActiveGame(groupId);
       logger.debug(`Active game: ${JSON.stringify(activeGame)}`);

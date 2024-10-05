@@ -33,9 +33,14 @@ class AdventureManager {
     return this.adventures.map((adv, index) => `${index + 1}. ${adv.title}`).join('\n');
   }
 
+  getRandomAdventure() {
+    if (this.adventures.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * this.adventures.length);
+    return this.adventures[randomIndex];
+  }
+
   setPendingSelection(groupId, userId) {
     this.pendingSelections.set(groupId, userId);
-    logger.debug(`Set pending selection for group ${groupId}, user ${userId}`);
   }
 
   getPendingSelection(groupId) {
@@ -44,7 +49,15 @@ class AdventureManager {
 
   clearPendingSelection(groupId) {
     this.pendingSelections.delete(groupId);
-    logger.debug(`Cleared pending selection for group ${groupId}`);
+  }
+
+  startAdventure(groupId, userId, adventureId, timeoutCallback) {
+    const adventure = this.adventures.find(adv => adv.id === adventureId);
+    if (!adventure) return null;
+
+    this.activeGames.set(groupId, { adventure, currentNode: 'start', userId });
+    this.startTimeout(groupId, timeoutCallback);
+    return adventure.start;
   }
 
   selectAdventure(groupId, userId, selection, timeoutCallback) {
@@ -54,10 +67,9 @@ class AdventureManager {
     }
 
     const adventure = this.adventures[index];
-    this.activeGames.set(groupId, { adventure, currentNode: 'start', userId });
-    this.startTimeout(groupId, timeoutCallback);
-    return adventure.start;
+    return this.startAdventure(groupId, userId, adventure.id, timeoutCallback);
   }
+
 
   updateCurrentNode(groupId, nextNode) {
     const game = this.activeGames.get(groupId);
