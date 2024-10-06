@@ -18,7 +18,7 @@ const authorizeGroup = async (message, args) => {
             return;
         }
 
-        if (cleanSenderId !== OWNER_NUMBER) {
+        if (!OWNER_NUMBER.includes(cleanSenderId)) {
             await message.reply('Hanya pemilik bot yang dapat menggunakan perintah ini.');
             return;
         }

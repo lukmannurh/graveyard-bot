@@ -6,7 +6,7 @@ const forbiddenWords = ['goblok', 'tolol', 'idiot', 'memek', 'kontol', 'jancuk',
 ];
 
 export function checkForbiddenWord(message, userId) {
-  if (userId === OWNER_NUMBER) {
+  if (OWNER_NUMBER.includes(userId.replace('@c.us', ''))) {
     return { found: false };
   }
 

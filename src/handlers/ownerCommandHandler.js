@@ -1,7 +1,7 @@
 import { OWNER_COMMANDS, GENERAL_COMMANDS } from "../commands/index.js";
 import exportedCommands from "../commands/index.js";
 import * as commands from "../commands/index.js";
-import { PREFIX } from "../config/constants.js";
+import { PREFIX, OWNER_NUMBER } from "../config/constants.js";
 import logger from "../utils/logger.js";
 import authorizeGroup from "../commands/authorizeGroup.js";
 import { handleRegularCommand } from "./regularCommandHandler.js";
@@ -9,14 +9,25 @@ import { handleNonCommandMessage } from "./nonCommandHandler.js";
 import adventureManager from "../utils/adventureManager.js";
 import { handleAdventureChoice } from "../commands/adventureCommand.js";
 
+function isOwner(userId) {
+  return OWNER_NUMBER.includes(userId.replace('@c.us', ''));
+}
+
 export const handleOwnerCommand = async (message, groupId) => {
   const [command, ...args] = message.body
     .slice(PREFIX.length)
     .trim()
     .split(/ +/);
   const commandName = command.toLowerCase();
+  const sender = await message.getContact();
+  const userId = sender.id._serialized;
 
   logger.info("Owner command received:", commandName);
+
+  if (!isOwner(userId)) {
+    logger.warn(`Non-owner ${userId} attempted to use owner command: ${commandName}`);
+    return;
+  }
 
   if (commandName === "authorize") {
     try {
@@ -71,12 +82,10 @@ export const handleOwnerCommand = async (message, groupId) => {
   } else if (message.body.startsWith(PREFIX)) {
     // If it's not an owner command but starts with prefix, handle it as a regular command
     const chat = await message.getChat();
-    const sender = await message.getContact();
     await handleRegularCommand(message, chat, sender, true);
   } else {
     // Handle non-command messages from owner, including adventure choices
     const chat = await message.getChat();
-    const sender = await message.getContact();
     if (
       adventureManager.isGameActive(groupId) &&
       /^\d+$/.test(message.body.trim())

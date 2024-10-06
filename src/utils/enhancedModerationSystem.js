@@ -12,7 +12,8 @@ const moderationDataFile = path.join(__dirname, '../../moderationData.json');
 let bannedUsers = new Map();
 
 function isOwner(userId) {
-  return userId.replace('@c.us', '') === OWNER_NUMBER;
+  const cleanUserId = userId.replace('@c.us', '');
+  return OWNER_NUMBER.includes(cleanUserId);
 }
 
 async function loadModerationData() {
