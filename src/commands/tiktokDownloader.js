@@ -33,17 +33,25 @@ async function downloadTikTokVideo(message, args) {
       const videoResponse = await axios({
         method: 'get',
         url: videoUrl,
-        responseType: 'arraybuffer'
+        responseType: 'stream'
       });
 
-      await fs.writeFile(tempFilePath, Buffer.from(videoResponse.data));
+      const writer = fs.createWriteStream(tempFilePath);
+      videoResponse.data.pipe(writer);
+
+      await new Promise((resolve, reject) => {
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+      });
 
       logger.info(`Video downloaded to: ${tempFilePath}`);
 
       const media = MessageMedia.fromFilePath(tempFilePath);
       await message.reply(media, null, { sendMediaAsDocument: true });
 
-      await fs.unlink(tempFilePath);
+      fs.unlink(tempFilePath, (err) => {
+        if (err) logger.error(`Error deleting temp file: ${err}`);
+      });
       
       logger.info(`TikTok video downloaded and sent successfully: ${url}`);
     } else {
