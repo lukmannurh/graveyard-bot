@@ -17,15 +17,8 @@ async function downloadMedia(url, type) {
     logger.debug(`API Response for ${type}: ${JSON.stringify(response.data)}`);
 
     let mediaUrl;
-    if (type === 'ytmp3' || type === 'ytmp4') {
-      mediaUrl = response.data.result.url;
-    } else if (type === 'ytdl') {
-      // Pilih kualitas video tertinggi yang tersedia
-      const formats = response.data.result.formats;
-      const highestQualityFormat = formats.reduce((prev, current) => 
-        (prev.qualityLabel > current.qualityLabel) ? prev : current
-      );
-      mediaUrl = highestQualityFormat.url;
+    if (type === 'ytmp3' || type === 'ytmp4' || type === 'ytdl') {
+      mediaUrl = response.data.url;
     } else {
       mediaUrl = response.data.data.url;
     }
