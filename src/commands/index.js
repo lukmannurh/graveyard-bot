@@ -18,6 +18,7 @@ import stats from './stats.js';
 import jadwalsholat from './jadwalsholat.js';
 import stickerCommand from './stickerCommand.js';
 import downloadTikTokVideo from './tiktokDownloader.js';
+import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from './downloader.js';
 import animeRecommendation from './animeRecommendation.js';
 
 export {
@@ -47,7 +48,7 @@ export {
 
 export const GENERAL_COMMANDS = [
   'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 'tt',
-  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's', 'animek'
+  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's', 'animek', 'ytdl', 'ytmp4', 'ytmp3', 'spotify', 'fbdl', 'igdl'
 ];
 
 export const OWNER_COMMANDS = ['authorize'];
@@ -76,6 +77,12 @@ const exportedCommands = {
   jadwalsholat,
   s: stickerCommand,
   tt: downloadTikTokVideo,
+  ytdl,
+  ytmp4,
+  ytmp3,
+  spotify,
+  fbdl,
+  igdl,
   animek: animeRecommendation
 };
 

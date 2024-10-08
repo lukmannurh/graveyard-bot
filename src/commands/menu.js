@@ -45,7 +45,13 @@ ${createMenuSection('🌸 Perintah Anime', [
 ])}
 
 ${createMenuSection('📥 Downloader', [
-  { name: 'tt [URL]', description: 'Mengunduh video TikTok' }
+  { name: 'tt [URL]', description: 'Download TikTok video' },
+  { name: 'ytdl [URL]', description: 'Download video or audio from YouTube' },
+  { name: 'ytmp4 [URL]', description: 'Download video from YouTube' },
+  { name: 'ytmp3 [URL]', description: 'Download audio from YouTube' },
+  { name: 'spotify [URL]', description: 'Download from Spotify' },
+  { name: 'fbdl [URL]', description: 'Download video from Facebook' },
+  { name: 'igdl [URL]', description: 'Download video from Instagram' }
 ])}
 
 *Catatan:*

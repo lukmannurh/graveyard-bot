@@ -10,6 +10,7 @@ import groupStats from '../utils/groupStats.js';
 import { isUserBanned, deleteBannedUserMessage, isOwner } from '../utils/enhancedModerationSystem.js';
 import { isAdmin } from '../utils/adminChecker.js';
 import downloadTikTokVideo from '../commands/tiktokDownloader.js';
+import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from '../commands/downloader.js';
 
 const messageHandler = async (message) => {
   try {
@@ -25,6 +26,7 @@ const messageHandler = async (message) => {
     const isOwnerUser = isOwner(userId);
     const isGroupAdmin = await isAdmin(chat, sender);
 
+    // Log message for stats
     if (message.fromMe === false) {
       groupStats.logMessage(groupId, userId);
     }
@@ -34,7 +36,7 @@ const messageHandler = async (message) => {
 
     if (isUserBanned(groupId, userId)) {
       await deleteBannedUserMessage(message);
-      await chat.sendMessage(`@${userId.split('@')[0]}, Anda sedang dalam status ban di grup ini. Pesan Anda telah dihapus. Ban akan berakhir dalam 1 jam.`);
+      await chat.sendMessage(`@${userId.split('@')[0]}, You are currently banned in this group. Your message has been deleted. The ban will end in 1 hour.`);
       return;
     }
 
@@ -42,9 +44,29 @@ const messageHandler = async (message) => {
       const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
       const commandName = command.toLowerCase();
 
-      if (commandName === 'tt') {
-        await downloadTikTokVideo(message, args);
-        return;
+      // Add new commands to this switch statement
+      switch (commandName) {
+        case 'tt':
+          await downloadTikTokVideo(message, args);
+          return;
+        case 'ytdl':
+          await ytdl(message, args);
+          return;
+        case 'ytmp4':
+          await ytmp4(message, args);
+          return;
+        case 'ytmp3':
+          await ytmp3(message, args);
+          return;
+        case 'spotify':
+          await spotify(message, args);
+          return;
+        case 'fbdl':
+          await fbdl(message, args);
+          return;
+        case 'igdl':
+          await igdl(message, args);
+          return;
       }
 
       if (commandName === 'adventure') {
@@ -71,6 +93,7 @@ const messageHandler = async (message) => {
     }
   } catch (error) {
     logger.error('Error in messageHandler:', error);
+    // Do not send error message to avoid responding to banned users
   }
 };
 
