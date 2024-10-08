@@ -17,8 +17,15 @@ async function downloadMedia(url, type) {
     logger.debug(`API Response for ${type}: ${JSON.stringify(response.data)}`);
 
     let mediaUrl;
-    if (type === 'ytmp3' || type === 'ytmp4' || type === 'ytdl') {
+    if (type === 'ytmp3' || type === 'ytmp4') {
       mediaUrl = response.data.url;
+    } else if (type === 'ytdl') {
+      // Handle ytdl response structure
+      const videoFormats = response.data.result.resultUrl.video;
+      const highestQualityVideo = videoFormats.reduce((prev, current) => 
+        (prev.quality > current.quality) ? prev : current
+      );
+      mediaUrl = highestQualityVideo.download;
     } else {
       mediaUrl = response.data.data.url;
     }
