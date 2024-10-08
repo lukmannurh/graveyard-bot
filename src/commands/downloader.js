@@ -14,29 +14,43 @@ const API_BASE_URL = 'https://api.ryzendesu.vip/api/downloader';
 async function downloadMedia(url, type) {
   try {
     const response = await axios.get(`${API_BASE_URL}/${type}`, { params: { url } });
-    logger.debug(`API Response: ${JSON.stringify(response.data)}`);
+    logger.debug(`API Response for ${type}: ${JSON.stringify(response.data)}`);
 
-    if (response.data && response.data.data && response.data.data.url) {
-      const mediaUrl = response.data.data.url;
-      const mediaResponse = await axios.get(mediaUrl, { responseType: 'arraybuffer' });
-      const buffer = Buffer.from(mediaResponse.data, 'binary');
-      
-      const tempFilePath = path.join(__dirname, '../../temp', `${type}_${Date.now()}.${type === 'ytmp3' ? 'mp3' : 'mp4'}`);
-      fs.writeFileSync(tempFilePath, buffer);
-
-      const fileSize = fs.statSync(tempFilePath).size;
-      const isDocument = fileSize > 12 * 1024 * 1024; // Check if file is larger than 12MB
-
-      const media = MessageMedia.fromFilePath(tempFilePath);
-      
-      fs.unlinkSync(tempFilePath);
-
-      return { media, isDocument };
+    let mediaUrl;
+    if (type === 'ytmp3' || type === 'ytmp4') {
+      mediaUrl = response.data.result.url;
+    } else if (type === 'ytdl') {
+      // Pilih kualitas video tertinggi yang tersedia
+      const formats = response.data.result.formats;
+      const highestQualityFormat = formats.reduce((prev, current) => 
+        (prev.qualityLabel > current.qualityLabel) ? prev : current
+      );
+      mediaUrl = highestQualityFormat.url;
     } else {
-      throw new Error('Invalid API response structure');
+      mediaUrl = response.data.data.url;
     }
+
+    if (!mediaUrl) {
+      throw new Error('Media URL not found in API response');
+    }
+
+    const mediaResponse = await axios.get(mediaUrl, { responseType: 'arraybuffer' });
+    const buffer = Buffer.from(mediaResponse.data, 'binary');
+    
+    const extension = type === 'ytmp3' ? 'mp3' : 'mp4';
+    const tempFilePath = path.join(__dirname, '../../temp', `${type}_${Date.now()}.${extension}`);
+    fs.writeFileSync(tempFilePath, buffer);
+
+    const fileSize = fs.statSync(tempFilePath).size;
+    const isDocument = fileSize > 12 * 1024 * 1024; // Check if file is larger than 12MB
+
+    const media = MessageMedia.fromFilePath(tempFilePath);
+    
+    fs.unlinkSync(tempFilePath);
+
+    return { media, isDocument };
   } catch (error) {
-    logger.error(`Error downloading media: ${error.message}`);
+    logger.error(`Error downloading media for ${type}: ${error.message}`);
     throw error;
   }
 }
