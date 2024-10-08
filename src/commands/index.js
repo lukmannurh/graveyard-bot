@@ -40,8 +40,8 @@ export {
   getpp,
   stats,
   jadwalsholat,
-  stickerCommand,
-  animeRecommendation
+  stickerCommand as s,
+  animeRecommendation as animek
 };
 
 export const GENERAL_COMMANDS = [
