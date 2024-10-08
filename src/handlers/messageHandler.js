@@ -25,7 +25,6 @@ const messageHandler = async (message) => {
     const isOwnerUser = isOwner(userId);
     const isGroupAdmin = await isAdmin(chat, sender);
 
-    // Log message for stats
     if (message.fromMe === false) {
       groupStats.logMessage(groupId, userId);
     }
@@ -43,7 +42,6 @@ const messageHandler = async (message) => {
       const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
       const commandName = command.toLowerCase();
 
-      // Tambahkan pengecekan khusus untuk perintah tt
       if (commandName === 'tt') {
         await downloadTikTokVideo(message, args);
         return;
@@ -73,7 +71,6 @@ const messageHandler = async (message) => {
     }
   } catch (error) {
     logger.error('Error in messageHandler:', error);
-    // Do not send error message to avoid responding to banned users
   }
 };
 

@@ -1,16 +1,15 @@
-// src/commands/tiktokDownloader.js
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import pkg from 'whatsapp-web.js';
-const { MessageMedia } = pkg;
+import { MessageMedia } from 'whatsapp-web.js';
 import logger from '../utils/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const API_URL = 'https://api.ryzendesu.vip/api/downloader/ttdl';
+const API_KEY = 'YOUR_API_KEY_HERE'; // Ganti dengan API key Anda jika diperlukan
 
 async function downloadTikTokVideo(message, args) {
   if (args.length === 0) {
@@ -19,14 +18,18 @@ async function downloadTikTokVideo(message, args) {
   }
 
   const url = args[0];
+  logger.info(`Attempting to download TikTok video: ${url}`);
   
   try {
-    const response = await axios.get(API_URL, { params: { url } });
+    const response = await axios.get(API_URL, { 
+      params: { url, apikey: API_KEY }
+    });
+    logger.debug(`API Response: ${JSON.stringify(response.data)}`);
     
     if (response.data && response.data.result && response.data.result.video) {
       const videoUrl = response.data.result.video;
+      logger.info(`Video URL obtained: ${videoUrl}`);
       
-      // Download video ke penyimpanan sementara
       const tempFilePath = path.join(__dirname, '../../temp', `tiktok_${Date.now()}.mp4`);
       const writer = fs.createWriteStream(tempFilePath);
       
@@ -43,21 +46,24 @@ async function downloadTikTokVideo(message, args) {
         writer.on('error', reject);
       });
 
-      // Kirim video sebagai balasan
+      logger.info(`Video downloaded to: ${tempFilePath}`);
+
       const media = MessageMedia.fromFilePath(tempFilePath);
       await message.reply(media, null, { caption: 'Video TikTok yang diminta' });
 
-      // Hapus file sementara
       fs.unlinkSync(tempFilePath);
       
       logger.info(`TikTok video downloaded and sent successfully: ${url}`);
     } else {
+      logger.warn(`Invalid API response structure: ${JSON.stringify(response.data)}`);
       await message.reply('Maaf, tidak dapat mengunduh video TikTok. Pastikan URL valid.');
-      logger.warn(`Failed to download TikTok video: ${url}`);
     }
   } catch (error) {
-    await message.reply('Terjadi kesalahan saat mengunduh video TikTok. Silakan coba lagi nanti.');
     logger.error(`Error downloading TikTok video: ${error.message}`);
+    if (error.response) {
+      logger.error(`API Error Response: ${JSON.stringify(error.response.data)}`);
+    }
+    await message.reply('Terjadi kesalahan saat mengunduh video TikTok. Silakan coba lagi nanti.');
   }
 }
 
