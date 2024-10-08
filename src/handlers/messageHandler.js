@@ -9,6 +9,7 @@ import { handleAdventureChoice, adventure } from '../commands/adventureCommand.j
 import groupStats from '../utils/groupStats.js';
 import { isUserBanned, deleteBannedUserMessage, isOwner } from '../utils/enhancedModerationSystem.js';
 import { isAdmin } from '../utils/adminChecker.js';
+import downloadTikTokVideo from '../commands/tiktokDownloader.js';
 
 const messageHandler = async (message) => {
   try {
@@ -41,6 +42,12 @@ const messageHandler = async (message) => {
     if (message.body.startsWith(PREFIX)) {
       const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
       const commandName = command.toLowerCase();
+
+      // Tambahkan pengecekan khusus untuk perintah tt
+      if (commandName === 'tt') {
+        await downloadTikTokVideo(message, args);
+        return;
+      }
 
       if (commandName === 'adventure') {
         if (isAuthorized) {

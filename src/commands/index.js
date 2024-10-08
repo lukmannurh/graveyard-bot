@@ -17,6 +17,7 @@ import getpp from './getProfilePicture.js';
 import stats from './stats.js';
 import jadwalsholat from './jadwalsholat.js';
 import stickerCommand from './stickerCommand.js';
+import downloadTikTokVideo from './tiktokDownloader.js';
 import animeRecommendation from './animeRecommendation.js';
 
 export {
@@ -45,7 +46,7 @@ export {
 };
 
 export const GENERAL_COMMANDS = [
-  'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 
+  'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 'tt',
   'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's', 'animek'
 ];
 
@@ -74,6 +75,7 @@ const exportedCommands = {
   stats,
   jadwalsholat,
   s: stickerCommand,
+  tt: downloadTikTokVideo,
   animek: animeRecommendation
 };
 
