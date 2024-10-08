@@ -58,7 +58,7 @@ Graveyard Bot is a multifunctional WhatsApp bot that combines artificial intelli
 ### Installation Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/username/graveyard-bot.git
+   git clone https://github.com/lukmannurh/graveyard-bot.git
    cd graveyard-bot
    ```
 
@@ -121,7 +121,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Email: luqmannur33@gmail.com
 
-Project Link: [https://github.com/username/graveyard-bot](https://github.com/username/graveyard-bot)
+Project Link: [https://github.com/lukmannurh/graveyard-bot](https://github.com/lukmannurh/graveyard-bot)
 
 ## 🙏 Acknowledgments
 
