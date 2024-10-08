@@ -3,7 +3,8 @@ import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { MessageMedia } from 'whatsapp-web.js';
+import pkg from 'whatsapp-web.js';
+const { MessageMedia } = pkg;
 import logger from '../utils/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
