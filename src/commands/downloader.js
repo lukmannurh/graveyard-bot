@@ -18,7 +18,9 @@ async function downloadMedia(url, type) {
 
     let mediaUrls = [];
     if (type === 'ytmp3' || type === 'ytmp4') {
-      mediaUrls.push({ url: response.data.url, filename: `${type}_${Date.now()}.${type === 'ytmp3' ? 'mp3' : 'mp4'}` });
+      if (response.data.url) {
+        mediaUrls.push({ url: response.data.url, filename: `${type}_${Date.now()}.${type === 'ytmp3' ? 'mp3' : 'mp4'}` });
+      }
     } else if (type === 'ytdl') {
       if (response.data.result && response.data.result.resultUrl) {
         if (response.data.result.resultUrl.video && response.data.result.resultUrl.video.length > 0) {
@@ -26,20 +28,31 @@ async function downloadMedia(url, type) {
           const highestQualityVideo = videoFormats.reduce((prev, current) => 
             (prev.quality > current.quality) ? prev : current
           );
-          mediaUrls.push({ url: highestQualityVideo.download, filename: `ytdl_video_${Date.now()}.mp4` });
+          if (highestQualityVideo.download) {
+            mediaUrls.push({ url: highestQualityVideo.download, filename: `ytdl_video_${Date.now()}.mp4` });
+          }
         }
-        if (response.data.result.resultUrl.audio && response.data.result.resultUrl.audio.length > 0) {
+        if (response.data.result.resultUrl.audio && response.data.result.resultUrl.audio.length > 0 && response.data.result.resultUrl.audio[0].download) {
           mediaUrls.push({ url: response.data.result.resultUrl.audio[0].download, filename: `ytdl_audio_${Date.now()}.mp3` });
         }
       }
     } else if (type === 'fbdl') {
-      if (response.data.status && response.data.data && response.data.data.length > 0) {
+      if (response.data.status && response.data.data && response.data.data.length > 0 && response.data.data[0].url) {
         mediaUrls.push({ url: response.data.data[0].url, filename: `fbdl_${Date.now()}.mp4` });
-      } else {
-        throw new Error('Invalid fbdl response structure');
+      }
+    } else if (type === 'igdl') {
+      if (response.data.status && response.data.data && response.data.data.length > 0) {
+        response.data.data.forEach((item, index) => {
+          if (item.url) {
+            const extension = item.url.split('.').pop().split('?')[0];
+            mediaUrls.push({ url: item.url, filename: `igdl_${index + 1}_${Date.now()}.${extension}` });
+          }
+        });
       }
     } else {
-      mediaUrls.push({ url: response.data.data.url, filename: `${type}_${Date.now()}.mp4` });
+      if (response.data.data && response.data.data.url) {
+        mediaUrls.push({ url: response.data.data.url, filename: `${type}_${Date.now()}.mp4` });
+      }
     }
 
     if (mediaUrls.length === 0) {
@@ -48,20 +61,28 @@ async function downloadMedia(url, type) {
 
     const downloadedMedia = [];
     for (const mediaUrl of mediaUrls) {
-      const mediaResponse = await axios.get(mediaUrl.url, { responseType: 'arraybuffer' });
-      const buffer = Buffer.from(mediaResponse.data, 'binary');
-      
-      const tempFilePath = path.join(__dirname, '../../temp', mediaUrl.filename);
-      fs.writeFileSync(tempFilePath, buffer);
+      try {
+        const mediaResponse = await axios.get(mediaUrl.url, { responseType: 'arraybuffer' });
+        const buffer = Buffer.from(mediaResponse.data, 'binary');
+        
+        const tempFilePath = path.join(__dirname, '../../temp', mediaUrl.filename);
+        fs.writeFileSync(tempFilePath, buffer);
 
-      const fileSize = fs.statSync(tempFilePath).size;
-      const isDocument = fileSize > 12 * 1024 * 1024; // Check if file is larger than 12MB
+        const fileSize = fs.statSync(tempFilePath).size;
+        const isDocument = fileSize > 12 * 1024 * 1024; // Check if file is larger than 12MB
 
-      const media = MessageMedia.fromFilePath(tempFilePath);
-      
-      fs.unlinkSync(tempFilePath);
+        const media = MessageMedia.fromFilePath(tempFilePath);
+        
+        fs.unlinkSync(tempFilePath);
 
-      downloadedMedia.push({ media, isDocument, filename: mediaUrl.filename });
+        downloadedMedia.push({ media, isDocument, filename: mediaUrl.filename });
+      } catch (downloadError) {
+        logger.error(`Error downloading ${mediaUrl.filename}: ${downloadError.message}`);
+      }
+    }
+
+    if (downloadedMedia.length === 0) {
+      throw new Error(`Failed to download any media for ${type}`);
     }
 
     return downloadedMedia;
@@ -99,7 +120,7 @@ async function handleDownload(message, args, type) {
         logger.error(`Error sending ${filename}: ${sendError.message}`);
         await message.reply(`Download successful, but there was an error sending ${filename}. Error: ${sendError.message}`);
         
-        // Jika gagal mengirim sebagai media, coba kirim sebagai dokumen
+        // If failed to send as media, try to send as document
         if (!isDocument) {
           try {
             const sent = await message.reply(media, null, { sendMediaAsDocument: true, caption: filename });
