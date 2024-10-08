@@ -74,16 +74,22 @@ async function handleDownload(message, args, type) {
   logger.info(`Attempting to download ${type}: ${url}`);
 
   try {
+    await message.reply('Download started. Please wait...');
+
     const { media, isDocument } = await downloadMedia(url, type);
     
-    // Send as two separate messages to avoid potential issues
-    await message.reply('Download complete. Sending media...');
-    await message.reply(media, null, { sendMediaAsDocument: isDocument });
-    
-    logger.info(`${type} downloaded and sent successfully: ${url}`);
+    logger.info(`${type} downloaded successfully. Attempting to send...`);
+
+    try {
+      await message.reply(media, null, { sendMediaAsDocument: isDocument });
+      logger.info(`${type} sent successfully: ${url}`);
+    } catch (sendError) {
+      logger.error(`Error sending media: ${sendError.message}`);
+      await message.reply(`Download successful, but there was an error sending the file. Error: ${sendError.message}`);
+    }
   } catch (error) {
     logger.error(`Error in ${type} command:`, error);
-    await message.reply(`An error occurred while downloading the ${type}. Please try again later.`);
+    await message.reply(`An error occurred while processing your request: ${error.message}`);
   }
 }
 
