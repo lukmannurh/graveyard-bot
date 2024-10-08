@@ -20,7 +20,6 @@ async function downloadMedia(url, type) {
     if (type === 'ytmp3' || type === 'ytmp4') {
       mediaUrl = response.data.url;
     } else if (type === 'ytdl') {
-      // Handle ytdl response structure
       if (response.data.result && response.data.result.resultUrl && response.data.result.resultUrl.video) {
         const videoFormats = response.data.result.resultUrl.video;
         const highestQualityVideo = videoFormats.reduce((prev, current) => 
@@ -31,7 +30,6 @@ async function downloadMedia(url, type) {
         throw new Error('Invalid ytdl response structure');
       }
     } else if (type === 'fbdl') {
-      // Handle fbdl response structure
       if (response.data.status && response.data.data && response.data.data.length > 0) {
         mediaUrl = response.data.data[0].url;
       } else {
@@ -77,7 +75,11 @@ async function handleDownload(message, args, type) {
 
   try {
     const { media, isDocument } = await downloadMedia(url, type);
+    
+    // Send as two separate messages to avoid potential issues
+    await message.reply('Download complete. Sending media...');
     await message.reply(media, null, { sendMediaAsDocument: isDocument });
+    
     logger.info(`${type} downloaded and sent successfully: ${url}`);
   } catch (error) {
     logger.error(`Error in ${type} command:`, error);
