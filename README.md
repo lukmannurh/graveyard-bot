@@ -1,84 +1,131 @@
 # Graveyard Bot
 
-Bot WhatsApp cerdas dengan kemampuan AI untuk menjawab pertanyaan, menganalisis gambar, dan bermain game tebak skor.
+Graveyard Bot is a multifunctional WhatsApp bot that combines artificial intelligence, entertainment features, and group management tools into one powerful package.
 
-## Fitur
+## 🌟 Key Features
 
-- Integrasi dengan Google Generative AI (Gemini)
-- Kemampuan memproses dan menganalisis gambar
-- Game tebak skor untuk pertandingan sepak bola
-- Perintah admin untuk manajemen grup
-- Responsif terhadap pesan teks dan gambar
+- **AI Integration**: Utilizes Google Generative AI (Gemini) for answering questions and analyzing images.
+- **Score Prediction Game**: Interactive feature for predicting soccer match scores.
+- **Text Adventures**: Immersive text-based role-playing experiences.
+- **Anime Explorer**: Anime recommendations and information.
+- **TikTok Downloader**: Easy download of TikTok videos.
+- **Group Management**: Admin commands for efficient group management.
+- **Sticker Creator**: Convert images to WhatsApp stickers.
+- **And much more!**
 
-## Persyaratan
+## 📋 Command List
 
-- Node.js (v16 atau lebih baru)
-- NPM (Node Package Manager)
-- Akun Google Cloud dengan akses ke Gemini API
-- Whatsapp yang terhubung ke perangkat
+### 📱 General Commands
+- `.menu` - Display list of commands
+- `.start [team1] [team2] [prize]` - Start a score prediction session
+- `.predict [score]` - Predict match score (e.g., .predict 1-0)
+- `.list` - View list of participants' predictions
+- `.random [num_teams] [name1] [name2] ...` - Create random teams
+- `.ai [question/command]` - Interact with AI
+- `.waifu [count]` - Get random waifu images (1-20 images)
+- `.getpp @user` - Retrieve profile picture of tagged user
+- `.stats` - Display group activity statistics
+- `.prayertimes` - Show prayer times (WIB, WITA, WIT)
+- `.s` - Convert image to sticker
 
-## Instalasi
+### 👑 Admin Commands
+- `.end` - End score prediction session
+- `.tagall` - Tag all group members
+- `.ban @user` - Ban user from group
+- `.unban @user` - Remove user ban
 
-1. Clone repositori ini:
+### 🎮 Games
+- `.checkforever` - Check "forever alone" level (just for fun)
+- `.adventure` - Start interactive text adventure
+
+### 🌸 Anime Commands
+- `.anime genre [genre_name]` - Anime recommendations by genre
+- `.anime season [year] [season]` - Information on seasonal anime
+- `.anime top` - List top 10 anime
+- `.anime upcoming` - List upcoming anime
+- `.anime [keyword]` - Anime search
+
+### 📥 Downloader
+- `.tt [URL]` - Download TikTok video
+
+## 🛠 Installation
+
+### Prerequisites
+- Node.js (v16.0.0 or newer)
+- npm (usually installed with Node.js)
+- WhatsApp connected to a device
+
+### Installation Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/username/graveyard-bot.git
+   cd graveyard-bot
    ```
-   git clone https://github.com/lukmannurh/graveyard-bot.git
-   cd graveyard-cot
-   ```
 
-2. Instal dependensi:
-   ```
+2. Install dependencies:
+   ```bash
    npm install
    ```
 
-3. Buat file `.env` di root proyek dan tambahkan API key Google Generative AI Anda:
-   ```
-   API_KEY=your_google_generative_ai_api_key_here
-   ```
+3. Configure environment:
+   - Copy `.env.example` to `.env`
+   - Fill in the required environment variables in the `.env` file
 
-4. Jalankan bot:
-   ```
+4. Run the bot:
+   ```bash
    npm start
    ```
 
-5. Scan kode QR yang muncul dengan aplikasi WhatsApp di ponsel Anda untuk menghubungkan bot.
+5. Scan the QR code that appears with your WhatsApp application on your phone.
 
-## Penggunaan
+## ⚙️ Configuration
 
-### Perintah Umum
+Main configuration is done through the `.env` file. Here are some important variables:
 
-- `.menu` - Menampilkan daftar perintah yang tersedia
-- `.ai [pertanyaan]` - Bertanya kepada AI
-- Kirim gambar dengan caption - AI akan menganalisis gambar
+- `API_KEY`: API key for Google Generative AI
+- `PREFIX`: Bot command prefix (default: '.')
+- `OWNER_NUMBER`: WhatsApp number of the bot owner
 
-### Game Tebak Skor
+## 🧩 Project Structure
 
-- `.start [tim1] [tim2] [hadiah]` - Memulai sesi tebak skor
-- `.tebak [skor]` - Menebak skor pertandingan (contoh: .tebak 1-0)
-- `.list` - Melihat daftar tebakan peserta
+```
+graveyard-bot/
+│
+├── src/
+│   ├── commands/           # Implementation of bot commands
+│   ├── handlers/           # Handlers for various types of messages
+│   ├── utils/              # Utility functions
+│   └── config/             # Configuration files
+│
+├── temp/                   # Folder for temporary files
+├── logs/                   # Application logs
+├── .env                    # Environment variables
+└── package.json            # Dependencies and npm scripts
+```
 
-### Perintah Admin
+## 🤝 Contributing
 
-- `.end` - Mengakhiri sesi tebak skor
-- `.tagall` - Menandai semua anggota grup
-- `.kick @user` - Mengeluarkan anggota dari grup
+Contributions are greatly appreciated! If you want to contribute:
 
-## Konfigurasi
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-Anda dapat mengubah prefix perintah dan konfigurasi lainnya di file `src/config.js`.
+## 📜 License
 
-## Pemecahan Masalah
+Distributed under the MIT License. See `LICENSE` for more information.
 
-Jika Anda mengalami masalah:
+## 📞 Contact
 
-1. Pastikan API key Anda valid dan memiliki akses yang cukup.
-2. Periksa koneksi internet Anda.
-3. Pastikan Anda menggunakan versi Node.js yang didukung.
-4. Lihat log error di konsol untuk informasi lebih lanjut.
+Email: luqmannur33@gmail.com
 
-## Kontribusi
+Project Link: [https://github.com/username/graveyard-bot](https://github.com/username/graveyard-bot)
 
-Kontribusi selalu diterima! Silakan buat pull request atau buka issue jika Anda memiliki saran atau menemukan bug.
+## 🙏 Acknowledgments
 
-## Lisensi
-
-[MIT License](LICENSE)
+- [WhatsApp Web.js](https://github.com/pedroslopez/whatsapp-web.js/)
+- [Google Generative AI](https://ai.google.dev/)
+- [Anime API](https://jikan.moe/)
+- And all the contributors who have helped this project!

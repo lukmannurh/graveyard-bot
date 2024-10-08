@@ -7,54 +7,54 @@ const createMenuSection = (title, commands) => {
 
 const menu = async (message) => {
   try {
-    const generalCommands = [
-      { name: 'menu', description: 'Menampilkan daftar perintah ini' },
-      { name: 'ai [pertanyaan/perintah]', description: 'Bertanya atau meminta AI untuk melakukan sesuatu' },
-      { name: 'start [tim1] [tim2] [hadiah]', description: 'Memulai sesi tebak skor' },
-      { name: 'tebak [skor]', description: 'Menebak skor pertandingan (contoh: .tebak 1-0)' },
-      { name: 'list', description: 'Melihat daftar tebakan peserta' },
-      { name: 'random [jumlah tim] [nama1] [nama2] ...', description: 'Membuat tim acak (minimal 2 tim dan 2 nama)' },
-      { name: 'waifu [jumlah]', description: 'Mendapatkan gambar waifu acak (1-20 gambar)' },
-      { name: 'bandarsabu', description: 'Mendapatkan kontak Imam Bandar Sabu Lampung' },
-      { name: 'cekjomok', description: 'Mengecek tingkat jomok Anda' },
-      { name: 'adventure', description: 'Memulai petualangan teks interaktif' },
-      { name: 'getpp @user', description: 'Mengambil dan mengirim foto profil pengguna yang di-tag' },
-      { name: 'stats', description: 'Menampilkan statistik aktivitas grup untuk bulan ini' },
-      { name: 'jadwalsholat', description: 'Menampilkan jadwal sholat untuk WIB, WITA, dan WIT' },
-      { name: 's', description: 'Mengubah gambar menjadi stiker (kirim gambar dengan caption .s)' }
-    ];
+    const menuText = `
+🤖 *GRAVEYARD BOT MENU* 🤖
 
-    const animeCommands = [
-      { name: 'animek genre [nama_genre]', description: 'Mendapatkan rekomendasi anime berdasarkan genre' },
-      { name: 'animek season [tahun] [musim]', description: 'Melihat anime musim tertentu (spring/summer/fall/winter)' },
-      { name: 'animek top', description: 'Melihat daftar top 10 anime' },
-      { name: 'animek upcoming', description: 'Melihat daftar anime yang akan datang' },
-      { name: 'animek [kata_kunci]', description: 'Mencari anime berdasarkan kata kunci' }
-    ];
+${createMenuSection('📱 Perintah Umum', [
+  { name: 'menu', description: 'Menampilkan daftar perintah ini' },
+  { name: 'start [tim1] [tim2] [hadiah]', description: 'Memulai sesi tebak skor' },
+  { name: 'tebak [skor]', description: 'Menebak skor pertandingan (contoh: .tebak 1-0)' },
+  { name: 'list', description: 'Melihat daftar tebakan peserta' },
+  { name: 'random [jumlah tim] [nama1] [nama2] ...', description: 'Membuat tim acak (minimal 2 tim dan 2 nama)' },
+  { name: 'ai [pertanyaan/perintah]', description: 'Bertanya atau meminta AI untuk melakukan sesuatu' },
+  { name: 'waifu [jumlah]', description: 'Mendapatkan gambar waifu acak (1-20 gambar)' },
+  { name: 'getpp @user', description: 'Mengambil dan mengirim foto profil pengguna yang di-tag' },
+  { name: 'stats', description: 'Menampilkan statistik aktivitas grup untuk bulan ini' },
+  { name: 'jadwalsholat', description: 'Menampilkan jadwal sholat untuk WIB, WITA, dan WIT' },
+  { name: 's', description: 'Mengubah gambar menjadi stiker (kirim gambar dengan caption .s)' }
+])}
 
-    const adminCommands = [
-      { name: 'end', description: 'Mengakhiri sesi tebak skor' },
-      { name: 'tagall', description: 'Menandai semua anggota grup' },
-      { name: 'kick @user', description: 'Mengeluarkan anggota dari grup' },
-      { name: 'ban @user', description: 'Mem-ban pengguna dari grup' },
-      { name: 'unban @user', description: 'Menghapus ban pengguna dari grup' }
-    ];
+${createMenuSection('👑 Perintah Admin', [
+  { name: 'end', description: 'Mengakhiri sesi tebak skor' },
+  { name: 'tagall', description: 'Menandai semua anggota grup' },
+  { name: 'ban @user', description: 'Mem-ban pengguna dari grup' },
+  { name: 'unban @user', description: 'Menghapus ban pengguna dari grup' }
+])}
 
-    const ownerCommands = [
-      { name: 'authorize add/remove', description: 'Menambah atau menghapus otorisasi grup' }
-    ];
+${createMenuSection('🎮 Game', [
+  { name: 'cekjomok', description: 'Mengecek tingkat jomok Anda' },
+  { name: 'adventure', description: 'Memulai petualangan teks interaktif' }
+])}
 
-    let menuText = "🤖 *Menu Bot Graveyard* 🤖\n\n";
-    menuText += createMenuSection('Perintah Umum', generalCommands) + '\n\n';
-    menuText += createMenuSection('Perintah Anime', animeCommands) + '\n\n';
-    menuText += createMenuSection('Perintah Admin', adminCommands) + '\n\n';
-    menuText += createMenuSection('Perintah Owner', ownerCommands) + '\n\n';
-    menuText += "*Catatan Tambahan:*\n";
-    menuText += "• Untuk menggunakan AI dengan gambar, kirim gambar dengan caption yang dimulai dengan .ai\n";
-    menuText += "• Semua perintah dimulai dengan awalan .\n";
-    menuText += "• Perintah admin hanya dapat digunakan oleh admin grup\n";
-    menuText += "• Perintah owner hanya dapat digunakan oleh pemilik bot\n\n";
-    menuText += "*OMKE GAS 🔥*";
+${createMenuSection('🌸 Perintah Anime', [
+  { name: 'animek genres [nama_genre]', description: 'Mendapatkan rekomendasi anime berdasarkan genre' },
+  { name: 'animek season [tahun] [musim]', description: 'Melihat anime musim tertentu (spring/summer/fall/winter)' },
+  { name: 'animek top', description: 'Melihat daftar top 10 anime' },
+  { name: 'animek upcoming', description: 'Melihat daftar anime yang akan datang' },
+  { name: 'animek [kata_kunci]', description: 'Mencari anime berdasarkan kata kunci' }
+])}
+
+${createMenuSection('📥 Downloader', [
+  { name: 'tt [URL]', description: 'Mengunduh video TikTok' }
+])}
+
+*Catatan:*
+• Semua perintah dimulai dengan awalan ${PREFIX}
+• Perintah admin hanya dapat digunakan oleh admin grup
+• Untuk menggunakan AI dengan gambar, kirim gambar dengan caption yang dimulai dengan ${PREFIX}ai
+
+🔥 *OMKE GAS* 🔥
+`;
 
     await message.reply(menuText);
     logger.info('Menu command executed successfully');
