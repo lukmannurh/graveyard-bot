@@ -21,11 +21,22 @@ async function downloadMedia(url, type) {
       mediaUrl = response.data.url;
     } else if (type === 'ytdl') {
       // Handle ytdl response structure
-      const videoFormats = response.data.result.resultUrl.video;
-      const highestQualityVideo = videoFormats.reduce((prev, current) => 
-        (prev.quality > current.quality) ? prev : current
-      );
-      mediaUrl = highestQualityVideo.download;
+      if (response.data.result && response.data.result.resultUrl && response.data.result.resultUrl.video) {
+        const videoFormats = response.data.result.resultUrl.video;
+        const highestQualityVideo = videoFormats.reduce((prev, current) => 
+          (prev.quality > current.quality) ? prev : current
+        );
+        mediaUrl = highestQualityVideo.download;
+      } else {
+        throw new Error('Invalid ytdl response structure');
+      }
+    } else if (type === 'fbdl') {
+      // Handle fbdl response structure
+      if (response.data.status && response.data.data && response.data.data.length > 0) {
+        mediaUrl = response.data.data[0].url;
+      } else {
+        throw new Error('Invalid fbdl response structure');
+      }
     } else {
       mediaUrl = response.data.data.url;
     }
