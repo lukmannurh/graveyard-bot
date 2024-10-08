@@ -21,7 +21,7 @@ async function downloadMedia(url, type) {
       mediaUrls.push({ url: response.data.url, filename: `${type}_${Date.now()}.${type === 'ytmp3' ? 'mp3' : 'mp4'}` });
     } else if (type === 'ytdl') {
       if (response.data.result && response.data.result.resultUrl) {
-        if (response.data.result.resultUrl.video) {
+        if (response.data.result.resultUrl.video && response.data.result.resultUrl.video.length > 0) {
           const videoFormats = response.data.result.resultUrl.video;
           const highestQualityVideo = videoFormats.reduce((prev, current) => 
             (prev.quality > current.quality) ? prev : current
@@ -32,9 +32,6 @@ async function downloadMedia(url, type) {
           mediaUrls.push({ url: response.data.result.resultUrl.audio[0].download, filename: `ytdl_audio_${Date.now()}.mp3` });
         }
       }
-      if (mediaUrls.length === 0) {
-        throw new Error('No valid media URLs found in ytdl response');
-      }
     } else if (type === 'fbdl') {
       if (response.data.status && response.data.data && response.data.data.length > 0) {
         mediaUrls.push({ url: response.data.data[0].url, filename: `fbdl_${Date.now()}.mp4` });
@@ -43,6 +40,10 @@ async function downloadMedia(url, type) {
       }
     } else {
       mediaUrls.push({ url: response.data.data.url, filename: `${type}_${Date.now()}.mp4` });
+    }
+
+    if (mediaUrls.length === 0) {
+      throw new Error(`No valid media URLs found in ${type} response`);
     }
 
     const downloadedMedia = [];
@@ -88,11 +89,30 @@ async function handleDownload(message, args, type) {
 
     for (const { media, isDocument, filename } of downloadedMedia) {
       try {
-        await message.reply(media, null, { sendMediaAsDocument: isDocument, caption: filename });
-        logger.info(`${filename} sent successfully.`);
+        const sent = await message.reply(media, null, { sendMediaAsDocument: isDocument, caption: filename });
+        if (sent) {
+          logger.info(`${filename} sent successfully.`);
+        } else {
+          throw new Error('Failed to send media');
+        }
       } catch (sendError) {
         logger.error(`Error sending ${filename}: ${sendError.message}`);
         await message.reply(`Download successful, but there was an error sending ${filename}. Error: ${sendError.message}`);
+        
+        // Jika gagal mengirim sebagai media, coba kirim sebagai dokumen
+        if (!isDocument) {
+          try {
+            const sent = await message.reply(media, null, { sendMediaAsDocument: true, caption: filename });
+            if (sent) {
+              logger.info(`${filename} sent successfully as document.`);
+            } else {
+              throw new Error('Failed to send media as document');
+            }
+          } catch (docError) {
+            logger.error(`Error sending ${filename} as document: ${docError.message}`);
+            await message.reply(`Failed to send ${filename} as media or document. You may need to download it manually.`);
+          }
+        }
       }
     }
 
