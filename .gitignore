@@ -5,3 +5,4 @@ node_modules/
 authorizedGroups.json
 package-lock.json
 *.log
+groupStats.json
