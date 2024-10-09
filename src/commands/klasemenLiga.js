@@ -20,6 +20,7 @@ const pendingKlasemenResponses = new Map();
 async function fetchLeagueTable(leagueId) {
   try {
     const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
+    logger.debug(`API Response for league ${leagueId}:`, JSON.stringify(response.data, null, 2));
     return response.data;
   } catch (error) {
     logger.error(`Error fetching league table for league ID ${leagueId}:`, error);
@@ -33,6 +34,8 @@ function formatTeamName(name, maxLength = 14) {
 }
 
 function findLatestSeason(data) {
+  logger.debug('Finding latest season from data:', JSON.stringify(data, null, 2));
+  
   if (!data || !data.table || !Array.isArray(data.table)) {
     logger.error('Invalid data structure received from API');
     return null;
@@ -42,14 +45,18 @@ function findLatestSeason(data) {
   let latestYear = 0;
 
   for (const season of data.table) {
+    logger.debug('Checking season:', JSON.stringify(season, null, 2));
     if (season && season.table && season.table.leagueSeason) {
       const currentYear = parseInt(season.table.leagueSeason.slice(0, 4));
+      logger.debug(`Current year: ${currentYear}, Latest year: ${latestYear}`);
       if (currentYear > latestYear) {
         latestYear = currentYear;
         latestSeason = season;
       }
     }
   }
+
+  logger.debug('Latest season found:', JSON.stringify(latestSeason, null, 2));
 
   if (latestSeason && latestSeason.table && Array.isArray(latestSeason.table.tables)) {
     return latestSeason.table.tables[0];
@@ -102,7 +109,10 @@ async function handleLeagueSelection(message, selection) {
     
     try {
       const leagueData = await fetchLeagueTable(selectedLeague.id);
+      logger.debug('League data received:', JSON.stringify(leagueData, null, 2));
+      
       const latestSeason = findLatestSeason(leagueData);
+      logger.debug('Latest season data:', JSON.stringify(latestSeason, null, 2));
       
       if (!latestSeason || !Array.isArray(latestSeason.rows)) {
         await message.reply("Maaf, data klasemen terbaru tidak tersedia untuk liga ini saat ini.");
