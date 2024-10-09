@@ -45,7 +45,7 @@ const messageHandler = async (message) => {
       const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
       const commandName = command.toLowerCase();
 
-      // Add new commands to this switch statement
+      // Handle specific commands
       switch (commandName) {
         case 'tt':
           await downloadTikTokVideo(message, args);
@@ -90,7 +90,11 @@ const messageHandler = async (message) => {
         await handleAdventureChoice(message);
       }
     } else if (isAuthorized) {
-      await handleNonCommandMessage(message, chat, sender);
+      // Handle klasemen liga response
+      const klasemenHandled = await handleKlasemenResponse(message);
+      if (!klasemenHandled) {
+        await handleNonCommandMessage(message, chat, sender);
+      }
     }
   } catch (error) {
     logger.error('Error in messageHandler:', error);
