@@ -1,7 +1,7 @@
 import axios from 'axios';
 import logger from '../utils/logger.js';
 
-const FOTMOB_API_URL = 'https://www.fotmob.com/api/leagues';
+const FOTMOB_API_URL = 'https://www.fotmob.com/api/allLeagues';
 
 const LEAGUE_MAPPING = {
   "Premier League": { id: 47, ccode: "ENG" },
