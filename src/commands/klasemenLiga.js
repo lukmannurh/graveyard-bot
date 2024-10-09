@@ -21,10 +21,17 @@ async function fetchLeagueTable(leagueId) {
     logger.debug(`Fetching league table for ID: ${leagueId}`);
     const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
     logger.debug(`Received response for league ID ${leagueId}`);
+    logger.debug('Response status:', response.status);
+    logger.debug('Response headers:', response.headers);
     logger.debug('Response data:', JSON.stringify(response.data, null, 2));
     return response.data;
   } catch (error) {
     logger.error(`Error fetching league table for league ID ${leagueId}:`, error);
+    if (error.response) {
+      logger.error('Error response:', error.response.data);
+      logger.error('Error status:', error.response.status);
+      logger.error('Error headers:', error.response.headers);
+    }
     throw new Error('Gagal mengambil data klasemen liga.');
   }
 }
@@ -44,6 +51,17 @@ function findTableData(data) {
     return data.table;
   } else if (data.table && data.table.all) {
     return data.table.all;
+  } else if (data.table && data.table.tables && data.table.tables[0]) {
+    return data.table.tables[0];
+  } else if (data.details && data.details.table && data.details.table.all) {
+    return data.details.table.all;
+  }
+  
+  // Jika tidak ada yang cocok, coba cari array pertama yang mungkin berisi data tim
+  for (let key in data) {
+    if (Array.isArray(data[key]) && data[key].length > 0 && data[key][0].teamId) {
+      return data[key];
+    }
   }
   
   logger.warn('Unable to find table data in the response');
@@ -88,49 +106,55 @@ export async function handleKlasemenResponse(message) {
 }
 
 async function handleLeagueSelection(message, selection) {
-  logger.debug(`Handling league selection: ${selection}`);
-  const selectedIndex = parseInt(selection) - 1;
-  const leagueNames = Object.keys(LEAGUE_MAPPING);
-  
-  if (selectedIndex >= 0 && selectedIndex < leagueNames.length) {
-    const selectedLeagueName = leagueNames[selectedIndex];
-    const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
-    logger.debug(`Selected league: ${selectedLeagueName}, ID: ${selectedLeague.id}`);
+  try {
+    logger.debug(`Handling league selection: ${selection}`);
+    const selectedIndex = parseInt(selection) - 1;
+    const leagueNames = Object.keys(LEAGUE_MAPPING);
     
-    const leagueData = await fetchLeagueTable(selectedLeague.id);
-    logger.debug('Fetched league data:', JSON.stringify(leagueData, null, 2));
-    
-    const leagueTable = findTableData(leagueData);
-    
-    if (!leagueTable || !Array.isArray(leagueTable)) {
-      logger.warn(`No table data found for ${selectedLeagueName}`);
-      await message.reply("Maaf, data klasemen tidak tersedia untuk liga ini saat ini.");
-      return;
-    }
-    
-    let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
-    tableResponse += "Pos | Tim                 | P | M | S | K | GM | GK | SB | Pts\n";
-    tableResponse += "-".repeat(70) + "\n";
-    
-    leagueTable.forEach(team => {
-      const position = (team.idx || team.position || team.rank || '').toString().padStart(3);
-      const name = formatTeamName(team.name);
-      const played = (team.played || team.matchesPlayed || '0').toString().padStart(2);
-      const won = (team.wins || team.won || '0').toString().padStart(2);
-      const drawn = (team.draws || team.drawn || '0').toString().padStart(2);
-      const lost = (team.losses || team.lost || '0').toString().padStart(2);
-      const goalsFor = (team.scoresFor || team.goalsDiff || '0').toString().padStart(2);
-      const goalsAgainst = (team.scoresAgainst || team.goalsAgainst || '0').toString().padStart(2);
-      const goalDifference = (team.goalDiff || team.goalDifference || '0').toString().padStart(3);
-      const points = (team.pts || team.points || '0').toString().padStart(3);
+    if (selectedIndex >= 0 && selectedIndex < leagueNames.length) {
+      const selectedLeagueName = leagueNames[selectedIndex];
+      const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
+      logger.debug(`Selected league: ${selectedLeagueName}, ID: ${selectedLeague.id}`);
+      
+      const leagueData = await fetchLeagueTable(selectedLeague.id);
+      logger.debug('Fetched league data:', JSON.stringify(leagueData, null, 2));
+      
+      const leagueTable = findTableData(leagueData);
+      logger.debug('Found league table:', JSON.stringify(leagueTable, null, 2));
+      
+      if (!leagueTable || !Array.isArray(leagueTable)) {
+        logger.warn(`No table data found for ${selectedLeagueName}`);
+        await message.reply("Maaf, data klasemen tidak tersedia untuk liga ini saat ini.");
+        return;
+      }
+      
+      let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
+      tableResponse += "Pos | Tim                 | P | M | S | K | GM | GK | SB | Pts\n";
+      tableResponse += "-".repeat(70) + "\n";
+      
+      leagueTable.forEach(team => {
+        const position = (team.idx || team.position || team.rank || '').toString().padStart(3);
+        const name = formatTeamName(team.name);
+        const played = (team.played || team.matchesPlayed || '0').toString().padStart(2);
+        const won = (team.wins || team.won || '0').toString().padStart(2);
+        const drawn = (team.draws || team.drawn || '0').toString().padStart(2);
+        const lost = (team.losses || team.lost || '0').toString().padStart(2);
+        const goalsFor = (team.scoresFor || team.goalsFor || '0').toString().padStart(2);
+        const goalsAgainst = (team.scoresAgainst || team.goalsAgainst || '0').toString().padStart(2);
+        const goalDifference = (team.goalDiff || team.goalDifference || '0').toString().padStart(3);
+        const points = (team.pts || team.points || '0').toString().padStart(3);
 
-      tableResponse += `${position} | ${name} | ${played} | ${won} | ${drawn} | ${lost} | ${goalsFor} | ${goalsAgainst} | ${goalDifference} | ${points}\n`;
-    });
-    
-    logger.debug(`Sending table response for ${selectedLeagueName}`);
-    await message.reply(tableResponse);
-  } else {
-    logger.warn(`Invalid league selection: ${selection}`);
-    await message.reply("Pilihan tidak valid. Silakan pilih nomor liga yang tersedia.");
+        tableResponse += `${position} | ${name} | ${played} | ${won} | ${drawn} | ${lost} | ${goalsFor} | ${goalsAgainst} | ${goalDifference} | ${points}\n`;
+      });
+      
+      logger.debug(`Sending table response for ${selectedLeagueName}`);
+      await message.reply(tableResponse);
+    } else {
+      logger.warn(`Invalid league selection: ${selection}`);
+      await message.reply("Pilihan tidak valid. Silakan pilih nomor liga yang tersedia.");
+    }
+  } catch (error) {
+    logger.error('Error in handleLeagueSelection:', error);
+    await message.reply('Terjadi kesalahan saat memproses pilihan liga. Silakan coba lagi nanti.');
   }
 }
