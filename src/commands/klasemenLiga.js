@@ -15,12 +15,12 @@ const LEAGUE_MAPPING = {
   "Europa League": { id: 73, ccode: "INT" }
 };
 
-// Simpan state untuk mengetahui grup mana yang sedang menunggu input klasemen
 const pendingKlasemenResponses = new Map();
 
 async function fetchLeagueTable(leagueId) {
   try {
     const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
+    logger.debug(`API Response for league ${leagueId}:`, JSON.stringify(response.data, null, 2));
     return response.data.table;
   } catch (error) {
     logger.error(`Error fetching league table for league ID ${leagueId}:`, error);
@@ -46,7 +46,6 @@ export async function klasemenLiga(message, args) {
       
       await message.reply(response);
       
-      // Set state bahwa grup ini sedang menunggu respon klasemen
       pendingKlasemenResponses.set(groupId, true);
     } else {
       await handleLeagueSelection(message, args[0]);
@@ -77,6 +76,8 @@ async function handleLeagueSelection(message, selection) {
     const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
     const leagueData = await fetchLeagueTable(selectedLeague.id);
     
+    logger.debug(`League data for ${selectedLeagueName}:`, JSON.stringify(leagueData, null, 2));
+
     if (!Array.isArray(leagueData) || leagueData.length === 0) {
       await message.reply("Maaf, data klasemen tidak tersedia untuk liga ini saat ini.");
       return;
@@ -84,6 +85,8 @@ async function handleLeagueSelection(message, selection) {
 
     const leagueTable = leagueData[0].data;
     
+    logger.debug(`League table for ${selectedLeagueName}:`, JSON.stringify(leagueTable, null, 2));
+
     if (!Array.isArray(leagueTable)) {
       await message.reply("Maaf, format data klasemen tidak sesuai. Silakan coba lagi nanti.");
       return;
