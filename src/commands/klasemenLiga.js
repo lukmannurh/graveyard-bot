@@ -37,7 +37,7 @@ async function fetchLeagueTable(leagueId) {
 }
 
 function formatTeamName(name, maxLength = 20) {
-  if (!name) return ''.padEnd(maxLength);
+  if (!name) return 'Unknown'.padEnd(maxLength);
   if (name.length <= maxLength) return name.padEnd(maxLength);
   return name.substring(0, maxLength - 3) + '...';
 }
@@ -45,21 +45,23 @@ function formatTeamName(name, maxLength = 20) {
 function findTableData(data) {
   logger.debug('Received data structure:', JSON.stringify(data, null, 2));
   
-  if (data.leagues && data.leagues[0] && data.leagues[0].table) {
+  if (data.leagues && data.leagues[0] && data.leagues[0].table && Array.isArray(data.leagues[0].table)) {
     return data.leagues[0].table;
   } else if (data.table && Array.isArray(data.table)) {
     return data.table;
-  } else if (data.table && data.table.all) {
+  } else if (data.table && data.table.all && Array.isArray(data.table.all)) {
     return data.table.all;
-  } else if (data.table && data.table.tables && data.table.tables[0]) {
+  } else if (data.table && data.table.tables && Array.isArray(data.table.tables[0])) {
     return data.table.tables[0];
-  } else if (data.details && data.details.table && data.details.table.all) {
+  } else if (data.details && data.details.table && Array.isArray(data.details.table)) {
+    return data.details.table;
+  } else if (data.details && data.details.table && data.details.table.all && Array.isArray(data.details.table.all)) {
     return data.details.table.all;
   }
   
-  // Jika tidak ada yang cocok, coba cari array pertama yang mungkin berisi data tim
+  // Jika tidak ada yang cocok, cari array pertama yang mungkin berisi data tim
   for (let key in data) {
-    if (Array.isArray(data[key]) && data[key].length > 0 && data[key][0].teamId) {
+    if (Array.isArray(data[key]) && data[key].length > 0 && (data[key][0].teamId || data[key][0].name || data[key][0].teamName)) {
       return data[key];
     }
   }
@@ -122,8 +124,8 @@ async function handleLeagueSelection(message, selection) {
       const leagueTable = findTableData(leagueData);
       logger.debug('Found league table:', JSON.stringify(leagueTable, null, 2));
       
-      if (!leagueTable || !Array.isArray(leagueTable)) {
-        logger.warn(`No table data found for ${selectedLeagueName}`);
+      if (!leagueTable || !Array.isArray(leagueTable) || leagueTable.length === 0) {
+        logger.warn(`No valid table data found for ${selectedLeagueName}`);
         await message.reply("Maaf, data klasemen tidak tersedia untuk liga ini saat ini.");
         return;
       }
@@ -134,7 +136,7 @@ async function handleLeagueSelection(message, selection) {
       
       leagueTable.forEach(team => {
         const position = (team.idx || team.position || team.rank || '').toString().padStart(3);
-        const name = formatTeamName(team.name);
+        const name = formatTeamName(team.name || team.teamName || 'Unknown');
         const played = (team.played || team.matchesPlayed || '0').toString().padStart(2);
         const won = (team.wins || team.won || '0').toString().padStart(2);
         const drawn = (team.draws || team.drawn || '0').toString().padStart(2);
