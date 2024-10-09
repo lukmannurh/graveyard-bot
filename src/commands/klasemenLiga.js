@@ -33,8 +33,8 @@ function formatTeamName(name, maxLength = 14) {
 }
 
 function findLatestSeason(data) {
-  if (data && data.table && Array.isArray(data.table)) {
-    return data.table[0]; // Assuming the first table is the most recent
+  if (data && data.table && data.table.all) {
+    return data.table.all;
   }
   return null;
 }
@@ -87,18 +87,15 @@ async function handleLeagueSelection(message, selection) {
       const leagueData = await fetchLeagueTable(selectedLeague.id);
       logger.info('League data received');
       
-      const latestSeason = findLatestSeason(leagueData);
+      const leagueTable = findLatestSeason(leagueData);
       
-      if (!latestSeason || !Array.isArray(latestSeason.data)) {
+      if (!leagueTable || !Array.isArray(leagueTable)) {
         logger.error('No valid league table data found');
         await message.reply("Maaf, data klasemen terbaru tidak tersedia untuk liga ini saat ini.");
         return;
       }
 
-      const leagueTable = latestSeason.data;
-      const seasonName = latestSeason.leagueName || 'Musim Terkini';
-      
-      let tableResponse = `Klasemen ${selectedLeagueName} (${seasonName}):\n\n`;
+      let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
       tableResponse += "Pos Tim            M  M  S  K  GD  Pts\n";
       tableResponse += "---------------------------------------\n";
       
@@ -109,7 +106,7 @@ async function handleLeagueSelection(message, selection) {
         tableResponse += `${team.wins.toString().padStart(2)} `;
         tableResponse += `${team.draws.toString().padStart(2)} `;
         tableResponse += `${team.losses.toString().padStart(2)} `;
-        tableResponse += `${team.gd.toString().padStart(3)} `;
+        tableResponse += `${team.goalConDiff.toString().padStart(3)} `;
         tableResponse += `${team.pts.toString().padStart(3)}\n`;
       });
       
