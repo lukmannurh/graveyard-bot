@@ -36,6 +36,7 @@ function findLeagueTable(data) {
   if (data && data.table && data.table.all) {
     return data.table.all;
   }
+  logger.error('League table structure not found:', JSON.stringify(data, null, 2));
   return null;
 }
 
@@ -86,6 +87,7 @@ async function handleLeagueSelection(message, selection) {
     try {
       const leagueData = await fetchLeagueTable(selectedLeague.id);
       logger.info('League data received');
+      logger.debug('League data structure:', JSON.stringify(leagueData, null, 2));
       
       const leagueTable = findLeagueTable(leagueData);
       
