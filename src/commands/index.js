@@ -50,7 +50,7 @@ export {
 
 export const GENERAL_COMMANDS = [
   'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 'tt',
-  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's', 'animek', 'ytdl', 'ytmp4', 'ytmp3', 'spotify', 'fbdl', 'igdl','klasemenliga'
+  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's', 'animek', 'ytdl', 'ytmp4', 'ytmp3', 'spotify', 'fbdl', 'igdl', 'klasemenliga'
 ];
 
 export const OWNER_COMMANDS = ['authorize'];
