@@ -47,7 +47,7 @@ function findLatestSeason(data) {
   return null;
 }
 
-export async function klasemenLiga(message, args) {
+async function klasemenLiga(message, args) {
   const groupId = message.from;
 
   try {
@@ -70,7 +70,7 @@ export async function klasemenLiga(message, args) {
   }
 }
 
-export async function handleKlasemenResponse(message) {
+async function handleKlasemenResponse(message) {
   const groupId = message.from;
   
   if (pendingKlasemenResponses.get(groupId)) {
