@@ -1,47 +1,28 @@
 import axios from 'axios';
-import * as cheerio from 'cheerio';
 import logger from '../utils/logger.js';
 
-const FOTMOB_URL = 'https://www.fotmob.com';
+const FOTMOB_API_URL = 'https://www.fotmob.com/api/leagues';
 
 const LEAGUE_MAPPING = {
-  "Premier League": "/leagues/47/overview/premier-league",
-  "LaLiga": "/leagues/87/overview/laliga",
-  "Serie A": "/leagues/55/overview/serie-a",
-  "Bundesliga": "/leagues/54/overview/bundesliga",
-  "Ligue 1": "/leagues/53/overview/ligue-1",
-  "Champions League": "/leagues/42/overview/champions-league",
-  "Europa League": "/leagues/73/overview/europa-league",
-  "BRI Liga 1": "/leagues/403/overview/bri-liga-1"
+  "Premier League": { id: 47, ccode: "GB1" },
+  "LaLiga": { id: 87, ccode: "ES1" },
+  "Serie A": { id: 55, ccode: "IT1" },
+  "Bundesliga": { id: 54, ccode: "L1" },
+  "Ligue 1": { id: 53, ccode: "FR1" },
+  "Champions League": { id: 42, ccode: "CL" },
+  "Europa League": { id: 73, ccode: "EL" },
+  "BRI Liga 1": { id: 403, ccode: "ID1" }
 };
 
 const pendingKlasemenResponses = new Map();
 
-async function scrapeLeagueTable(leagueUrl) {
+async function fetchLeagueTable(leagueId) {
   try {
-    logger.info(`Scraping data from ${FOTMOB_URL}${leagueUrl}`);
-    const response = await axios.get(`${FOTMOB_URL}${leagueUrl}`);
-    const $ = cheerio.load(response.data);
-    
-    const table = [];
-    $('table.Table__table tbody tr').each((index, element) => {
-      const $tds = $(element).find('td');
-      table.push({
-        position: $($tds[0]).text().trim(),
-        name: $($tds[1]).text().trim(),
-        played: $($tds[2]).text().trim(),
-        won: $($tds[3]).text().trim(),
-        drawn: $($tds[4]).text().trim(),
-        lost: $($tds[5]).text().trim(),
-        goalDifference: $($tds[6]).text().trim(),
-        points: $($tds[7]).text().trim()
-      });
-    });
-
-    logger.info(`Scraped ${table.length} teams from the league table`);
-    return table;
+    logger.info(`Fetching data for league ID ${leagueId}`);
+    const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
+    return response.data;
   } catch (error) {
-    logger.error(`Error scraping league table: ${error.message}`);
+    logger.error(`Error fetching league table for league ID ${leagueId}:`, error.message);
     throw new Error('Gagal mengambil data klasemen liga.');
   }
 }
@@ -49,6 +30,13 @@ async function scrapeLeagueTable(leagueUrl) {
 function formatTeamName(name, maxLength = 14) {
   if (name.length <= maxLength) return name.padEnd(maxLength);
   return name.substring(0, maxLength - 3) + '...';
+}
+
+function findLatestSeason(data) {
+  if (data && data.table && Array.isArray(data.table)) {
+    return data.table[0]; // Assuming the first table is the most recent
+  }
+  return null;
 }
 
 async function klasemenLiga(message, args) {
@@ -93,30 +81,36 @@ async function handleLeagueSelection(message, selection) {
   
   if (selectedIndex >= 0 && selectedIndex < leagueNames.length) {
     const selectedLeagueName = leagueNames[selectedIndex];
-    const selectedLeagueUrl = LEAGUE_MAPPING[selectedLeagueName];
+    const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
     
     try {
-      const leagueTable = await scrapeLeagueTable(selectedLeagueUrl);
+      const leagueData = await fetchLeagueTable(selectedLeague.id);
+      logger.info('League data received');
       
-      if (!leagueTable || leagueTable.length === 0) {
+      const latestSeason = findLatestSeason(leagueData);
+      
+      if (!latestSeason || !Array.isArray(latestSeason.data)) {
         logger.error('No valid league table data found');
         await message.reply("Maaf, data klasemen terbaru tidak tersedia untuk liga ini saat ini.");
         return;
       }
 
-      let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
+      const leagueTable = latestSeason.data;
+      const seasonName = latestSeason.leagueName || 'Musim Terkini';
+      
+      let tableResponse = `Klasemen ${selectedLeagueName} (${seasonName}):\n\n`;
       tableResponse += "Pos Tim            M  M  S  K  GD  Pts\n";
       tableResponse += "---------------------------------------\n";
       
       leagueTable.forEach(team => {
-        tableResponse += `${team.position.padStart(2)} `;
+        tableResponse += `${team.idx.toString().padStart(2)} `;
         tableResponse += `${formatTeamName(team.name)} `;
-        tableResponse += `${team.played.padStart(2)} `;
-        tableResponse += `${team.won.padStart(2)} `;
-        tableResponse += `${team.drawn.padStart(2)} `;
-        tableResponse += `${team.lost.padStart(2)} `;
-        tableResponse += `${team.goalDifference.padStart(3)} `;
-        tableResponse += `${team.points.padStart(3)}\n`;
+        tableResponse += `${team.played.toString().padStart(2)} `;
+        tableResponse += `${team.wins.toString().padStart(2)} `;
+        tableResponse += `${team.draws.toString().padStart(2)} `;
+        tableResponse += `${team.losses.toString().padStart(2)} `;
+        tableResponse += `${team.gd.toString().padStart(3)} `;
+        tableResponse += `${team.pts.toString().padStart(3)}\n`;
       });
       
       logger.info('Sending league table response');
