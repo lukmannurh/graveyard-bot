@@ -1,7 +1,7 @@
 import axios from 'axios';
 import logger from '../utils/logger.js';
 
-const FOTMOB_API_URL = 'https://www.fotmob.com/api/allLeagues';
+const FOTMOB_API_URL = 'https://www.fotmob.com/api/leagues';
 
 const LEAGUE_MAPPING = {
   "Premier League": { id: 47, ccode: "ENG" },
@@ -20,8 +20,8 @@ const pendingKlasemenResponses = new Map();
 
 async function fetchLeagueTable(leagueId) {
   try {
-    const response = await axios.get(`https://www.fotmob.com/api/leagues?id=${leagueId}`);
-    return response.data.table[0].data;
+    const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
+    return response.data.table;
   } catch (error) {
     logger.error(`Error fetching league table for league ID ${leagueId}:`, error);
     throw new Error('Gagal mengambil data klasemen liga.');
@@ -75,7 +75,19 @@ async function handleLeagueSelection(message, selection) {
   if (selectedIndex >= 0 && selectedIndex < leagueNames.length) {
     const selectedLeagueName = leagueNames[selectedIndex];
     const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
-    const leagueTable = await fetchLeagueTable(selectedLeague.id);
+    const leagueData = await fetchLeagueTable(selectedLeague.id);
+    
+    if (!Array.isArray(leagueData) || leagueData.length === 0) {
+      await message.reply("Maaf, data klasemen tidak tersedia untuk liga ini saat ini.");
+      return;
+    }
+
+    const leagueTable = leagueData[0].data;
+    
+    if (!Array.isArray(leagueTable)) {
+      await message.reply("Maaf, format data klasemen tidak sesuai. Silakan coba lagi nanti.");
+      return;
+    }
     
     let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
     tableResponse += "Pos Tim            M  M  S  K  Pts\n";
