@@ -20,6 +20,7 @@ import stickerCommand from './stickerCommand.js';
 import downloadTikTokVideo from './tiktokDownloader.js';
 import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from './downloader.js';
 import animeRecommendation from './animeRecommendation.js';
+import { klasemenLiga } from './klasemenLiga.js';
 
 export {
   menu,
@@ -43,12 +44,13 @@ export {
   stats,
   jadwalsholat,
   stickerCommand as s,
-  animeRecommendation as animek
+  animeRecommendation as animek,
+  klasemenLiga
 };
 
 export const GENERAL_COMMANDS = [
   'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 'tt',
-  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's', 'animek', 'ytdl', 'ytmp4', 'ytmp3', 'spotify', 'fbdl', 'igdl'
+  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's', 'animek', 'ytdl', 'ytmp4', 'ytmp3', 'spotify', 'fbdl', 'igdl','klasemenliga'
 ];
 
 export const OWNER_COMMANDS = ['authorize'];
@@ -83,7 +85,8 @@ const exportedCommands = {
   spotify,
   fbdl,
   igdl,
-  animek: animeRecommendation
+  animek: animeRecommendation,
+  klasemenliga: klasemenLiga
 };
 
 export default exportedCommands;
