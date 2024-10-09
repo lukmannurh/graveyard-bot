@@ -21,6 +21,7 @@ async function fetchLeagueTable(leagueId) {
     logger.debug(`Fetching league table for ID: ${leagueId}`);
     const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
     logger.debug(`Received response for league ID ${leagueId}`);
+    logger.debug('Response data:', JSON.stringify(response.data, null, 2));
     return response.data;
   } catch (error) {
     logger.error(`Error fetching league table for league ID ${leagueId}:`, error);
@@ -35,13 +36,17 @@ function formatTeamName(name, maxLength = 20) {
 }
 
 function findTableData(data) {
-  if (data.table && Array.isArray(data.table.all)) {
-    return data.table.all;
+  logger.debug('Received data structure:', JSON.stringify(data, null, 2));
+  
+  if (data.leagues && data.leagues[0] && data.leagues[0].table) {
+    return data.leagues[0].table;
   } else if (data.table && Array.isArray(data.table)) {
-    return data.table[0].data;
-  } else if (Array.isArray(data.table)) {
     return data.table;
+  } else if (data.table && data.table.all) {
+    return data.table.all;
   }
+  
+  logger.warn('Unable to find table data in the response');
   return null;
 }
 
@@ -93,6 +98,7 @@ async function handleLeagueSelection(message, selection) {
     logger.debug(`Selected league: ${selectedLeagueName}, ID: ${selectedLeague.id}`);
     
     const leagueData = await fetchLeagueTable(selectedLeague.id);
+    logger.debug('Fetched league data:', JSON.stringify(leagueData, null, 2));
     
     const leagueTable = findTableData(leagueData);
     
@@ -103,19 +109,19 @@ async function handleLeagueSelection(message, selection) {
     }
     
     let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
-    tableResponse += "Pos | Tim                 | M  | M | S | K | GM | GK | SG  | Pts\n";
+    tableResponse += "Pos | Tim                 | P | M | S | K | GM | GK | SB | Pts\n";
     tableResponse += "-".repeat(70) + "\n";
     
     leagueTable.forEach(team => {
       const position = (team.idx || team.position || team.rank || '').toString().padStart(3);
       const name = formatTeamName(team.name);
-      const played = (team.played || '0').toString().padStart(2);
+      const played = (team.played || team.matchesPlayed || '0').toString().padStart(2);
       const won = (team.wins || team.won || '0').toString().padStart(2);
       const drawn = (team.draws || team.drawn || '0').toString().padStart(2);
       const lost = (team.losses || team.lost || '0').toString().padStart(2);
-      const goalsFor = (team.goalsFor || (team.scoresStr ? team.scoresStr.split('-')[0] : '0') || '0').toString().padStart(2);
-      const goalsAgainst = (team.goalsAgainst || (team.scoresStr ? team.scoresStr.split('-')[1] : '0') || '0').toString().padStart(2);
-      const goalDifference = (team.goalConDiff || team.goalDifference || '0').toString().padStart(3);
+      const goalsFor = (team.scoresFor || team.goalsDiff || '0').toString().padStart(2);
+      const goalsAgainst = (team.scoresAgainst || team.goalsAgainst || '0').toString().padStart(2);
+      const goalDifference = (team.goalDiff || team.goalDifference || '0').toString().padStart(3);
       const points = (team.pts || team.points || '0').toString().padStart(3);
 
       tableResponse += `${position} | ${name} | ${played} | ${won} | ${drawn} | ${lost} | ${goalsFor} | ${goalsAgainst} | ${goalDifference} | ${points}\n`;
