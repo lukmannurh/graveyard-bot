@@ -20,7 +20,7 @@ async function fetchLeagueTable(leagueId) {
   try {
     logger.info(`Fetching data for league ID ${leagueId}`);
     const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}&ccode3=IDN`);
-    logger.debug('API Response:', JSON.stringify(response.data, null, 2));
+    logger.debug('API Response received');
     return response.data;
   } catch (error) {
     logger.error(`Error fetching league table for league ID ${leagueId}:`, error.message);
@@ -36,14 +36,10 @@ function formatTeamName(name, maxLength = 14) {
 function findLeagueTable(data) {
   logger.debug('Searching for league table in data structure');
   if (data && data.table && data.table.all) {
-    logger.debug('League table found');
+    logger.debug('League table found in data.table.all');
     return data.table.all;
   }
-  if (data && data.table && data.table.tables && data.table.tables[0]) {
-    logger.debug('League table found in alternative structure');
-    return data.table.tables[0];
-  }
-  logger.error('League table structure not found:', JSON.stringify(data, null, 2));
+  logger.error('League table structure not found');
   return null;
 }
 
