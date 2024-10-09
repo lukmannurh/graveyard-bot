@@ -91,6 +91,7 @@ async function handleLeagueSelection(message, selection) {
     try {
       const leagueData = await fetchLeagueTable(selectedLeague.id);
       logger.info('League data received');
+      logger.debug('League data structure:', JSON.stringify(leagueData, null, 2));
       
       const leagueTable = findLeagueTable(leagueData);
       
