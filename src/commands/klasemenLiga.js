@@ -19,11 +19,12 @@ const pendingKlasemenResponses = new Map();
 
 async function fetchLeagueTable(leagueId) {
   try {
+    logger.info(`Fetching data for league ID ${leagueId}`);
     const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
-    logger.debug(`API Response for league ${leagueId}:`, JSON.stringify(response.data, null, 2));
+    logger.info(`Data received for league ID ${leagueId}`);
     return response.data;
   } catch (error) {
-    logger.error(`Error fetching league table for league ID ${leagueId}:`, error);
+    logger.error(`Error fetching league table for league ID ${leagueId}:`, error.message);
     throw new Error('Gagal mengambil data klasemen liga.');
   }
 }
@@ -34,7 +35,7 @@ function formatTeamName(name, maxLength = 14) {
 }
 
 function findLatestSeason(data) {
-  logger.debug('Finding latest season from data:', JSON.stringify(data, null, 2));
+  logger.info('Finding latest season from data');
   
   if (!data || !data.table || !Array.isArray(data.table)) {
     logger.error('Invalid data structure received from API');
@@ -45,10 +46,8 @@ function findLatestSeason(data) {
   let latestYear = 0;
 
   for (const season of data.table) {
-    logger.debug('Checking season:', JSON.stringify(season, null, 2));
     if (season && season.table && season.table.leagueSeason) {
       const currentYear = parseInt(season.table.leagueSeason.slice(0, 4));
-      logger.debug(`Current year: ${currentYear}, Latest year: ${latestYear}`);
       if (currentYear > latestYear) {
         latestYear = currentYear;
         latestSeason = season;
@@ -56,7 +55,7 @@ function findLatestSeason(data) {
     }
   }
 
-  logger.debug('Latest season found:', JSON.stringify(latestSeason, null, 2));
+  logger.info(`Latest season found: ${latestYear}`);
 
   if (latestSeason && latestSeason.table && Array.isArray(latestSeason.table.tables)) {
     return latestSeason.table.tables[0];
@@ -69,6 +68,7 @@ async function klasemenLiga(message, args) {
   const groupId = message.from;
 
   try {
+    logger.info('klasemenLiga command called');
     if (args.length === 0) {
       let response = "Pilih liga yang ingin dilihat klasemennya:\n\n";
       Object.keys(LEAGUE_MAPPING).forEach((leagueName, index) => {
@@ -83,7 +83,7 @@ async function klasemenLiga(message, args) {
       await handleLeagueSelection(message, args[0]);
     }
   } catch (error) {
-    logger.error('Error in klasemenLiga command:', error);
+    logger.error('Error in klasemenLiga command:', error.message);
     await message.reply('Terjadi kesalahan saat mengambil data klasemen. Silakan coba lagi nanti.');
   }
 }
@@ -100,6 +100,7 @@ async function handleKlasemenResponse(message) {
 }
 
 async function handleLeagueSelection(message, selection) {
+  logger.info(`Handling league selection: ${selection}`);
   const selectedIndex = parseInt(selection) - 1;
   const leagueNames = Object.keys(LEAGUE_MAPPING);
   
@@ -109,12 +110,12 @@ async function handleLeagueSelection(message, selection) {
     
     try {
       const leagueData = await fetchLeagueTable(selectedLeague.id);
-      logger.debug('League data received:', JSON.stringify(leagueData, null, 2));
+      logger.info('League data received');
       
       const latestSeason = findLatestSeason(leagueData);
-      logger.debug('Latest season data:', JSON.stringify(latestSeason, null, 2));
       
       if (!latestSeason || !Array.isArray(latestSeason.rows)) {
+        logger.error('No valid league table data found');
         await message.reply("Maaf, data klasemen terbaru tidak tersedia untuk liga ini saat ini.");
         return;
       }
@@ -129,16 +130,17 @@ async function handleLeagueSelection(message, selection) {
       leagueTable.forEach(team => {
         tableResponse += `${team.position.toString().padStart(2)} `;
         tableResponse += `${formatTeamName(team.name)} `;
-        tableResponse += `${team.matchesTotal.toString().padStart(2)} `;
+        tableResponse += `${(team.matchesTotal || team.matches).toString().padStart(2)} `;
         tableResponse += `${team.wins.toString().padStart(2)} `;
         tableResponse += `${team.draws.toString().padStart(2)} `;
         tableResponse += `${team.losses.toString().padStart(2)} `;
         tableResponse += `${team.points.toString().padStart(3)}\n`;
       });
       
+      logger.info('Sending league table response');
       await message.reply(tableResponse);
     } catch (error) {
-      logger.error('Error fetching league data:', error);
+      logger.error('Error fetching league data:', error.message);
       await message.reply('Terjadi kesalahan saat mengambil data klasemen. Silakan coba lagi nanti.');
     }
   } else {
