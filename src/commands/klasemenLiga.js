@@ -1,5 +1,3 @@
-// Dalam file src/commands/klasemenLiga.js
-
 import axios from 'axios';
 import logger from '../utils/logger.js';
 
@@ -36,7 +34,6 @@ function formatTeamName(name, maxLength = 14) {
 
 function findLatestSeason(data) {
   if (data && data.table && Array.isArray(data.table)) {
-    // Cari musim dengan tahun terbaru
     const latestSeason = data.table.reduce((latest, current) => {
       const currentYear = parseInt(current.table.leagueSeason.slice(0, 4));
       const latestYear = latest ? parseInt(latest.table.leagueSeason.slice(0, 4)) : 0;
@@ -44,7 +41,7 @@ function findLatestSeason(data) {
     }, null);
 
     if (latestSeason && latestSeason.table && Array.isArray(latestSeason.table.tables)) {
-      return latestSeason.table.tables[0]; // Ambil tabel pertama dari musim terbaru
+      return latestSeason.table.tables[0];
     }
   }
   return null;
@@ -123,5 +120,5 @@ async function handleLeagueSelection(message, selection) {
   }
 }
 
-// Pastikan untuk mengekspor fungsi-fungsi yang diperlukan
+// Hanya ekspor fungsi yang diperlukan
 export { klasemenLiga, handleKlasemenResponse };
