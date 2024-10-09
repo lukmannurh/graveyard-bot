@@ -1,30 +1,47 @@
 import axios from 'axios';
+import cheerio from 'cheerio';
 import logger from '../utils/logger.js';
 
-const FOTMOB_API_URL = 'https://www.fotmob.com/api/leagues';
+const FOTMOB_URL = 'https://www.fotmob.com';
 
 const LEAGUE_MAPPING = {
-  "Premier League": { id: 47, ccode: "ENG" },
-  "Champions League": { id: 42, ccode: "INT" },
-  "LaLiga": { id: 87, ccode: "ESP" },
-  "Serie A": { id: 55, ccode: "ITA" },
-  "Bundesliga": { id: 54, ccode: "GER" },
-  "Ligue 1": { id: 53, ccode: "FRA" },
-  "BRI Liga 1": { id: 403, ccode: "IDN" },
-  "Europa Conference League": { id: 73, ccode: "INT" },
-  "Europa League": { id: 73, ccode: "INT" }
+  "Premier League": "/leagues/47/overview/premier-league",
+  "LaLiga": "/leagues/87/overview/laliga",
+  "Serie A": "/leagues/55/overview/serie-a",
+  "Bundesliga": "/leagues/54/overview/bundesliga",
+  "Ligue 1": "/leagues/53/overview/ligue-1",
+  "Champions League": "/leagues/42/overview/champions-league",
+  "Europa League": "/leagues/73/overview/europa-league",
+  "BRI Liga 1": "/leagues/403/overview/bri-liga-1"
 };
 
 const pendingKlasemenResponses = new Map();
 
-async function fetchLeagueTable(leagueId) {
+async function scrapeLeagueTable(leagueUrl) {
   try {
-    logger.info(`Fetching data for league ID ${leagueId}`);
-    const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
-    logger.info(`Data received for league ID ${leagueId}`);
-    return response.data;
+    logger.info(`Scraping data from ${FOTMOB_URL}${leagueUrl}`);
+    const response = await axios.get(`${FOTMOB_URL}${leagueUrl}`);
+    const $ = cheerio.load(response.data);
+    
+    const table = [];
+    $('table.Table__table tbody tr').each((index, element) => {
+      const $tds = $(element).find('td');
+      table.push({
+        position: $($tds[0]).text().trim(),
+        name: $($tds[1]).text().trim(),
+        played: $($tds[2]).text().trim(),
+        won: $($tds[3]).text().trim(),
+        drawn: $($tds[4]).text().trim(),
+        lost: $($tds[5]).text().trim(),
+        goalDifference: $($tds[6]).text().trim(),
+        points: $($tds[7]).text().trim()
+      });
+    });
+
+    logger.info(`Scraped ${table.length} teams from the league table`);
+    return table;
   } catch (error) {
-    logger.error(`Error fetching league table for league ID ${leagueId}:`, error.message);
+    logger.error(`Error scraping league table: ${error.message}`);
     throw new Error('Gagal mengambil data klasemen liga.');
   }
 }
@@ -32,36 +49,6 @@ async function fetchLeagueTable(leagueId) {
 function formatTeamName(name, maxLength = 14) {
   if (name.length <= maxLength) return name.padEnd(maxLength);
   return name.substring(0, maxLength - 3) + '...';
-}
-
-function findLatestSeason(data) {
-  logger.info('Finding latest season from data');
-  
-  if (!data || !data.table || !Array.isArray(data.table)) {
-    logger.error('Invalid data structure received from API');
-    return null;
-  }
-
-  let latestSeason = null;
-  let latestYear = 0;
-
-  for (const season of data.table) {
-    if (season && season.table && season.table.leagueSeason) {
-      const currentYear = parseInt(season.table.leagueSeason.slice(0, 4));
-      if (currentYear > latestYear) {
-        latestYear = currentYear;
-        latestSeason = season;
-      }
-    }
-  }
-
-  logger.info(`Latest season found: ${latestYear}`);
-
-  if (latestSeason && latestSeason.table && Array.isArray(latestSeason.table.tables)) {
-    return latestSeason.table.tables[0];
-  }
-
-  return null;
 }
 
 async function klasemenLiga(message, args) {
@@ -106,35 +93,30 @@ async function handleLeagueSelection(message, selection) {
   
   if (selectedIndex >= 0 && selectedIndex < leagueNames.length) {
     const selectedLeagueName = leagueNames[selectedIndex];
-    const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
+    const selectedLeagueUrl = LEAGUE_MAPPING[selectedLeagueName];
     
     try {
-      const leagueData = await fetchLeagueTable(selectedLeague.id);
-      logger.info('League data received');
+      const leagueTable = await scrapeLeagueTable(selectedLeagueUrl);
       
-      const latestSeason = findLatestSeason(leagueData);
-      
-      if (!latestSeason || !Array.isArray(latestSeason.rows)) {
+      if (!leagueTable || leagueTable.length === 0) {
         logger.error('No valid league table data found');
         await message.reply("Maaf, data klasemen terbaru tidak tersedia untuk liga ini saat ini.");
         return;
       }
 
-      const leagueTable = latestSeason.rows;
-      const seasonName = latestSeason.leagueName || 'Musim Terkini';
-      
-      let tableResponse = `Klasemen ${selectedLeagueName} (${seasonName}):\n\n`;
-      tableResponse += "Pos Tim            M  M  S  K  Pts\n";
-      tableResponse += "--------------------------------\n";
+      let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
+      tableResponse += "Pos Tim            M  M  S  K  GD  Pts\n";
+      tableResponse += "---------------------------------------\n";
       
       leagueTable.forEach(team => {
-        tableResponse += `${team.position.toString().padStart(2)} `;
+        tableResponse += `${team.position.padStart(2)} `;
         tableResponse += `${formatTeamName(team.name)} `;
-        tableResponse += `${(team.matchesTotal || team.matches).toString().padStart(2)} `;
-        tableResponse += `${team.wins.toString().padStart(2)} `;
-        tableResponse += `${team.draws.toString().padStart(2)} `;
-        tableResponse += `${team.losses.toString().padStart(2)} `;
-        tableResponse += `${team.points.toString().padStart(3)}\n`;
+        tableResponse += `${team.played.padStart(2)} `;
+        tableResponse += `${team.won.padStart(2)} `;
+        tableResponse += `${team.drawn.padStart(2)} `;
+        tableResponse += `${team.lost.padStart(2)} `;
+        tableResponse += `${team.goalDifference.padStart(3)} `;
+        tableResponse += `${team.points.padStart(3)}\n`;
       });
       
       logger.info('Sending league table response');
