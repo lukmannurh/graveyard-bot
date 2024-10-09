@@ -33,17 +33,28 @@ function formatTeamName(name, maxLength = 14) {
 }
 
 function findLatestSeason(data) {
-  if (data && data.table && Array.isArray(data.table)) {
-    const latestSeason = data.table.reduce((latest, current) => {
-      const currentYear = parseInt(current.table.leagueSeason.slice(0, 4));
-      const latestYear = latest ? parseInt(latest.table.leagueSeason.slice(0, 4)) : 0;
-      return currentYear > latestYear ? current : latest;
-    }, null);
+  if (!data || !data.table || !Array.isArray(data.table)) {
+    logger.error('Invalid data structure received from API');
+    return null;
+  }
 
-    if (latestSeason && latestSeason.table && Array.isArray(latestSeason.table.tables)) {
-      return latestSeason.table.tables[0];
+  let latestSeason = null;
+  let latestYear = 0;
+
+  for (const season of data.table) {
+    if (season && season.table && season.table.leagueSeason) {
+      const currentYear = parseInt(season.table.leagueSeason.slice(0, 4));
+      if (currentYear > latestYear) {
+        latestYear = currentYear;
+        latestSeason = season;
+      }
     }
   }
+
+  if (latestSeason && latestSeason.table && Array.isArray(latestSeason.table.tables)) {
+    return latestSeason.table.tables[0];
+  }
+
   return null;
 }
 
@@ -88,37 +99,41 @@ async function handleLeagueSelection(message, selection) {
   if (selectedIndex >= 0 && selectedIndex < leagueNames.length) {
     const selectedLeagueName = leagueNames[selectedIndex];
     const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
-    const leagueData = await fetchLeagueTable(selectedLeague.id);
     
-    const latestSeason = findLatestSeason(leagueData);
-    
-    if (!latestSeason || !Array.isArray(latestSeason.rows)) {
-      await message.reply("Maaf, data klasemen terbaru tidak tersedia untuk liga ini saat ini.");
-      return;
-    }
+    try {
+      const leagueData = await fetchLeagueTable(selectedLeague.id);
+      const latestSeason = findLatestSeason(leagueData);
+      
+      if (!latestSeason || !Array.isArray(latestSeason.rows)) {
+        await message.reply("Maaf, data klasemen terbaru tidak tersedia untuk liga ini saat ini.");
+        return;
+      }
 
-    const leagueTable = latestSeason.rows;
-    const seasonName = leagueData.table[0].table.leagueSeason;
-    
-    let tableResponse = `Klasemen ${selectedLeagueName} (${seasonName}):\n\n`;
-    tableResponse += "Pos Tim            M  M  S  K  Pts\n";
-    tableResponse += "--------------------------------\n";
-    
-    leagueTable.forEach(team => {
-      tableResponse += `${team.position.toString().padStart(2)} `;
-      tableResponse += `${formatTeamName(team.name)} `;
-      tableResponse += `${team.matches.toString().padStart(2)} `;
-      tableResponse += `${team.wins.toString().padStart(2)} `;
-      tableResponse += `${team.draws.toString().padStart(2)} `;
-      tableResponse += `${team.losses.toString().padStart(2)} `;
-      tableResponse += `${team.points.toString().padStart(3)}\n`;
-    });
-    
-    await message.reply(tableResponse);
+      const leagueTable = latestSeason.rows;
+      const seasonName = latestSeason.leagueName || 'Musim Terkini';
+      
+      let tableResponse = `Klasemen ${selectedLeagueName} (${seasonName}):\n\n`;
+      tableResponse += "Pos Tim            M  M  S  K  Pts\n";
+      tableResponse += "--------------------------------\n";
+      
+      leagueTable.forEach(team => {
+        tableResponse += `${team.position.toString().padStart(2)} `;
+        tableResponse += `${formatTeamName(team.name)} `;
+        tableResponse += `${team.matchesTotal.toString().padStart(2)} `;
+        tableResponse += `${team.wins.toString().padStart(2)} `;
+        tableResponse += `${team.draws.toString().padStart(2)} `;
+        tableResponse += `${team.losses.toString().padStart(2)} `;
+        tableResponse += `${team.points.toString().padStart(3)}\n`;
+      });
+      
+      await message.reply(tableResponse);
+    } catch (error) {
+      logger.error('Error fetching league data:', error);
+      await message.reply('Terjadi kesalahan saat mengambil data klasemen. Silakan coba lagi nanti.');
+    }
   } else {
     await message.reply("Pilihan tidak valid. Silakan pilih nomor liga yang tersedia.");
   }
 }
 
-// Hanya ekspor fungsi yang diperlukan
 export { klasemenLiga, handleKlasemenResponse };
