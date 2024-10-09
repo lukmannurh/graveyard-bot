@@ -1,3 +1,5 @@
+// Dalam file src/commands/klasemenLiga.js
+
 import axios from 'axios';
 import logger from '../utils/logger.js';
 
@@ -33,9 +35,17 @@ function formatTeamName(name, maxLength = 14) {
 }
 
 function findLatestSeason(data) {
-  if (data.table && Array.isArray(data.table)) {
-    // Asumsi bahwa tabel pertama adalah musim terkini
-    return data.table[0];
+  if (data && data.table && Array.isArray(data.table)) {
+    // Cari musim dengan tahun terbaru
+    const latestSeason = data.table.reduce((latest, current) => {
+      const currentYear = parseInt(current.table.leagueSeason.slice(0, 4));
+      const latestYear = latest ? parseInt(latest.table.leagueSeason.slice(0, 4)) : 0;
+      return currentYear > latestYear ? current : latest;
+    }, null);
+
+    if (latestSeason && latestSeason.table && Array.isArray(latestSeason.table.tables)) {
+      return latestSeason.table.tables[0]; // Ambil tabel pertama dari musim terbaru
+    }
   }
   return null;
 }
@@ -85,25 +95,26 @@ async function handleLeagueSelection(message, selection) {
     
     const latestSeason = findLatestSeason(leagueData);
     
-    if (!latestSeason || !Array.isArray(latestSeason.data)) {
+    if (!latestSeason || !Array.isArray(latestSeason.rows)) {
       await message.reply("Maaf, data klasemen terbaru tidak tersedia untuk liga ini saat ini.");
       return;
     }
 
-    const leagueTable = latestSeason.data;
+    const leagueTable = latestSeason.rows;
+    const seasonName = leagueData.table[0].table.leagueSeason;
     
-    let tableResponse = `Klasemen ${selectedLeagueName} (Musim Terkini):\n\n`;
+    let tableResponse = `Klasemen ${selectedLeagueName} (${seasonName}):\n\n`;
     tableResponse += "Pos Tim            M  M  S  K  Pts\n";
     tableResponse += "--------------------------------\n";
     
     leagueTable.forEach(team => {
-      tableResponse += `${team.idx.toString().padStart(2)} `;
+      tableResponse += `${team.position.toString().padStart(2)} `;
       tableResponse += `${formatTeamName(team.name)} `;
-      tableResponse += `${team.played.toString().padStart(2)} `;
+      tableResponse += `${team.matches.toString().padStart(2)} `;
       tableResponse += `${team.wins.toString().padStart(2)} `;
       tableResponse += `${team.draws.toString().padStart(2)} `;
       tableResponse += `${team.losses.toString().padStart(2)} `;
-      tableResponse += `${team.pts.toString().padStart(3)}\n`;
+      tableResponse += `${team.points.toString().padStart(3)}\n`;
     });
     
     await message.reply(tableResponse);
@@ -111,3 +122,6 @@ async function handleLeagueSelection(message, selection) {
     await message.reply("Pilihan tidak valid. Silakan pilih nomor liga yang tersedia.");
   }
 }
+
+// Pastikan untuk mengekspor fungsi-fungsi yang diperlukan
+export { klasemenLiga, handleKlasemenResponse };

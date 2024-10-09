@@ -1,127 +1,105 @@
-// Dalam file src/commands/klasemenLiga.js
-
-import axios from 'axios';
+import { handleOwnerCommand } from './ownerCommandHandler.js';
+import { handleRegularCommand } from './regularCommandHandler.js';
+import { handleNonCommandMessage } from './nonCommandHandler.js';
+import { isGroupAuthorized } from '../utils/authorizedGroups.js';
+import { PREFIX } from '../config/constants.js';
 import logger from '../utils/logger.js';
+import adventureManager from '../utils/adventureManager.js';
+import { handleAdventureChoice, adventure } from '../commands/adventureCommand.js';
+import groupStats from '../utils/groupStats.js';
+import { isUserBanned, deleteBannedUserMessage, isOwner } from '../utils/enhancedModerationSystem.js';
+import { isAdmin } from '../utils/adminChecker.js';
+import downloadTikTokVideo from '../commands/tiktokDownloader.js';
+import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from '../commands/downloader.js';
+import { handleKlasemenResponse } from '../commands/klasemenLiga.js';
 
-const FOTMOB_API_URL = 'https://www.fotmob.com/api/leagues';
-
-const LEAGUE_MAPPING = {
-  "Premier League": { id: 47, ccode: "ENG" },
-  "Champions League": { id: 42, ccode: "INT" },
-  "LaLiga": { id: 87, ccode: "ESP" },
-  "Serie A": { id: 55, ccode: "ITA" },
-  "Bundesliga": { id: 54, ccode: "GER" },
-  "Ligue 1": { id: 53, ccode: "FRA" },
-  "BRI Liga 1": { id: 403, ccode: "IDN" },
-  "Europa Conference League": { id: 73, ccode: "INT" },
-  "Europa League": { id: 73, ccode: "INT" }
-};
-
-const pendingKlasemenResponses = new Map();
-
-async function fetchLeagueTable(leagueId) {
+const messageHandler = async (message) => {
   try {
-    const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
-    return response.data;
-  } catch (error) {
-    logger.error(`Error fetching league table for league ID ${leagueId}:`, error);
-    throw new Error('Gagal mengambil data klasemen liga.');
-  }
-}
+    const chat = await message.getChat();
+    if (!chat.isGroup) return;
 
-function formatTeamName(name, maxLength = 14) {
-  if (name.length <= maxLength) return name.padEnd(maxLength);
-  return name.substring(0, maxLength - 3) + '...';
-}
+    const sender = await message.getContact();
+    const groupId = chat.id._serialized;
+    const userId = sender.id._serialized;
 
-function findLatestSeason(data) {
-  if (data && data.table && Array.isArray(data.table)) {
-    // Cari musim dengan tahun terbaru
-    const latestSeason = data.table.reduce((latest, current) => {
-      const currentYear = parseInt(current.table.leagueSeason.slice(0, 4));
-      const latestYear = latest ? parseInt(latest.table.leagueSeason.slice(0, 4)) : 0;
-      return currentYear > latestYear ? current : latest;
-    }, null);
+    logger.debug(`Message received - Type: ${message.type}, From: ${userId}, Group: ${groupId}, Body: ${message.body}`);
 
-    if (latestSeason && latestSeason.table && Array.isArray(latestSeason.table.tables)) {
-      return latestSeason.table.tables[0]; // Ambil tabel pertama dari musim terbaru
+    const isOwnerUser = isOwner(userId);
+    const isGroupAdmin = await isAdmin(chat, sender);
+
+    // Log message for stats
+    if (message.fromMe === false) {
+      groupStats.logMessage(groupId, userId);
     }
-  }
-  return null;
-}
 
-export async function klasemenLiga(message, args) {
-  const groupId = message.from;
+    const isAuthorized = isGroupAuthorized(groupId);
+    logger.debug(`Group authorization status: ${isAuthorized}`);
 
-  try {
-    if (args.length === 0) {
-      let response = "Pilih liga yang ingin dilihat klasemennya:\n\n";
-      Object.keys(LEAGUE_MAPPING).forEach((leagueName, index) => {
-        response += `${index + 1}. ${leagueName}\n`;
-      });
-      response += "\nBalas dengan nomor liga yang dipilih.";
-      
-      await message.reply(response);
-      
-      pendingKlasemenResponses.set(groupId, true);
-    } else {
-      await handleLeagueSelection(message, args[0]);
-    }
-  } catch (error) {
-    logger.error('Error in klasemenLiga command:', error);
-    await message.reply('Terjadi kesalahan saat mengambil data klasemen. Silakan coba lagi nanti.');
-  }
-}
-
-export async function handleKlasemenResponse(message) {
-  const groupId = message.from;
-  
-  if (pendingKlasemenResponses.get(groupId)) {
-    pendingKlasemenResponses.delete(groupId);
-    await handleLeagueSelection(message, message.body);
-    return true;
-  }
-  return false;
-}
-
-async function handleLeagueSelection(message, selection) {
-  const selectedIndex = parseInt(selection) - 1;
-  const leagueNames = Object.keys(LEAGUE_MAPPING);
-  
-  if (selectedIndex >= 0 && selectedIndex < leagueNames.length) {
-    const selectedLeagueName = leagueNames[selectedIndex];
-    const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
-    const leagueData = await fetchLeagueTable(selectedLeague.id);
-    
-    const latestSeason = findLatestSeason(leagueData);
-    
-    if (!latestSeason || !Array.isArray(latestSeason.rows)) {
-      await message.reply("Maaf, data klasemen terbaru tidak tersedia untuk liga ini saat ini.");
+    if (isUserBanned(groupId, userId)) {
+      await deleteBannedUserMessage(message);
+      await chat.sendMessage(`@${userId.split('@')[0]}, You are currently banned in this group. Your message has been deleted. The ban will end in 1 hour.`);
       return;
     }
 
-    const leagueTable = latestSeason.rows;
-    const seasonName = leagueData.table[0].table.leagueSeason;
-    
-    let tableResponse = `Klasemen ${selectedLeagueName} (${seasonName}):\n\n`;
-    tableResponse += "Pos Tim            M  M  S  K  Pts\n";
-    tableResponse += "--------------------------------\n";
-    
-    leagueTable.forEach(team => {
-      tableResponse += `${team.position.toString().padStart(2)} `;
-      tableResponse += `${formatTeamName(team.name)} `;
-      tableResponse += `${team.matches.toString().padStart(2)} `;
-      tableResponse += `${team.wins.toString().padStart(2)} `;
-      tableResponse += `${team.draws.toString().padStart(2)} `;
-      tableResponse += `${team.losses.toString().padStart(2)} `;
-      tableResponse += `${team.points.toString().padStart(3)}\n`;
-    });
-    
-    await message.reply(tableResponse);
-  } else {
-    await message.reply("Pilihan tidak valid. Silakan pilih nomor liga yang tersedia.");
-  }
-}
+    if (message.body.startsWith(PREFIX)) {
+      const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
+      const commandName = command.toLowerCase();
 
-// Pastikan untuk mengekspor fungsi-fungsi yang diperlukan
-export { klasemenLiga, handleKlasemenResponse };
+      // Handle specific commands
+      switch (commandName) {
+        case 'tt':
+          await downloadTikTokVideo(message, args);
+          return;
+        case 'ytdl':
+          await ytdl(message, args);
+          return;
+        case 'ytmp4':
+          await ytmp4(message, args);
+          return;
+        case 'ytmp3':
+          await ytmp3(message, args);
+          return;
+        case 'spotify':
+          await spotify(message, args);
+          return;
+        case 'fbdl':
+          await fbdl(message, args);
+          return;
+        case 'igdl':
+          await igdl(message, args);
+          return;
+      }
+
+      if (commandName === 'adventure') {
+        if (isAuthorized) {
+          await adventure(message, args);
+        } else {
+          logger.debug(`Unauthorized group ${groupId}, ignoring command from non-owner`);
+        }
+      } else if (isOwnerUser) {
+        await handleOwnerCommand(message, groupId);
+      } else if (isAuthorized) {
+        await handleRegularCommand(message, chat, sender, isGroupAdmin);
+      } else {
+        logger.debug(`Unauthorized group ${groupId}, ignoring command from non-owner`);
+      }
+    } else if (adventureManager.getPendingSelection(groupId) === userId || 
+               (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim()))) {
+      if (isAuthorized) {
+        logger.debug('Processing adventure choice');
+        await handleAdventureChoice(message);
+      }
+    } else if (isAuthorized) {
+      // Handle klasemen liga response
+      const klasemenHandled = await handleKlasemenResponse(message);
+      if (!klasemenHandled) {
+        await handleNonCommandMessage(message, chat, sender);
+      }
+    }
+  } catch (error) {
+    logger.error('Error in messageHandler:', error);
+    // Do not send error message to avoid responding to banned users
+  }
+};
+
+export default messageHandler;
