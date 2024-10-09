@@ -19,7 +19,7 @@ const pendingKlasemenResponses = new Map();
 async function fetchLeagueTable(leagueId) {
   try {
     logger.info(`Fetching data for league ID ${leagueId}`);
-    const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
+    const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}&ccode3=IDN`);
     return response.data;
   } catch (error) {
     logger.error(`Error fetching league table for league ID ${leagueId}:`, error.message);
@@ -32,7 +32,7 @@ function formatTeamName(name, maxLength = 14) {
   return name.substring(0, maxLength - 3) + '...';
 }
 
-function findLatestSeason(data) {
+function findLeagueTable(data) {
   if (data && data.table && data.table.all) {
     return data.table.all;
   }
@@ -87,7 +87,7 @@ async function handleLeagueSelection(message, selection) {
       const leagueData = await fetchLeagueTable(selectedLeague.id);
       logger.info('League data received');
       
-      const leagueTable = findLatestSeason(leagueData);
+      const leagueTable = findLeagueTable(leagueData);
       
       if (!leagueTable || !Array.isArray(leagueTable)) {
         logger.error('No valid league table data found');
