@@ -15,6 +15,9 @@ const LEAGUE_MAPPING = {
   "Europa League": { id: 73, ccode: "INT" }
 };
 
+// Simpan state untuk mengetahui grup mana yang sedang menunggu input klasemen
+const pendingKlasemenResponses = new Map();
+
 async function fetchLeagueTable(leagueId) {
   try {
     const response = await axios.get(`https://www.fotmob.com/api/leagues?id=${leagueId}`);
@@ -31,6 +34,8 @@ function formatTeamName(name, maxLength = 14) {
 }
 
 export async function klasemenLiga(message, args) {
+  const groupId = message.from;
+
   try {
     if (args.length === 0) {
       let response = "Pilih liga yang ingin dilihat klasemennya:\n\n";
@@ -40,36 +45,54 @@ export async function klasemenLiga(message, args) {
       response += "\nBalas dengan nomor liga yang dipilih.";
       
       await message.reply(response);
-    } else {
-      const selectedIndex = parseInt(args[0]) - 1;
-      const leagueNames = Object.keys(LEAGUE_MAPPING);
       
-      if (selectedIndex >= 0 && selectedIndex < leagueNames.length) {
-        const selectedLeagueName = leagueNames[selectedIndex];
-        const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
-        const leagueTable = await fetchLeagueTable(selectedLeague.id);
-        
-        let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
-        tableResponse += "Pos Tim            M  M  S  K  Pts\n";
-        tableResponse += "--------------------------------\n";
-        
-        leagueTable.forEach(team => {
-          tableResponse += `${team.idx.toString().padStart(2)} `;
-          tableResponse += `${formatTeamName(team.name)} `;
-          tableResponse += `${team.played.toString().padStart(2)} `;
-          tableResponse += `${team.wins.toString().padStart(2)} `;
-          tableResponse += `${team.draws.toString().padStart(2)} `;
-          tableResponse += `${team.losses.toString().padStart(2)} `;
-          tableResponse += `${team.pts.toString().padStart(3)}\n`;
-        });
-        
-        await message.reply(tableResponse);
-      } else {
-        await message.reply("Pilihan tidak valid. Silakan pilih nomor liga yang tersedia.");
-      }
+      // Set state bahwa grup ini sedang menunggu respon klasemen
+      pendingKlasemenResponses.set(groupId, true);
+    } else {
+      await handleLeagueSelection(message, args[0]);
     }
   } catch (error) {
     logger.error('Error in klasemenLiga command:', error);
     await message.reply('Terjadi kesalahan saat mengambil data klasemen. Silakan coba lagi nanti.');
+  }
+}
+
+export async function handleKlasemenResponse(message) {
+  const groupId = message.from;
+  
+  if (pendingKlasemenResponses.get(groupId)) {
+    pendingKlasemenResponses.delete(groupId);
+    await handleLeagueSelection(message, message.body);
+    return true;
+  }
+  return false;
+}
+
+async function handleLeagueSelection(message, selection) {
+  const selectedIndex = parseInt(selection) - 1;
+  const leagueNames = Object.keys(LEAGUE_MAPPING);
+  
+  if (selectedIndex >= 0 && selectedIndex < leagueNames.length) {
+    const selectedLeagueName = leagueNames[selectedIndex];
+    const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
+    const leagueTable = await fetchLeagueTable(selectedLeague.id);
+    
+    let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
+    tableResponse += "Pos Tim            M  M  S  K  Pts\n";
+    tableResponse += "--------------------------------\n";
+    
+    leagueTable.forEach(team => {
+      tableResponse += `${team.idx.toString().padStart(2)} `;
+      tableResponse += `${formatTeamName(team.name)} `;
+      tableResponse += `${team.played.toString().padStart(2)} `;
+      tableResponse += `${team.wins.toString().padStart(2)} `;
+      tableResponse += `${team.draws.toString().padStart(2)} `;
+      tableResponse += `${team.losses.toString().padStart(2)} `;
+      tableResponse += `${team.pts.toString().padStart(3)}\n`;
+    });
+    
+    await message.reply(tableResponse);
+  } else {
+    await message.reply("Pilihan tidak valid. Silakan pilih nomor liga yang tersedia.");
   }
 }
