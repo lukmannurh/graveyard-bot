@@ -28,18 +28,13 @@ async function fetchLeagueTable(leagueId) {
   }
 }
 
-function formatTeamName(name, maxLength = 14) {
-  if (name.length <= maxLength) return name.padEnd(maxLength);
-  return name.substring(0, maxLength - 3) + '...';
-}
-
-function findLeagueTable(data) {
-  logger.debug('Searching for league table in data structure');
-  if (data && data.table && data.table.all) {
-    logger.debug('League table found in data.table.all');
-    return data.table.all;
+function extractRelevantData(data) {
+  if (data && data.table) {
+    return {
+      ongoing: data.table.ongoing || [],
+      table: data.table.all || []
+    };
   }
-  logger.error('League table structure not found');
   return null;
 }
 
@@ -91,33 +86,19 @@ async function handleLeagueSelection(message, selection) {
     try {
       const leagueData = await fetchLeagueTable(selectedLeague.id);
       logger.info('League data received');
-      logger.debug('League data structure:', JSON.stringify(leagueData, null, 2));
       
-      const leagueTable = findLeagueTable(leagueData);
+      const relevantData = extractRelevantData(leagueData);
       
-      if (!leagueTable || !Array.isArray(leagueTable)) {
+      if (!relevantData) {
         logger.error('No valid league table data found');
         await message.reply("Maaf, data klasemen terbaru tidak tersedia untuk liga ini saat ini.");
         return;
       }
 
-      let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
-      tableResponse += "Pos Tim            M  M  S  K  GD  Pts\n";
-      tableResponse += "---------------------------------------\n";
-      
-      leagueTable.forEach(team => {
-        tableResponse += `${team.idx.toString().padStart(2)} `;
-        tableResponse += `${formatTeamName(team.name)} `;
-        tableResponse += `${team.played.toString().padStart(2)} `;
-        tableResponse += `${team.wins.toString().padStart(2)} `;
-        tableResponse += `${team.draws.toString().padStart(2)} `;
-        tableResponse += `${team.losses.toString().padStart(2)} `;
-        tableResponse += `${team.goalConDiff.toString().padStart(3)} `;
-        tableResponse += `${team.pts.toString().padStart(3)}\n`;
-      });
-      
-      logger.info('Sending league table response');
-      await message.reply(tableResponse);
+      const formattedData = JSON.stringify(relevantData, null, 2);
+      logger.debug('Formatted league data:', formattedData);
+
+      await message.reply(`Klasemen ${selectedLeagueName}:\n\n` + "```json\n" + formattedData + "\n```");
       logger.debug('League table response sent');
     } catch (error) {
       logger.error('Error fetching league data:', error.message);
