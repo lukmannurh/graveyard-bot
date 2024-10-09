@@ -1,5 +1,5 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import logger from '../utils/logger.js';
 
 const FOTMOB_URL = 'https://www.fotmob.com';
