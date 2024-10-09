@@ -11,7 +11,7 @@ import { isUserBanned, deleteBannedUserMessage, isOwner } from '../utils/enhance
 import { isAdmin } from '../utils/adminChecker.js';
 import downloadTikTokVideo from '../commands/tiktokDownloader.js';
 import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from '../commands/downloader.js';
-import { handleKlasemenResponse, klasemenLiga } from '../commands/klasemenLiga.js';
+import { klasemenLiga, handleKlasemenResponse } from '../commands/klasemenLiga.js';
 
 const messageHandler = async (message) => {
   try {
@@ -69,6 +69,7 @@ const messageHandler = async (message) => {
           await igdl(message, args);
           return;
         case 'klasemenliga':
+          logger.info('Klasemen Liga command detected');
           await klasemenLiga(message, args);
           return;
       }

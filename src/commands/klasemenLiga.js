@@ -18,7 +18,9 @@ const pendingKlasemenResponses = new Map();
 
 async function fetchLeagueTable(leagueId) {
   try {
+    logger.debug(`Fetching league table for ID: ${leagueId}`);
     const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
+    logger.debug(`Received response for league ID ${leagueId}`);
     return response.data;
   } catch (error) {
     logger.error(`Error fetching league table for league ID ${leagueId}:`, error);
@@ -45,6 +47,7 @@ function findTableData(data) {
 
 export async function klasemenLiga(message, args) {
   const groupId = message.from;
+  logger.info(`Klasemen Liga command received. Args: ${args}`);
   try {
     if (args.length === 0) {
       let response = "Pilih liga yang ingin dilihat klasemennya:\n\n";
@@ -53,10 +56,12 @@ export async function klasemenLiga(message, args) {
       });
       response += "\nBalas dengan nomor liga yang dipilih.";
       
+      logger.debug(`Sending league selection menu: ${response}`);
       await message.reply(response);
       
       pendingKlasemenResponses.set(groupId, true);
     } else {
+      logger.debug(`Processing league selection: ${args[0]}`);
       await handleLeagueSelection(message, args[0]);
     }
   } catch (error) {
@@ -69,6 +74,7 @@ export async function handleKlasemenResponse(message) {
   const groupId = message.from;
   
   if (pendingKlasemenResponses.get(groupId)) {
+    logger.debug(`Handling klasemen response for group: ${groupId}`);
     pendingKlasemenResponses.delete(groupId);
     await handleLeagueSelection(message, message.body);
     return true;
@@ -77,17 +83,21 @@ export async function handleKlasemenResponse(message) {
 }
 
 async function handleLeagueSelection(message, selection) {
+  logger.debug(`Handling league selection: ${selection}`);
   const selectedIndex = parseInt(selection) - 1;
   const leagueNames = Object.keys(LEAGUE_MAPPING);
   
   if (selectedIndex >= 0 && selectedIndex < leagueNames.length) {
     const selectedLeagueName = leagueNames[selectedIndex];
     const selectedLeague = LEAGUE_MAPPING[selectedLeagueName];
+    logger.debug(`Selected league: ${selectedLeagueName}, ID: ${selectedLeague.id}`);
+    
     const leagueData = await fetchLeagueTable(selectedLeague.id);
     
     const leagueTable = findTableData(leagueData);
     
     if (!leagueTable || !Array.isArray(leagueTable)) {
+      logger.warn(`No table data found for ${selectedLeagueName}`);
       await message.reply("Maaf, data klasemen tidak tersedia untuk liga ini saat ini.");
       return;
     }
@@ -111,8 +121,10 @@ async function handleLeagueSelection(message, selection) {
       tableResponse += `${position} | ${name} | ${played} | ${won} | ${drawn} | ${lost} | ${goalsFor} | ${goalsAgainst} | ${goalDifference} | ${points}\n`;
     });
     
+    logger.debug(`Sending table response for ${selectedLeagueName}`);
     await message.reply(tableResponse);
   } else {
+    logger.warn(`Invalid league selection: ${selection}`);
     await message.reply("Pilihan tidak valid. Silakan pilih nomor liga yang tersedia.");
   }
 }
