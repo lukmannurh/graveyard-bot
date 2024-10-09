@@ -20,6 +20,7 @@ async function fetchLeagueTable(leagueId) {
   try {
     logger.info(`Fetching data for league ID ${leagueId}`);
     const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}&ccode3=IDN`);
+    logger.debug('API Response:', JSON.stringify(response.data, null, 2));
     return response.data;
   } catch (error) {
     logger.error(`Error fetching league table for league ID ${leagueId}:`, error.message);
@@ -33,8 +34,14 @@ function formatTeamName(name, maxLength = 14) {
 }
 
 function findLeagueTable(data) {
+  logger.debug('Searching for league table in data structure');
   if (data && data.table && data.table.all) {
+    logger.debug('League table found');
     return data.table.all;
+  }
+  if (data && data.table && data.table.tables && data.table.tables[0]) {
+    logger.debug('League table found in alternative structure');
+    return data.table.tables[0];
   }
   logger.error('League table structure not found:', JSON.stringify(data, null, 2));
   return null;
@@ -52,6 +59,7 @@ async function klasemenLiga(message, args) {
       });
       response += "\nBalas dengan nomor liga yang dipilih.";
       
+      logger.debug('Sending league selection options');
       await message.reply(response);
       
       pendingKlasemenResponses.set(groupId, true);
@@ -87,7 +95,6 @@ async function handleLeagueSelection(message, selection) {
     try {
       const leagueData = await fetchLeagueTable(selectedLeague.id);
       logger.info('League data received');
-      logger.debug('League data structure:', JSON.stringify(leagueData, null, 2));
       
       const leagueTable = findLeagueTable(leagueData);
       
@@ -114,6 +121,7 @@ async function handleLeagueSelection(message, selection) {
       
       logger.info('Sending league table response');
       await message.reply(tableResponse);
+      logger.debug('League table response sent');
     } catch (error) {
       logger.error('Error fetching league data:', error.message);
       await message.reply('Terjadi kesalahan saat mengambil data klasemen. Silakan coba lagi nanti.');
