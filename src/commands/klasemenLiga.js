@@ -112,16 +112,16 @@ async function handleLeagueSelection(message, selection) {
 
       let tableResponse = `*Klasemen ${selectedLeagueName}*\n\n`;
       tableResponse += "```\n";
-      tableResponse += "Pos Tim                 P   Pts\n";
+      tableResponse += "Pos  Tim                 P    Pts\n";
       tableResponse += "--------------------------------\n";
       
       simplifiedTable.forEach(team => {
         const position = (team.position + '').padStart(2);
-        const name = (team.name + '').padEnd(19).substring(0, 19);
+        const name = (team.name + '').padEnd(18).substring(0, 18);
         const played = (team.played + '').padStart(3);
         const points = (team.points + '').padStart(4);
         
-        tableResponse += `${position} ${name} ${played} ${points}\n`;
+        tableResponse += `${position}  ${name} ${played}  ${points}\n`;
       });
       
       tableResponse += "```";
