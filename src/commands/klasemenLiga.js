@@ -31,17 +31,21 @@ async function fetchLeagueTable(leagueId) {
   }
 }
 
-function formatTeamName(name, maxLength = 15) {
+function formatTeamName(name, maxLength = 30) {
   if (!name) return 'Unknown'.padEnd(maxLength);
-  const words = name.split(' ');
-  if (words.length === 1) return name.padEnd(maxLength).substring(0, maxLength);
+  if (name.length <= maxLength) return name.padEnd(maxLength);
   
+  const words = name.split(' ');
   let formattedName = words[0];
   for (let i = 1; i < words.length; i++) {
-    if (formattedName.length + 2 >= maxLength) break;
-    formattedName += ' ' + words[i][0];
+    if (formattedName.length + words[i].length + 1 <= maxLength) {
+      formattedName += ' ' + words[i];
+    } else {
+      formattedName += ' ' + words[i][0] + '.';
+      if (formattedName.length >= maxLength) break;
+    }
   }
-  return formattedName.padEnd(maxLength).substring(0, maxLength);
+  return formattedName.padEnd(maxLength);
 }
 
 function findTableData(obj) {
@@ -165,7 +169,7 @@ function generateTextResponse(leagueName, table) {
 }
 
 async function generateImageResponse(leagueName, table) {
-  const canvas = createCanvas(650, Math.max(600, 110 + table.length * 25));
+  const canvas = createCanvas(800, Math.max(600, 150 + table.length * 30));
   const ctx = canvas.getContext('2d');
 
   // Set background
@@ -174,29 +178,61 @@ async function generateImageResponse(leagueName, table) {
 
   // Draw title
   ctx.fillStyle = '#333333';
-  ctx.font = 'bold 24px Arial';
+  ctx.font = 'bold 28px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText(`Klasemen ${leagueName}`, canvas.width / 2, 40);
+  ctx.fillText(`Klasemen ${leagueName}`, canvas.width / 2, 50);
 
   // Draw table headers
   const headers = ['Pos', 'Tim', 'Main', 'M', 'S', 'K', 'Poin'];
-  ctx.font = 'bold 16px Arial';
+  const columnWidths = [60, 280, 60, 60, 60, 60, 60];
+  let xOffset = 40;
+
+  ctx.font = 'bold 18px Arial';
   ctx.textAlign = 'left';
   headers.forEach((header, index) => {
-    ctx.fillText(header, 50 + index * 85, 80);
+    ctx.fillText(header, xOffset, 100);
+    xOffset += columnWidths[index];
   });
 
+  // Draw horizontal line
+  ctx.beginPath();
+  ctx.moveTo(40, 110);
+  ctx.lineTo(canvas.width - 40, 110);
+  ctx.strokeStyle = '#999999';
+  ctx.stroke();
+
   // Draw table rows
-  ctx.font = '14px Arial';
+  ctx.font = '16px Arial';
   table.forEach((team, index) => {
-    const y = 110 + index * 25;
-    ctx.fillText(team.position.toString(), 50, y);
-    ctx.fillText(formatTeamName(team.name, 20), 135, y);
-    ctx.fillText(team.played.toString(), 220, y);
-    ctx.fillText(team.won.toString(), 305, y);
-    ctx.fillText(team.drawn.toString(), 390, y);
-    ctx.fillText(team.lost.toString(), 475, y);
-    ctx.fillText(team.points.toString(), 560, y);
+    const y = 140 + index * 30;
+    xOffset = 40;
+
+    // Alternating row background
+    if (index % 2 === 0) {
+      ctx.fillStyle = '#e8e8e8';
+      ctx.fillRect(40, y - 20, canvas.width - 80, 30);
+    }
+
+    ctx.fillStyle = '#333333';
+    ctx.fillText(team.position.toString(), xOffset, y);
+    xOffset += columnWidths[0];
+
+    ctx.fillText(formatTeamName(team.name, 30), xOffset, y);
+    xOffset += columnWidths[1];
+
+    ctx.fillText(team.played.toString(), xOffset + 20, y);
+    xOffset += columnWidths[2];
+
+    ctx.fillText(team.won.toString(), xOffset + 20, y);
+    xOffset += columnWidths[3];
+
+    ctx.fillText(team.drawn.toString(), xOffset + 20, y);
+    xOffset += columnWidths[4];
+
+    ctx.fillText(team.lost.toString(), xOffset + 20, y);
+    xOffset += columnWidths[5];
+
+    ctx.fillText(team.points.toString(), xOffset + 20, y);
   });
 
   return canvas.toBuffer('image/png');
