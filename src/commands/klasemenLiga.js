@@ -11,8 +11,8 @@ const LEAGUE_MAPPING = {
   "LaLiga": { id: 87, ccode: "ESP" },
   "Serie A": { id: 55, ccode: "ITA" },
   "Bundesliga": { id: 54, ccode: "GER" },
-  "Ligue 1": { id: 8983, ccode: "FRA" },
-  "BRI Liga 1": { id: 403, ccode: "IDN" },
+  "Ligue 1": { id: 53, ccode: "FRA" },
+  "BRI Liga 1": { id: 8983, ccode: "IDN" },
   "Europa Conference League": { id: 10216, ccode: "INT" },
   "Europa League": { id: 73, ccode: "INT" }
 };
