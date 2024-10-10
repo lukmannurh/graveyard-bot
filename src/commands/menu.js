@@ -1,3 +1,4 @@
+import logger from '../utils/logger.js';
 import { PREFIX } from '../config/constants.js';
 
 const createMenuSection = (title, commands) => {
