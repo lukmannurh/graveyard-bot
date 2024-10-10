@@ -107,23 +107,21 @@ async function handleLeagueSelection(message, selection) {
         position: team.idx || team.position || team.rank || '',
         name: team.name || '',
         played: team.played || 0,
-        points: team.pts || team.points || 0,
-        goalDifference: team.goalConDiff || team.goalDifference || 0
+        points: team.pts || team.points || 0
       }));
 
       let tableResponse = `*Klasemen ${selectedLeagueName}*\n\n`;
       tableResponse += "```\n";
-      tableResponse += "Pos Tim              P   Pts  GD\n";
-      tableResponse += "-----------------------------------\n";
+      tableResponse += "Pos Tim                 P   Pts\n";
+      tableResponse += "--------------------------------\n";
       
       simplifiedTable.forEach(team => {
         const position = (team.position + '').padStart(2);
-        const name = (team.name + '').padEnd(16).substring(0, 16);
+        const name = (team.name + '').padEnd(19).substring(0, 19);
         const played = (team.played + '').padStart(3);
         const points = (team.points + '').padStart(4);
-        const goalDifference = (team.goalDifference > 0 ? '+' : '') + team.goalDifference;
         
-        tableResponse += `${position} ${name} ${played} ${points} ${goalDifference.padStart(4)}\n`;
+        tableResponse += `${position} ${name} ${played} ${points}\n`;
       });
       
       tableResponse += "```";
