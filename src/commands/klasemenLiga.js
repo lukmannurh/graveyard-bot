@@ -21,52 +21,28 @@ async function fetchLeagueTable(leagueId) {
     logger.debug(`Fetching league table for ID: ${leagueId}`);
     const response = await axios.get(`${FOTMOB_API_URL}?id=${leagueId}`);
     logger.debug(`Received response for league ID ${leagueId}`);
-    logger.debug('Response status:', response.status);
-    logger.debug('Response headers:', response.headers);
-    logger.debug('Response data:', JSON.stringify(response.data, null, 2));
     return response.data;
   } catch (error) {
     logger.error(`Error fetching league table for league ID ${leagueId}:`, error);
-    if (error.response) {
-      logger.error('Error response:', error.response.data);
-      logger.error('Error status:', error.response.status);
-      logger.error('Error headers:', error.response.headers);
-    }
     throw new Error('Gagal mengambil data klasemen liga.');
   }
 }
 
 function formatTeamName(name, maxLength = 20) {
   if (!name) return 'Unknown'.padEnd(maxLength);
-  if (name.length <= maxLength) return name.padEnd(maxLength);
-  return name.substring(0, maxLength - 3) + '...';
+  return (name + '').padEnd(maxLength).substring(0, maxLength);
 }
 
-function findTableData(data) {
-  logger.debug('Received data structure:', JSON.stringify(data, null, 2));
-  
-  if (data.leagues && data.leagues[0] && data.leagues[0].table && Array.isArray(data.leagues[0].table)) {
-    return data.leagues[0].table;
-  } else if (data.table && Array.isArray(data.table)) {
-    return data.table;
-  } else if (data.table && data.table.all && Array.isArray(data.table.all)) {
-    return data.table.all;
-  } else if (data.table && data.table.tables && Array.isArray(data.table.tables[0])) {
-    return data.table.tables[0];
-  } else if (data.details && data.details.table && Array.isArray(data.details.table)) {
-    return data.details.table;
-  } else if (data.details && data.details.table && data.details.table.all && Array.isArray(data.details.table.all)) {
-    return data.details.table.all;
-  }
-  
-  // Jika tidak ada yang cocok, cari array pertama yang mungkin berisi data tim
-  for (let key in data) {
-    if (Array.isArray(data[key]) && data[key].length > 0 && (data[key][0].teamId || data[key][0].name || data[key][0].teamName)) {
-      return data[key];
+function findTableData(obj) {
+  if (obj && typeof obj === 'object') {
+    if (Array.isArray(obj) && obj.length > 0 && obj[0].name && obj[0].played !== undefined) {
+      return obj;
+    }
+    for (let key in obj) {
+      let result = findTableData(obj[key]);
+      if (result) return result;
     }
   }
-  
-  logger.warn('Unable to find table data in the response');
   return null;
 }
 
@@ -130,23 +106,34 @@ async function handleLeagueSelection(message, selection) {
         return;
       }
       
+      const simplifiedTable = leagueTable.map(team => ({
+        position: team.idx || team.position || team.rank || '',
+        name: team.name || '',
+        played: team.played || 0,
+        won: team.wins || team.won || 0,
+        drawn: team.draws || team.drawn || 0,
+        lost: team.losses || team.lost || 0,
+        goalsFor: team.goalsFor || (team.scoresStr ? parseInt(team.scoresStr.split('-')[0]) : 0) || 0,
+        goalsAgainst: team.goalsAgainst || (team.scoresStr ? parseInt(team.scoresStr.split('-')[1]) : 0) || 0,
+        goalDifference: team.goalConDiff || team.goalDifference || 0,
+        points: team.pts || team.points || 0
+      }));
+
       let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
-      tableResponse += "Pos | Tim                 | P | M | S | K | GM | GK | SB | Pts\n";
+      tableResponse += "Pos | Team                | P  | W  | D  | L  | GF | GA | GD  | Pts\n";
       tableResponse += "-".repeat(70) + "\n";
       
-      leagueTable.forEach(team => {
-        const position = (team.idx || team.position || team.rank || '').toString().padStart(3);
-        const name = formatTeamName(team.name || team.teamName || 'Unknown');
-        const played = (team.played || team.matchesPlayed || '0').toString().padStart(2);
-        const won = (team.wins || team.won || '0').toString().padStart(2);
-        const drawn = (team.draws || team.drawn || '0').toString().padStart(2);
-        const lost = (team.losses || team.lost || '0').toString().padStart(2);
-        const goalsFor = (team.scoresFor || team.goalsFor || '0').toString().padStart(2);
-        const goalsAgainst = (team.scoresAgainst || team.goalsAgainst || '0').toString().padStart(2);
-        const goalDifference = (team.goalDiff || team.goalDifference || '0').toString().padStart(3);
-        const points = (team.pts || team.points || '0').toString().padStart(3);
-
-        tableResponse += `${position} | ${name} | ${played} | ${won} | ${drawn} | ${lost} | ${goalsFor} | ${goalsAgainst} | ${goalDifference} | ${points}\n`;
+      simplifiedTable.forEach(team => {
+        tableResponse += `${(team.position + '').padStart(3)} | `;
+        tableResponse += `${formatTeamName(team.name)} | `;
+        tableResponse += `${(team.played + '').padStart(2)} | `;
+        tableResponse += `${(team.won + '').padStart(2)} | `;
+        tableResponse += `${(team.drawn + '').padStart(2)} | `;
+        tableResponse += `${(team.lost + '').padStart(2)} | `;
+        tableResponse += `${(team.goalsFor + '').padStart(2)} | `;
+        tableResponse += `${(team.goalsAgainst + '').padStart(2)} | `;
+        tableResponse += `${(team.goalDifference + '').padStart(3)} | `;
+        tableResponse += `${(team.points + '').padStart(3)}\n`;
       });
       
       logger.debug(`Sending table response for ${selectedLeagueName}`);
