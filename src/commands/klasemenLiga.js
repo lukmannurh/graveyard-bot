@@ -118,9 +118,9 @@ async function handleLeagueSelection(message, selection) {
         position: team.idx || team.position || team.rank || '',
         name: team.name || '',
         played: team.played || 0,
-        won: team.won || 0,
-        drawn: team.drawn || 0,
-        lost: team.lost || 0,
+        won: team.wins || team.won || 0,
+        drawn: team.draws || team.drawn || 0,
+        lost: team.losses || team.lost || 0,
         goalsFor: team.scoresFor || team.goalsFor || 0,
         goalsAgainst: team.scoresAgainst || team.goalsAgainst || 0,
         goalDifference: team.goalDifference || 0,
@@ -148,16 +148,22 @@ async function handleLeagueSelection(message, selection) {
 function generateTextResponse(leagueName, table) {
   let response = `*Klasemen ${leagueName}*\n\n`;
   response += "```\n";
-  response += "Pos Tim            P  Pts\n";
-  response += "--------------------------\n";
+  response += "Pos Tim            P   M   S   K  GM  GK  SG Pts\n";
+  response += "------------------------------------------------\n";
   
-  table.slice(0, 10).forEach(team => {
+  table.forEach(team => {
     const position = (team.position + '').padStart(2);
     const name = formatTeamName(team.name, 13);
-    const played = (team.played + '').padStart(2);
+    const played = (team.played + '').padStart(3);
+    const won = (team.won + '').padStart(3);
+    const drawn = (team.drawn + '').padStart(3);
+    const lost = (team.lost + '').padStart(3);
+    const goalsFor = (team.goalsFor + '').padStart(3);
+    const goalsAgainst = (team.goalsAgainst + '').padStart(3);
+    const goalDifference = (team.goalDifference + '').padStart(3);
     const points = (team.points + '').padStart(3);
     
-    response += `${position} ${name} ${played} ${points}\n`;
+    response += `${position} ${name} ${played} ${won} ${drawn} ${lost} ${goalsFor} ${goalsAgainst} ${goalDifference} ${points}\n`;
   });
   
   response += "```";
@@ -165,12 +171,12 @@ function generateTextResponse(leagueName, table) {
 }
 
 async function generateImageResponse(leagueName, table) {
-  const canvas = createCanvas(800, 600);
+  const canvas = createCanvas(800, Math.max(600, 110 + table.length * 25));
   const ctx = canvas.getContext('2d');
 
   // Set background
   ctx.fillStyle = '#f0f0f0';
-  ctx.fillRect(0, 0, 800, 600);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Draw title
   ctx.fillStyle = '#333333';
@@ -189,16 +195,16 @@ async function generateImageResponse(leagueName, table) {
   ctx.font = '14px Arial';
   table.forEach((team, index) => {
     const y = 110 + index * 25;
-    ctx.fillText(team.position, 50, y);
+    ctx.fillText(team.position.toString(), 50, y);
     ctx.fillText(formatTeamName(team.name, 20), 125, y);
-    ctx.fillText(team.played, 200, y);
-    ctx.fillText(team.won, 275, y);
-    ctx.fillText(team.drawn, 350, y);
-    ctx.fillText(team.lost, 425, y);
-    ctx.fillText(team.goalsFor, 500, y);
-    ctx.fillText(team.goalsAgainst, 575, y);
-    ctx.fillText(team.goalDifference, 650, y);
-    ctx.fillText(team.points, 725, y);
+    ctx.fillText(team.played.toString(), 200, y);
+    ctx.fillText(team.won.toString(), 275, y);
+    ctx.fillText(team.drawn.toString(), 350, y);
+    ctx.fillText(team.lost.toString(), 425, y);
+    ctx.fillText(team.goalsFor.toString(), 500, y);
+    ctx.fillText(team.goalsAgainst.toString(), 575, y);
+    ctx.fillText(team.goalDifference.toString(), 650, y);
+    ctx.fillText(team.points.toString(), 725, y);
   });
 
   return canvas.toBuffer('image/png');
