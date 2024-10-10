@@ -28,9 +28,17 @@ async function fetchLeagueTable(leagueId) {
   }
 }
 
-function formatTeamName(name, maxLength = 20) {
+function formatTeamName(name, maxLength = 15) {
   if (!name) return 'Unknown'.padEnd(maxLength);
-  return (name + '').padEnd(maxLength).substring(0, maxLength);
+  const words = name.split(' ');
+  if (words.length === 1) return name.padEnd(maxLength).substring(0, maxLength);
+  
+  let formattedName = words[0];
+  for (let i = 1; i < words.length; i++) {
+    if (formattedName.length + 2 >= maxLength) break;
+    formattedName += ' ' + words[i][0];
+  }
+  return formattedName.padEnd(maxLength).substring(0, maxLength);
 }
 
 function findTableData(obj) {
@@ -112,12 +120,12 @@ async function handleLeagueSelection(message, selection) {
 
       let tableResponse = `*Klasemen ${selectedLeagueName}*\n\n`;
       tableResponse += "```\n";
-      tableResponse += "Pos Tim              P  Pts\n";
-      tableResponse += "----------------------------\n";
+      tableResponse += "Pos Tim            P  Pts\n";
+      tableResponse += "--------------------------\n";
       
       simplifiedTable.forEach(team => {
         const position = (team.position + '').padStart(2);
-        const name = (team.name + '').padEnd(15).substring(0, 15);
+        const name = formatTeamName(team.name, 13);
         const played = (team.played + '').padStart(2);
         const points = (team.points + '').padStart(3);
         
