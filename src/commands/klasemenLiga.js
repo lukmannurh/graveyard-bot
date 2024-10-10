@@ -95,10 +95,7 @@ async function handleLeagueSelection(message, selection) {
       logger.debug(`Selected league: ${selectedLeagueName}, ID: ${selectedLeague.id}`);
       
       const leagueData = await fetchLeagueTable(selectedLeague.id);
-      logger.debug('Fetched league data:', JSON.stringify(leagueData, null, 2));
-      
       const leagueTable = findTableData(leagueData);
-      logger.debug('Found league table:', JSON.stringify(leagueTable, null, 2));
       
       if (!leagueTable || !Array.isArray(leagueTable) || leagueTable.length === 0) {
         logger.warn(`No valid table data found for ${selectedLeagueName}`);
@@ -110,31 +107,26 @@ async function handleLeagueSelection(message, selection) {
         position: team.idx || team.position || team.rank || '',
         name: team.name || '',
         played: team.played || 0,
-        won: team.wins || team.won || 0,
-        drawn: team.draws || team.drawn || 0,
-        lost: team.losses || team.lost || 0,
-        goalsFor: team.goalsFor || (team.scoresStr ? parseInt(team.scoresStr.split('-')[0]) : 0) || 0,
-        goalsAgainst: team.goalsAgainst || (team.scoresStr ? parseInt(team.scoresStr.split('-')[1]) : 0) || 0,
-        goalDifference: team.goalConDiff || team.goalDifference || 0,
-        points: team.pts || team.points || 0
+        points: team.pts || team.points || 0,
+        goalDifference: team.goalConDiff || team.goalDifference || 0
       }));
 
-      let tableResponse = `Klasemen ${selectedLeagueName}:\n\n`;
-      tableResponse += "Pos | Team                | P  | W  | D  | L  | GF | GA | GD  | Pts\n";
-      tableResponse += "-".repeat(70) + "\n";
+      let tableResponse = `*Klasemen ${selectedLeagueName}*\n\n`;
+      tableResponse += "```\n";
+      tableResponse += "Pos Tim              P   Pts  GD\n";
+      tableResponse += "-----------------------------------\n";
       
       simplifiedTable.forEach(team => {
-        tableResponse += `${(team.position + '').padStart(3)} | `;
-        tableResponse += `${formatTeamName(team.name)} | `;
-        tableResponse += `${(team.played + '').padStart(2)} | `;
-        tableResponse += `${(team.won + '').padStart(2)} | `;
-        tableResponse += `${(team.drawn + '').padStart(2)} | `;
-        tableResponse += `${(team.lost + '').padStart(2)} | `;
-        tableResponse += `${(team.goalsFor + '').padStart(2)} | `;
-        tableResponse += `${(team.goalsAgainst + '').padStart(2)} | `;
-        tableResponse += `${(team.goalDifference + '').padStart(3)} | `;
-        tableResponse += `${(team.points + '').padStart(3)}\n`;
+        const position = (team.position + '').padStart(2);
+        const name = (team.name + '').padEnd(16).substring(0, 16);
+        const played = (team.played + '').padStart(3);
+        const points = (team.points + '').padStart(4);
+        const goalDifference = (team.goalDifference > 0 ? '+' : '') + team.goalDifference;
+        
+        tableResponse += `${position} ${name} ${played} ${points} ${goalDifference.padStart(4)}\n`;
       });
+      
+      tableResponse += "```";
       
       logger.debug(`Sending table response for ${selectedLeagueName}`);
       await message.reply(tableResponse);
