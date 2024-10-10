@@ -1,5 +1,8 @@
 import axios from 'axios';
+import { createCanvas } from 'canvas';
 import logger from '../utils/logger.js';
+import pkg from 'whatsapp-web.js';
+const { MessageMedia } = pkg;
 
 const FOTMOB_API_URL = 'https://www.fotmob.com/api/leagues';
 const LEAGUE_MAPPING = {
@@ -115,27 +118,23 @@ async function handleLeagueSelection(message, selection) {
         position: team.idx || team.position || team.rank || '',
         name: team.name || '',
         played: team.played || 0,
+        won: team.won || 0,
+        drawn: team.drawn || 0,
+        lost: team.lost || 0,
+        goalsFor: team.scoresFor || team.goalsFor || 0,
+        goalsAgainst: team.scoresAgainst || team.goalsAgainst || 0,
+        goalDifference: team.goalDifference || 0,
         points: team.pts || team.points || 0
       }));
 
-      let tableResponse = `*Klasemen ${selectedLeagueName}*\n\n`;
-      tableResponse += "```\n";
-      tableResponse += "Pos Tim            P  Pts\n";
-      tableResponse += "--------------------------\n";
-      
-      simplifiedTable.forEach(team => {
-        const position = (team.position + '').padStart(2);
-        const name = formatTeamName(team.name, 13);
-        const played = (team.played + '').padStart(2);
-        const points = (team.points + '').padStart(3);
-        
-        tableResponse += `${position} ${name} ${played} ${points}\n`;
-      });
-      
-      tableResponse += "```";
-      
-      logger.debug(`Sending table response for ${selectedLeagueName}`);
-      await message.reply(tableResponse);
+      // Kirim respons teks
+      const textResponse = generateTextResponse(selectedLeagueName, simplifiedTable);
+      await message.reply(textResponse);
+
+      // Kirim respons gambar
+      const imageBuffer = await generateImageResponse(selectedLeagueName, simplifiedTable);
+      const media = new MessageMedia('image/png', imageBuffer.toString('base64'));
+      await message.reply(media, null, { caption: `Klasemen ${selectedLeagueName}` });
     } else {
       logger.warn(`Invalid league selection: ${selection}`);
       await message.reply("Pilihan tidak valid. Silakan pilih nomor liga yang tersedia.");
@@ -144,4 +143,63 @@ async function handleLeagueSelection(message, selection) {
     logger.error('Error in handleLeagueSelection:', error);
     await message.reply('Terjadi kesalahan saat memproses pilihan liga. Silakan coba lagi nanti.');
   }
+}
+
+function generateTextResponse(leagueName, table) {
+  let response = `*Klasemen ${leagueName}*\n\n`;
+  response += "```\n";
+  response += "Pos Tim            P  Pts\n";
+  response += "--------------------------\n";
+  
+  table.slice(0, 10).forEach(team => {
+    const position = (team.position + '').padStart(2);
+    const name = formatTeamName(team.name, 13);
+    const played = (team.played + '').padStart(2);
+    const points = (team.points + '').padStart(3);
+    
+    response += `${position} ${name} ${played} ${points}\n`;
+  });
+  
+  response += "```";
+  return response;
+}
+
+async function generateImageResponse(leagueName, table) {
+  const canvas = createCanvas(800, 600);
+  const ctx = canvas.getContext('2d');
+
+  // Set background
+  ctx.fillStyle = '#f0f0f0';
+  ctx.fillRect(0, 0, 800, 600);
+
+  // Draw title
+  ctx.fillStyle = '#333333';
+  ctx.font = 'bold 24px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Klasemen ${leagueName}`, 400, 40);
+
+  // Draw table headers
+  const headers = ['Pos', 'Tim', 'Main', 'M', 'S', 'K', 'GM', 'GK', 'SG', 'Poin'];
+  ctx.font = 'bold 16px Arial';
+  headers.forEach((header, index) => {
+    ctx.fillText(header, 50 + index * 75, 80);
+  });
+
+  // Draw table rows
+  ctx.font = '14px Arial';
+  table.forEach((team, index) => {
+    const y = 110 + index * 25;
+    ctx.fillText(team.position, 50, y);
+    ctx.fillText(formatTeamName(team.name, 20), 125, y);
+    ctx.fillText(team.played, 200, y);
+    ctx.fillText(team.won, 275, y);
+    ctx.fillText(team.drawn, 350, y);
+    ctx.fillText(team.lost, 425, y);
+    ctx.fillText(team.goalsFor, 500, y);
+    ctx.fillText(team.goalsAgainst, 575, y);
+    ctx.fillText(team.goalDifference, 650, y);
+    ctx.fillText(team.points, 725, y);
+  });
+
+  return canvas.toBuffer('image/png');
 }
