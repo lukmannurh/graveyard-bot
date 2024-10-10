@@ -148,22 +148,16 @@ async function handleLeagueSelection(message, selection) {
 function generateTextResponse(leagueName, table) {
   let response = `*Klasemen ${leagueName}*\n\n`;
   response += "```\n";
-  response += "Pos Tim            P   M   S   K  GM  GK  SG Pts\n";
-  response += "------------------------------------------------\n";
+  response += "Pos Tim            P  Pts\n";
+  response += "--------------------------\n";
   
   table.forEach(team => {
     const position = (team.position + '').padStart(2);
     const name = formatTeamName(team.name, 13);
-    const played = (team.played + '').padStart(3);
-    const won = (team.won + '').padStart(3);
-    const drawn = (team.drawn + '').padStart(3);
-    const lost = (team.lost + '').padStart(3);
-    const goalsFor = (team.goalsFor + '').padStart(3);
-    const goalsAgainst = (team.goalsAgainst + '').padStart(3);
-    const goalDifference = (team.goalDifference + '').padStart(3);
+    const played = (team.played + '').padStart(2);
     const points = (team.points + '').padStart(3);
     
-    response += `${position} ${name} ${played} ${won} ${drawn} ${lost} ${goalsFor} ${goalsAgainst} ${goalDifference} ${points}\n`;
+    response += `${position} ${name} ${played} ${points}\n`;
   });
   
   response += "```";
@@ -171,7 +165,7 @@ function generateTextResponse(leagueName, table) {
 }
 
 async function generateImageResponse(leagueName, table) {
-  const canvas = createCanvas(800, Math.max(600, 110 + table.length * 25));
+  const canvas = createCanvas(650, Math.max(600, 110 + table.length * 25));
   const ctx = canvas.getContext('2d');
 
   // Set background
@@ -182,13 +176,14 @@ async function generateImageResponse(leagueName, table) {
   ctx.fillStyle = '#333333';
   ctx.font = 'bold 24px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText(`Klasemen ${leagueName}`, 400, 40);
+  ctx.fillText(`Klasemen ${leagueName}`, canvas.width / 2, 40);
 
   // Draw table headers
-  const headers = ['Pos', 'Tim', 'Main', 'M', 'S', 'K', 'GM', 'GK', 'SG', 'Poin'];
+  const headers = ['Pos', 'Tim', 'Main', 'M', 'S', 'K', 'Poin'];
   ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'left';
   headers.forEach((header, index) => {
-    ctx.fillText(header, 50 + index * 75, 80);
+    ctx.fillText(header, 50 + index * 85, 80);
   });
 
   // Draw table rows
@@ -196,15 +191,12 @@ async function generateImageResponse(leagueName, table) {
   table.forEach((team, index) => {
     const y = 110 + index * 25;
     ctx.fillText(team.position.toString(), 50, y);
-    ctx.fillText(formatTeamName(team.name, 20), 125, y);
-    ctx.fillText(team.played.toString(), 200, y);
-    ctx.fillText(team.won.toString(), 275, y);
-    ctx.fillText(team.drawn.toString(), 350, y);
-    ctx.fillText(team.lost.toString(), 425, y);
-    ctx.fillText(team.goalsFor.toString(), 500, y);
-    ctx.fillText(team.goalsAgainst.toString(), 575, y);
-    ctx.fillText(team.goalDifference.toString(), 650, y);
-    ctx.fillText(team.points.toString(), 725, y);
+    ctx.fillText(formatTeamName(team.name, 20), 135, y);
+    ctx.fillText(team.played.toString(), 220, y);
+    ctx.fillText(team.won.toString(), 305, y);
+    ctx.fillText(team.drawn.toString(), 390, y);
+    ctx.fillText(team.lost.toString(), 475, y);
+    ctx.fillText(team.points.toString(), 560, y);
   });
 
   return canvas.toBuffer('image/png');
