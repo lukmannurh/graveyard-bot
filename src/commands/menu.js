@@ -1,4 +1,3 @@
-import logger from '../utils/logger.js';
 import { PREFIX } from '../config/constants.js';
 
 const createMenuSection = (title, commands) => {
@@ -21,7 +20,8 @@ ${createMenuSection('📱 Perintah Umum', [
   { name: 'getpp @user', description: 'Mengambil dan mengirim foto profil pengguna yang di-tag' },
   { name: 'stats', description: 'Menampilkan statistik aktivitas grup untuk bulan ini' },
   { name: 'jadwalsholat', description: 'Menampilkan jadwal sholat untuk WIB, WITA, dan WIT' },
-  { name: 's', description: 'Mengubah gambar menjadi stiker (kirim gambar dengan caption .s)' }
+  { name: 's', description: 'Mengubah gambar menjadi stiker (kirim gambar dengan caption .s)' },
+  { name: 'klasemenliga', description: 'Menampilkan klasemen liga (Premier League, La Liga, dll.)' }
 ])}
 
 ${createMenuSection('👑 Perintah Admin', [
