@@ -207,7 +207,7 @@ async function handleWorldCupQualificationAFC(message, leagueData) {
     await message.reply(textResponse);
 
     // Kirim respons gambar
-    const imageBuffer = await generateImageResponse("KING INDO ROAD TO WORLD CUP 2026 - Indonesia's Group", simplifiedGroupData);
+    const imageBuffer = await generateImageResponse("World Cup Qualification AFC - Indonesia's Group", simplifiedGroupData);
     const media = new MessageMedia('image/png', imageBuffer.toString('base64'));
     await message.reply(media, null, { caption: "Klasemen Kualifikasi Piala Dunia AFC - Grup Indonesia" });
 
