@@ -157,67 +157,60 @@ async function handleLeagueSelection(message, selection) {
 
 async function handleWorldCupQualificationAFC(message, leagueData) {
   try {
-    const groups = ['A', 'B', 'C'];
-    let allGroupsData = [];
-
-    // Log struktur data untuk debugging
     logger.debug('World Cup Qualification AFC data structure:', JSON.stringify(leagueData, null, 2));
 
-    // Fungsi untuk menemukan data tabel
-    function findTableData(obj, groupName) {
+    function findIndonesiaGroup(obj) {
       if (obj && typeof obj === 'object') {
         if (Array.isArray(obj) && obj.length > 0 && obj[0].name && obj[0].played !== undefined) {
-          return obj;
+          const indonesiaTeam = obj.find(team => team.name.toLowerCase().includes('indonesia'));
+          if (indonesiaTeam) return obj;
         }
         for (let key in obj) {
           if (key === 'tables' && Array.isArray(obj[key])) {
-            const groupTable = obj[key].find(table => table.name.includes(`3Rd Round Grp. ${groupName}`));
-            if (groupTable && groupTable.table) {
-              return groupTable.table;
+            for (let table of obj[key]) {
+              if (table.table) {
+                const indonesiaTeam = table.table.find(team => team.name.toLowerCase().includes('indonesia'));
+                if (indonesiaTeam) return table.table;
+              }
             }
           }
-          let result = findTableData(obj[key], groupName);
+          let result = findIndonesiaGroup(obj[key]);
           if (result) return result;
         }
       }
       return null;
     }
 
-    for (const group of groups) {
-      const tableData = findTableData(leagueData, group);
-      if (tableData) {
-        const simplifiedGroupData = tableData.map(team => ({
-          position: team.idx || team.position || team.rank || '',
-          name: team.name || '',
-          played: team.played || 0,
-          won: team.wins || team.won || 0,
-          drawn: team.draws || team.drawn || 0,
-          lost: team.losses || team.lost || 0,
-          goalsFor: team.goalsFor || (team.scoresStr ? parseInt(team.scoresStr.split('-')[0]) : 0) || 0,
-          goalsAgainst: team.goalsAgainst || (team.scoresStr ? parseInt(team.scoresStr.split('-')[1]) : 0) || 0,
-          goalDifference: team.goalConDiff || team.goalDifference || 0,
-          points: team.pts || team.points || 0
-        }));
-        allGroupsData.push({ group, data: simplifiedGroupData });
-      }
-    }
+    const indonesiaGroupData = findIndonesiaGroup(leagueData);
 
-    if (allGroupsData.length === 0) {
-      logger.warn('No group data found for World Cup Qualification AFC');
-      await message.reply("Maaf, data klasemen tidak tersedia untuk Kualifikasi Piala Dunia AFC saat ini.");
+    if (!indonesiaGroupData) {
+      logger.warn('No group data found containing Indonesia');
+      await message.reply("Maaf, data klasemen untuk grup Indonesia tidak ditemukan dalam Kualifikasi Piala Dunia AFC saat ini.");
       return;
     }
 
-    // Kirim respons teks untuk setiap grup
-    for (const groupData of allGroupsData) {
-      const textResponse = generateTextResponse(`World Cup Qualification AFC Group ${groupData.group}`, groupData.data);
-      await message.reply(textResponse);
+    const simplifiedGroupData = indonesiaGroupData.map(team => ({
+      position: team.idx || team.position || team.rank || '',
+      name: team.name || '',
+      played: team.played || 0,
+      won: team.wins || team.won || 0,
+      drawn: team.draws || team.drawn || 0,
+      lost: team.losses || team.lost || 0,
+      goalsFor: team.goalsFor || (team.scoresStr ? parseInt(team.scoresStr.split('-')[0]) : 0) || 0,
+      goalsAgainst: team.goalsAgainst || (team.scoresStr ? parseInt(team.scoresStr.split('-')[1]) : 0) || 0,
+      goalDifference: team.goalConDiff || team.goalDifference || 0,
+      points: team.pts || team.points || 0
+    }));
 
-      // Kirim respons gambar untuk setiap grup
-      const imageBuffer = await generateImageResponse(`World Cup Qualification AFC Group ${groupData.group}`, groupData.data);
-      const media = new MessageMedia('image/png', imageBuffer.toString('base64'));
-      await message.reply(media, null, { caption: `Klasemen Kualifikasi Piala Dunia AFC Grup ${groupData.group}` });
-    }
+    // Kirim respons teks
+    const textResponse = generateTextResponse("World Cup Qualification AFC - Indonesia's Group", simplifiedGroupData);
+    await message.reply(textResponse);
+
+    // Kirim respons gambar
+    const imageBuffer = await generateImageResponse("World Cup Qualification AFC - Indonesia's Group", simplifiedGroupData);
+    const media = new MessageMedia('image/png', imageBuffer.toString('base64'));
+    await message.reply(media, null, { caption: "Klasemen Kualifikasi Piala Dunia AFC - Grup Indonesia" });
+
   } catch (error) {
     logger.error('Error in handleWorldCupQualificationAFC:', error);
     await message.reply('Terjadi kesalahan saat memproses data Kualifikasi Piala Dunia AFC. Silakan coba lagi nanti.');
