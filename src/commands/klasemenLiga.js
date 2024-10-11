@@ -237,41 +237,45 @@ function generateTextResponse(leagueName, table) {
 }
 
 async function generateImageResponse(leagueName, table) {
-  const isAFCQualification = leagueName.includes("World Cup Qualification AFC Group C");
-  const canvas = createCanvas(1000, Math.max(650, 220 + table.length * 40));
+  const isAFCQualification = leagueName.includes("World Cup Qualification AFC");
+  const canvas = createCanvas(1000, Math.max(680, 250 + table.length * 40));
   const ctx = canvas.getContext('2d');
 
   // Set background
-  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  gradient.addColorStop(0, '#f0f8ff');  // Light sky blue
-  gradient.addColorStop(1, '#e6f3ff');  // Lighter sky blue
-  ctx.fillStyle = gradient;
+  ctx.fillStyle = '#f0f0f0';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Draw decorative header
-  ctx.fillStyle = '#3a5fcd';  // Royal blue
-  ctx.fillRect(0, 0, canvas.width, 100);
+  // Draw card effect for AFC Qualification
+  if (isAFCQualification) {
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+    ctx.shadowBlur = 15;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 5;
+    ctx.fillRect(20, 20, canvas.width - 40, canvas.height - 40);
+    ctx.shadowColor = 'transparent';
+  }
 
   // Draw title
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = '#333333';
   ctx.font = 'bold 36px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText('Kualifikasi Piala Dunia 2026', canvas.width / 2, 45);
+  ctx.fillText('Kualifikasi Piala Dunia 2026', canvas.width / 2, 60);
 
   // Draw subtitle
   ctx.font = '24px Arial';
-  ctx.fillText('Zona Asia', canvas.width / 2, 80);
+  ctx.fillText('Zona Asia', canvas.width / 2, 95);
 
   // Draw table headers
   const headers = ['Pos', 'Tim', 'Main', 'M', 'S', 'K', 'GM', 'GK', '+/-', 'Poin'];
   const columnWidths = [60, 280, 70, 60, 60, 60, 60, 60, 60, 70];
   let xOffset = 50;
 
-  ctx.fillStyle = '#3a5fcd';
+  ctx.fillStyle = '#e0e0e0';
   ctx.fillRect(40, 120, canvas.width - 80, 40);
   
   ctx.font = 'bold 16px Arial';
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = '#333333';
   ctx.textAlign = 'left';
   headers.forEach((header, index) => {
     ctx.fillText(header, xOffset, 145);
@@ -287,14 +291,14 @@ async function generateImageResponse(leagueName, table) {
     // Set row background color
     if (isAFCQualification) {
       if (index < 2) {
-        ctx.fillStyle = 'rgba(46, 204, 113, 0.2)';  // Soft green for positions 1-2
+        ctx.fillStyle = 'rgba(40, 167, 69, 0.3)';  // Darker green for positions 1-2
       } else if (index < 4) {
-        ctx.fillStyle = 'rgba(241, 196, 15, 0.2)';  // Soft yellow for positions 3-4
+        ctx.fillStyle = 'rgba(255, 193, 7, 0.3)';  // Darker yellow for positions 3-4
       } else {
-        ctx.fillStyle = index % 2 === 0 ? '#ffffff' : '#f0f8ff';
+        ctx.fillStyle = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
       }
     } else {
-      ctx.fillStyle = index % 2 === 0 ? '#ffffff' : '#f0f8ff';
+      ctx.fillStyle = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
     }
     ctx.fillRect(40, y - 25, canvas.width - 80, 40);
 
@@ -316,28 +320,23 @@ async function generateImageResponse(leagueName, table) {
 
   // Add legend for AFC Qualification
   if (isAFCQualification) {
-    const legendY = canvas.height - 60;
+    const legendY = canvas.height - 80;
     ctx.font = 'bold 16px Arial';
-    ctx.fillStyle = '#3a5fcd';
+    ctx.fillStyle = '#333333';
     ctx.textAlign = 'left';
     ctx.fillText('Keterangan:', 50, legendY - 20);
 
     ctx.font = '14px Arial';
-    ctx.fillStyle = 'rgba(46, 204, 113, 0.2)';
+    ctx.fillStyle = 'rgba(40, 167, 69, 0.3)';
     ctx.fillRect(50, legendY, 20, 20);
     ctx.fillStyle = '#333333';
     ctx.fillText('Lolos langsung ke Piala Dunia 2026', 80, legendY + 15);
 
-    ctx.fillStyle = 'rgba(241, 196, 15, 0.2)';
+    ctx.fillStyle = 'rgba(255, 193, 7, 0.3)';
     ctx.fillRect(350, legendY, 20, 20);
     ctx.fillStyle = '#333333';
     ctx.fillText('Lanjut ke putaran playoff', 380, legendY + 15);
   }
-
-  // Add subtle border
-  ctx.strokeStyle = '#3a5fcd';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 
   return canvas.toBuffer('image/png');
 }
