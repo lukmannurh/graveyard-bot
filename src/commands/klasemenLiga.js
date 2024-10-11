@@ -203,11 +203,11 @@ async function handleWorldCupQualificationAFC(message, leagueData) {
     }));
 
     // Kirim respons teks
-    const textResponse = generateTextResponse("World Cup Qualification AFC Group C - Indonesia's Group", simplifiedGroupData);
+    const textResponse = generateTextResponse("World Cup Qualification AFC Group C", simplifiedGroupData);
     await message.reply(textResponse);
 
     // Kirim respons gambar
-    const imageBuffer = await generateImageResponse("World Cup Qualification AFC Group C - Indonesia's Group", simplifiedGroupData);
+    const imageBuffer = await generateImageResponse("World Cup Qualification AFC Group C", simplifiedGroupData);
     const media = new MessageMedia('image/png', imageBuffer.toString('base64'));
     await message.reply(media, null, { caption: "Klasemen Kualifikasi Piala Dunia AFC - Grup Indonesia" });
 
