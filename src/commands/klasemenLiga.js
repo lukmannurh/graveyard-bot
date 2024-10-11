@@ -12,9 +12,10 @@ const LEAGUE_MAPPING = {
   "Serie A": { id: 55, ccode: "ITA" },
   "Bundesliga": { id: 54, ccode: "GER" },
   "Ligue 1": { id: 53, ccode: "FRA" },
-  "BRI Liga 1": { id: 8983, ccode: "IDN" },
-  "Europa Conference League": { id: 10216, ccode: "INT" },
-  "Europa League": { id: 73, ccode: "INT" }
+  "BRI Liga 1": { id: 403, ccode: "IDN" },
+  "Europa Conference League": { id: 73, ccode: "INT" },
+  "Europa League": { id: 73, ccode: "INT" },
+  "World Cup Qualification AFC": { id: 10197, ccode: "INT" }
 };
 
 const pendingKlasemenResponses = new Map();
@@ -110,35 +111,40 @@ async function handleLeagueSelection(message, selection) {
       logger.debug(`Selected league: ${selectedLeagueName}, ID: ${selectedLeague.id}`);
       
       const leagueData = await fetchLeagueTable(selectedLeague.id);
-      const leagueTable = findTableData(leagueData);
       
-      if (!leagueTable || !Array.isArray(leagueTable) || leagueTable.length === 0) {
-        logger.warn(`No valid table data found for ${selectedLeagueName}`);
-        await message.reply("Maaf, data klasemen tidak tersedia untuk liga ini saat ini.");
-        return;
+      if (selectedLeagueName === "World Cup Qualification AFC") {
+        await handleWorldCupQualificationAFC(message, leagueData);
+      } else {
+        const leagueTable = findTableData(leagueData);
+        
+        if (!leagueTable || !Array.isArray(leagueTable) || leagueTable.length === 0) {
+          logger.warn(`No valid table data found for ${selectedLeagueName}`);
+          await message.reply("Maaf, data klasemen tidak tersedia untuk liga ini saat ini.");
+          return;
+        }
+        
+        const simplifiedTable = leagueTable.map(team => ({
+          position: team.idx || team.position || team.rank || '',
+          name: team.name || '',
+          played: team.played || 0,
+          won: team.wins || team.won || 0,
+          drawn: team.draws || team.drawn || 0,
+          lost: team.losses || team.lost || 0,
+          goalsFor: team.scoresFor || team.goalsFor || 0,
+          goalsAgainst: team.scoresAgainst || team.goalsAgainst || 0,
+          goalDifference: team.goalDifference || 0,
+          points: team.pts || team.points || 0
+        }));
+
+        // Kirim respons teks
+        const textResponse = generateTextResponse(selectedLeagueName, simplifiedTable);
+        await message.reply(textResponse);
+
+        // Kirim respons gambar
+        const imageBuffer = await generateImageResponse(selectedLeagueName, simplifiedTable);
+        const media = new MessageMedia('image/png', imageBuffer.toString('base64'));
+        await message.reply(media, null, { caption: `Klasemen ${selectedLeagueName}` });
       }
-      
-      const simplifiedTable = leagueTable.map(team => ({
-        position: team.idx || team.position || team.rank || '',
-        name: team.name || '',
-        played: team.played || 0,
-        won: team.wins || team.won || 0,
-        drawn: team.draws || team.drawn || 0,
-        lost: team.losses || team.lost || 0,
-        goalsFor: team.scoresFor || team.goalsFor || 0,
-        goalsAgainst: team.scoresAgainst || team.goalsAgainst || 0,
-        goalDifference: team.goalDifference || 0,
-        points: team.pts || team.points || 0
-      }));
-
-      // Kirim respons teks
-      const textResponse = generateTextResponse(selectedLeagueName, simplifiedTable);
-      await message.reply(textResponse);
-
-      // Kirim respons gambar
-      const imageBuffer = await generateImageResponse(selectedLeagueName, simplifiedTable);
-      const media = new MessageMedia('image/png', imageBuffer.toString('base64'));
-      await message.reply(media, null, { caption: `Klasemen ${selectedLeagueName}` });
     } else {
       logger.warn(`Invalid league selection: ${selection}`);
       await message.reply("Pilihan tidak valid. Silakan pilih nomor liga yang tersedia.");
@@ -146,6 +152,51 @@ async function handleLeagueSelection(message, selection) {
   } catch (error) {
     logger.error('Error in handleLeagueSelection:', error);
     await message.reply('Terjadi kesalahan saat memproses pilihan liga. Silakan coba lagi nanti.');
+  }
+}
+
+async function handleWorldCupQualificationAFC(message, leagueData) {
+  try {
+    const groups = ['A', 'B', 'C'];
+    let allGroupsData = [];
+
+    for (const group of groups) {
+      const groupData = leagueData.tables.find(table => table.title.includes(`Group ${group}`));
+      if (groupData && groupData.table) {
+        const simplifiedGroupData = groupData.table.map(team => ({
+          position: team.idx || team.position || team.rank || '',
+          name: team.name || '',
+          played: team.played || 0,
+          won: team.wins || team.won || 0,
+          drawn: team.draws || team.drawn || 0,
+          lost: team.losses || team.lost || 0,
+          goalsFor: team.scoresFor || team.goalsFor || 0,
+          goalsAgainst: team.scoresAgainst || team.goalsAgainst || 0,
+          goalDifference: team.goalDifference || 0,
+          points: team.pts || team.points || 0
+        }));
+        allGroupsData.push({ group, data: simplifiedGroupData });
+      }
+    }
+
+    if (allGroupsData.length === 0) {
+      await message.reply("Maaf, data klasemen tidak tersedia untuk Kualifikasi Piala Dunia AFC saat ini.");
+      return;
+    }
+
+    // Kirim respons teks untuk setiap grup
+    for (const groupData of allGroupsData) {
+      const textResponse = generateTextResponse(`World Cup Qualification AFC Group ${groupData.group}`, groupData.data);
+      await message.reply(textResponse);
+
+      // Kirim respons gambar untuk setiap grup
+      const imageBuffer = await generateImageResponse(`World Cup Qualification AFC Group ${groupData.group}`, groupData.data);
+      const media = new MessageMedia('image/png', imageBuffer.toString('base64'));
+      await message.reply(media, null, { caption: `Klasemen Kualifikasi Piala Dunia AFC Grup ${groupData.group}` });
+    }
+  } catch (error) {
+    logger.error('Error in handleWorldCupQualificationAFC:', error);
+    await message.reply('Terjadi kesalahan saat memproses data Kualifikasi Piala Dunia AFC. Silakan coba lagi nanti.');
   }
 }
 
