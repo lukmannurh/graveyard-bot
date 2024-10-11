@@ -12,7 +12,7 @@ import { isAdmin } from '../utils/adminChecker.js';
 import downloadTikTokVideo from '../commands/tiktokDownloader.js';
 import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from '../commands/downloader.js';
 import { klasemenLiga, handleKlasemenResponse } from '../commands/klasemenLiga.js';
-import { handleDaduGame } from '../commands/daduGame.js';
+import { dadu, handleDaduGame } from '../commands/daduGame.js';
 
 const messageHandler = async (message) => {
   try {
@@ -74,7 +74,7 @@ const messageHandler = async (message) => {
           await klasemenLiga(message, args);
           return;
         case 'dadu':
-          await handleDaduCommand(message, args);
+          await dadu(message, args);
           return;
       }
 
