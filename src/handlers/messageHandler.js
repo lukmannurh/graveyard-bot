@@ -12,6 +12,7 @@ import { isAdmin } from '../utils/adminChecker.js';
 import downloadTikTokVideo from '../commands/tiktokDownloader.js';
 import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from '../commands/downloader.js';
 import { klasemenLiga, handleKlasemenResponse } from '../commands/klasemenLiga.js';
+import { checkDaduGame } from '../commands/daduGame.js';
 
 const messageHandler = async (message) => {
   try {
@@ -72,6 +73,9 @@ const messageHandler = async (message) => {
           logger.info('Klasemen Liga command detected');
           await klasemenLiga(message, args);
           return;
+        case 'dadu':
+          await handleDaduCommand(message, args);
+          return;
       }
 
       if (commandName === 'adventure') {
@@ -97,7 +101,11 @@ const messageHandler = async (message) => {
       // Handle klasemen liga response
       const klasemenHandled = await handleKlasemenResponse(message);
       if (!klasemenHandled) {
-        await handleNonCommandMessage(message, chat, sender);
+        // Handle dadu game response
+        const daduHandled = await checkDaduGame(message);
+        if (!daduHandled) {
+          await handleNonCommandMessage(message, chat, sender);
+        }
       }
     }
   } catch (error) {

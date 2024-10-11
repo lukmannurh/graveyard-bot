@@ -21,6 +21,7 @@ import downloadTikTokVideo from './tiktokDownloader.js';
 import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from './downloader.js';
 import animeRecommendation from './animeRecommendation.js';
 import { klasemenLiga } from './klasemenLiga.js';
+import { dadu, checkDaduGame } from './daduGame.js';
 
 export {
   menu,
@@ -45,12 +46,15 @@ export {
   jadwalsholat,
   stickerCommand as s,
   animeRecommendation as animek,
-  klasemenLiga
+  klasemenLiga,
+  dadu,
+  checkDaduGame
 };
 
 export const GENERAL_COMMANDS = [
   'menu', 'ai', 'start', 'tebak', 'list', 'random', 'waifu', 'tt',
-  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's', 'animek', 'ytdl', 'ytmp4', 'ytmp3', 'spotify', 'fbdl', 'igdl', 'klasemenliga'
+  'bandarsabu', 'cekjomok', 'adventure', 'getpp', 'stats', 'jadwalsholat', 's', 'animek', 
+  'ytdl', 'ytmp4', 'ytmp3', 'spotify', 'fbdl', 'igdl', 'klasemenliga', 'dadu'
 ];
 
 export const OWNER_COMMANDS = ['authorize'];
@@ -86,7 +90,8 @@ const exportedCommands = {
   fbdl,
   igdl,
   animek: animeRecommendation,
-  klasemenliga: klasemenLiga
+  klasemenliga: klasemenLiga,
+  dadu
 };
 
 export default exportedCommands;
