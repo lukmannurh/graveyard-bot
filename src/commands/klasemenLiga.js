@@ -163,36 +163,39 @@ async function handleWorldCupQualificationAFC(message, leagueData) {
     // Log struktur data untuk debugging
     logger.debug('World Cup Qualification AFC data structure:', JSON.stringify(leagueData, null, 2));
 
-    // Coba temukan data tabel di berbagai lokasi yang mungkin
-    let tableData = leagueData.table || leagueData.tables || leagueData.tableData || [];
-    if (!Array.isArray(tableData)) {
-      tableData = [tableData];
+    // Fungsi untuk menemukan data tabel
+    function findTableData(obj, groupName) {
+      if (obj && typeof obj === 'object') {
+        if (Array.isArray(obj) && obj.length > 0 && obj[0].name && obj[0].played !== undefined) {
+          return obj;
+        }
+        for (let key in obj) {
+          if (key === 'tables' && Array.isArray(obj[key])) {
+            const groupTable = obj[key].find(table => table.name.includes(`3Rd Round Grp. ${groupName}`));
+            if (groupTable && groupTable.table) {
+              return groupTable.table;
+            }
+          }
+          let result = findTableData(obj[key], groupName);
+          if (result) return result;
+        }
+      }
+      return null;
     }
 
     for (const group of groups) {
-      let groupData;
-      for (const table of tableData) {
-        if (table.name && table.name.includes(`Group ${group}`)) {
-          groupData = table;
-          break;
-        }
-        if (table.table && Array.isArray(table.table)) {
-          groupData = table.table.find(t => t.name && t.name.includes(`Group ${group}`));
-          if (groupData) break;
-        }
-      }
-
-      if (groupData && groupData.table) {
-        const simplifiedGroupData = groupData.table.map(team => ({
+      const tableData = findTableData(leagueData, group);
+      if (tableData) {
+        const simplifiedGroupData = tableData.map(team => ({
           position: team.idx || team.position || team.rank || '',
           name: team.name || '',
           played: team.played || 0,
           won: team.wins || team.won || 0,
           drawn: team.draws || team.drawn || 0,
           lost: team.losses || team.lost || 0,
-          goalsFor: team.scoresFor || team.goalsFor || 0,
-          goalsAgainst: team.scoresAgainst || team.goalsAgainst || 0,
-          goalDifference: team.goalDifference || 0,
+          goalsFor: team.goalsFor || (team.scoresStr ? parseInt(team.scoresStr.split('-')[0]) : 0) || 0,
+          goalsAgainst: team.goalsAgainst || (team.scoresStr ? parseInt(team.scoresStr.split('-')[1]) : 0) || 0,
+          goalDifference: team.goalConDiff || team.goalDifference || 0,
           points: team.pts || team.points || 0
         }));
         allGroupsData.push({ group, data: simplifiedGroupData });
