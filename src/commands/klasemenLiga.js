@@ -15,7 +15,7 @@ const LEAGUE_MAPPING = {
   "BRI Liga 1": { id: 403, ccode: "IDN" },
   "Europa Conference League": { id: 73, ccode: "INT" },
   "Europa League": { id: 73, ccode: "INT" },
-  "KING INDO ROAD TO WORLD CUP 2026": { id: 10197, ccode: "INT" }
+  "World Cup Qualification AFC": { id: 10197, ccode: "INT" }
 };
 
 const pendingKlasemenResponses = new Map();
