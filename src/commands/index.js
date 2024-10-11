@@ -21,7 +21,7 @@ import downloadTikTokVideo from './tiktokDownloader.js';
 import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from './downloader.js';
 import animeRecommendation from './animeRecommendation.js';
 import { klasemenLiga } from './klasemenLiga.js';
-import { dadu, checkDaduGame } from './daduGame.js';
+import { dadu, handleDaduGame } from './daduGame.js';
 
 export {
   menu,
