@@ -12,7 +12,7 @@ import { isAdmin } from '../utils/adminChecker.js';
 import downloadTikTokVideo from '../commands/tiktokDownloader.js';
 import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from '../commands/downloader.js';
 import { klasemenLiga, handleKlasemenResponse } from '../commands/klasemenLiga.js';
-import { checkDaduGame } from '../commands/daduGame.js';
+import { handleDaduGame } from '../commands/daduGame.js';
 
 const messageHandler = async (message) => {
   try {
@@ -102,7 +102,7 @@ const messageHandler = async (message) => {
       const klasemenHandled = await handleKlasemenResponse(message);
       if (!klasemenHandled) {
         // Handle dadu game response
-        const daduHandled = await checkDaduGame(message);
+        const daduHandled = await handleDaduGame(message);
         if (!daduHandled) {
           await handleNonCommandMessage(message, chat, sender);
         }

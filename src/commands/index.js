@@ -48,7 +48,7 @@ export {
   animeRecommendation as animek,
   klasemenLiga,
   dadu,
-  checkDaduGame
+  handleDaduGame
 };
 
 export const GENERAL_COMMANDS = [

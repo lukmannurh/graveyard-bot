@@ -233,3 +233,9 @@ const generateDiceImage = async (dice1, dice2) => {
 
   return canvas.toBuffer();
 };
+
+export const handleDaduGame = async (message) => {
+    if (await handleDaduResponse(message)) return true;
+    if (await handleDaduChoice(message)) return true;
+    return false;
+  };
