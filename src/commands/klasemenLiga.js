@@ -160,14 +160,28 @@ async function handleWorldCupQualificationAFC(message, leagueData) {
     const groups = ['A', 'B', 'C'];
     let allGroupsData = [];
 
-    // Periksa apakah data yang diperlukan tersedia
-    if (!leagueData.table || !Array.isArray(leagueData.table)) {
-      await message.reply("Maaf, data klasemen tidak tersedia untuk Kualifikasi Piala Dunia AFC saat ini.");
-      return;
+    // Log struktur data untuk debugging
+    logger.debug('World Cup Qualification AFC data structure:', JSON.stringify(leagueData, null, 2));
+
+    // Coba temukan data tabel di berbagai lokasi yang mungkin
+    let tableData = leagueData.table || leagueData.tables || leagueData.tableData || [];
+    if (!Array.isArray(tableData)) {
+      tableData = [tableData];
     }
 
     for (const group of groups) {
-      const groupData = leagueData.table.find(table => table.name.includes(`Group ${group}`));
+      let groupData;
+      for (const table of tableData) {
+        if (table.name && table.name.includes(`Group ${group}`)) {
+          groupData = table;
+          break;
+        }
+        if (table.table && Array.isArray(table.table)) {
+          groupData = table.table.find(t => t.name && t.name.includes(`Group ${group}`));
+          if (groupData) break;
+        }
+      }
+
       if (groupData && groupData.table) {
         const simplifiedGroupData = groupData.table.map(team => ({
           position: team.idx || team.position || team.rank || '',
@@ -186,6 +200,7 @@ async function handleWorldCupQualificationAFC(message, leagueData) {
     }
 
     if (allGroupsData.length === 0) {
+      logger.warn('No group data found for World Cup Qualification AFC');
       await message.reply("Maaf, data klasemen tidak tersedia untuk Kualifikasi Piala Dunia AFC saat ini.");
       return;
     }
