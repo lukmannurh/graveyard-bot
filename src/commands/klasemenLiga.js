@@ -15,7 +15,7 @@ const LEAGUE_MAPPING = {
   "BRI Liga 1": { id: 403, ccode: "IDN" },
   "Europa Conference League": { id: 73, ccode: "INT" },
   "Europa League": { id: 73, ccode: "INT" },
-  "World Cup Qualification AFC": { id: 10197, ccode: "INT" }
+  "KING INDO ROAD TO WORLD CUP 2026": { id: 10197, ccode: "INT" }
 };
 
 const pendingKlasemenResponses = new Map();
@@ -207,7 +207,7 @@ async function handleWorldCupQualificationAFC(message, leagueData) {
     await message.reply(textResponse);
 
     // Kirim respons gambar
-    const imageBuffer = await generateImageResponse("World Cup Qualification AFC - Indonesia's Group", simplifiedGroupData);
+    const imageBuffer = await generateImageResponse("KING INDO ROAD TO WORLD CUP 2026 - Indonesia's Group", simplifiedGroupData);
     const media = new MessageMedia('image/png', imageBuffer.toString('base64'));
     await message.reply(media, null, { caption: "Klasemen Kualifikasi Piala Dunia AFC - Grup Indonesia" });
 
@@ -237,7 +237,8 @@ function generateTextResponse(leagueName, table) {
 }
 
 async function generateImageResponse(leagueName, table) {
-  const canvas = createCanvas(800, Math.max(600, 150 + table.length * 30));
+  const isAFCQualification = leagueName.includes("World Cup Qualification AFC");
+  const canvas = createCanvas(800, Math.max(650, 200 + table.length * 30));
   const ctx = canvas.getContext('2d');
 
   // Set background
@@ -275,11 +276,19 @@ async function generateImageResponse(leagueName, table) {
     const y = 140 + index * 30;
     xOffset = 40;
 
-    // Alternating row background
-    if (index % 2 === 0) {
-      ctx.fillStyle = '#e8e8e8';
-      ctx.fillRect(40, y - 20, canvas.width - 80, 30);
+    // Set row background color based on position for AFC Qualification
+    if (isAFCQualification) {
+      if (index < 2) {
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.2)'; // Light green for positions 1-2
+      } else if (index < 4) {
+        ctx.fillStyle = 'rgba(255, 255, 0, 0.2)'; // Light yellow for positions 3-4
+      } else {
+        ctx.fillStyle = index % 2 === 0 ? '#e8e8e8' : '#f0f0f0'; // Alternating colors for other positions
+      }
+    } else {
+      ctx.fillStyle = index % 2 === 0 ? '#e8e8e8' : '#f0f0f0'; // Alternating colors for all positions in other leagues
     }
+    ctx.fillRect(40, y - 20, canvas.width - 80, 30);
 
     ctx.fillStyle = '#333333';
     ctx.fillText(team.position.toString(), xOffset, y);
@@ -302,6 +311,25 @@ async function generateImageResponse(leagueName, table) {
 
     ctx.fillText(team.points.toString(), xOffset + 20, y);
   });
+
+  // Add legend for AFC Qualification
+  if (isAFCQualification) {
+    const legendY = canvas.height - 80;
+    ctx.font = 'bold 16px Arial';
+    ctx.fillStyle = '#333333';
+    ctx.fillText('Keterangan:', 40, legendY);
+
+    ctx.font = '14px Arial';
+    ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+    ctx.fillRect(40, legendY + 10, 20, 20);
+    ctx.fillStyle = '#333333';
+    ctx.fillText('= Lolos langsung ke Piala Dunia 2026', 70, legendY + 25);
+
+    ctx.fillStyle = 'rgba(255, 255, 0, 0.2)';
+    ctx.fillRect(40, legendY + 40, 20, 20);
+    ctx.fillStyle = '#333333';
+    ctx.fillText('= Lanjut ke putaran selanjutnya', 70, legendY + 55);
+  }
 
   return canvas.toBuffer('image/png');
 }
