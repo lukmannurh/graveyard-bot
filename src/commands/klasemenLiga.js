@@ -237,8 +237,8 @@ function generateTextResponse(leagueName, table) {
 }
 
 async function generateImageResponse(leagueName, table) {
-  const isAFCQualification = leagueName.includes("World Cup Qualification AFC");
-  const canvas = createCanvas(1000, Math.max(680, 250 + table.length * 40));
+  const isAFCQualification = leagueName.includes("World Cup Qualification AFC Group C");
+  const canvas = createCanvas(900, Math.max(650, 250 + table.length * 40));
   const ctx = canvas.getContext('2d');
 
   // Set background
@@ -258,17 +258,19 @@ async function generateImageResponse(leagueName, table) {
 
   // Draw title
   ctx.fillStyle = '#333333';
-  ctx.font = 'bold 36px Arial';
+  ctx.font = 'bold 32px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText('Kualifikasi Piala Dunia 2026', canvas.width / 2, 60);
+  ctx.fillText(leagueName, canvas.width / 2, 60);
 
-  // Draw subtitle
-  ctx.font = '24px Arial';
-  ctx.fillText('Zona Asia', canvas.width / 2, 95);
+  // Draw subtitle for AFC Qualification
+  if (isAFCQualification) {
+    ctx.font = '20px Arial';
+    ctx.fillText('Zona Asia', canvas.width / 2, 90);
+  }
 
   // Draw table headers
-  const headers = ['Pos', 'Tim', 'Main', 'M', 'S', 'K', 'GM', 'GK', '+/-', 'Poin'];
-  const columnWidths = [60, 280, 70, 60, 60, 60, 60, 60, 60, 70];
+  const headers = ['Pos', 'Tim', 'Main', 'M', 'S', 'K', 'Poin'];
+  const columnWidths = [60, 340, 80, 70, 70, 70, 80];
   let xOffset = 50;
 
   ctx.fillStyle = '#e0e0e0';
@@ -308,11 +310,11 @@ async function generateImageResponse(leagueName, table) {
     xOffset += columnWidths[0];
 
     ctx.textAlign = 'left';
-    ctx.fillText(formatTeamName(team.name, 32), xOffset, y);
+    ctx.fillText(formatTeamName(team.name, 40), xOffset, y);
     xOffset += columnWidths[1];
 
     ctx.textAlign = 'center';
-    ['played', 'won', 'drawn', 'lost', 'goalsFor', 'goalsAgainst', 'goalDifference', 'points'].forEach((stat, i) => {
+    ['played', 'won', 'drawn', 'lost', 'points'].forEach((stat, i) => {
       ctx.fillText(team[stat].toString(), xOffset + columnWidths[i+2]/2, y);
       xOffset += columnWidths[i+2];
     });
