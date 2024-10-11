@@ -161,15 +161,15 @@ async function handleWorldCupQualificationAFC(message, leagueData) {
 
     function findIndonesiaGroup(obj) {
       if (obj && typeof obj === 'object') {
-        if (Array.isArray(obj) && obj.length > 0 && obj[0].name && obj[0].played !== undefined) {
-          const indonesiaTeam = obj.find(team => team.name.toLowerCase().includes('indonesia'));
+        if (Array.isArray(obj)) {
+          const indonesiaTeam = obj.find(team => team.name && team.name.toLowerCase().includes('indonesia'));
           if (indonesiaTeam) return obj;
         }
         for (let key in obj) {
           if (key === 'tables' && Array.isArray(obj[key])) {
             for (let table of obj[key]) {
-              if (table.table) {
-                const indonesiaTeam = table.table.find(team => team.name.toLowerCase().includes('indonesia'));
+              if (Array.isArray(table.table)) {
+                const indonesiaTeam = table.table.find(team => team.name && team.name.toLowerCase().includes('indonesia'));
                 if (indonesiaTeam) return table.table;
               }
             }
