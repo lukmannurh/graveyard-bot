@@ -238,79 +238,87 @@ function generateTextResponse(leagueName, table) {
 
 async function generateImageResponse(leagueName, table) {
   const isAFCQualification = leagueName.includes("World Cup Qualification AFC Group C");
-  const canvas = createCanvas(900, Math.max(650, 250 + table.length * 40));
+  const canvas = createCanvas(1000, Math.max(700, 280 + table.length * 40));
   const ctx = canvas.getContext('2d');
 
   // Set background
-  ctx.fillStyle = '#f0f0f0';
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  gradient.addColorStop(0, '#e8f4f8');
+  gradient.addColorStop(1, '#d4e6f1');
+  ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Draw card effect for AFC Qualification
-  if (isAFCQualification) {
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-    ctx.shadowBlur = 15;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 5;
-    ctx.fillRect(20, 20, canvas.width - 40, canvas.height - 40);
-    ctx.shadowColor = 'transparent';
-  }
+  // Draw card
+  ctx.fillStyle = '#ffffff';
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+  ctx.shadowBlur = 20;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 10;
+  ctx.fillRect(30, 30, canvas.width - 60, canvas.height - 60);
+  ctx.shadowColor = 'transparent';
+
+  // Draw header background
+  const headerGradient = ctx.createLinearGradient(30, 30, 30, 150);
+  headerGradient.addColorStop(0, '#3498db');
+  headerGradient.addColorStop(1, '#2980b9');
+  ctx.fillStyle = headerGradient;
+  ctx.fillRect(30, 30, canvas.width - 60, 120);
 
   // Draw title
-  ctx.fillStyle = '#333333';
-  ctx.font = 'bold 32px Arial';
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 36px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText(leagueName, canvas.width / 2, 60);
+  ctx.fillText(leagueName, canvas.width / 2, 85);
 
   // Draw subtitle for AFC Qualification
   if (isAFCQualification) {
-    ctx.font = '20px Arial';
-    ctx.fillText('Zona Asia', canvas.width / 2, 90);
+    ctx.font = '24px Arial';
+    ctx.fillText('Zona Asia', canvas.width / 2, 120);
   }
 
   // Draw table headers
   const headers = ['Pos', 'Tim', 'Main', 'M', 'S', 'K', 'Poin'];
-  const columnWidths = [60, 340, 80, 70, 70, 70, 80];
-  let xOffset = 50;
+  const columnWidths = [60, 380, 80, 70, 70, 70, 80];
+  let xOffset = 60;
 
-  ctx.fillStyle = '#e0e0e0';
-  ctx.fillRect(40, 120, canvas.width - 80, 40);
+  ctx.fillStyle = '#ecf0f1';
+  ctx.fillRect(50, 170, canvas.width - 100, 40);
   
   ctx.font = 'bold 16px Arial';
-  ctx.fillStyle = '#333333';
+  ctx.fillStyle = '#2c3e50';
   ctx.textAlign = 'left';
   headers.forEach((header, index) => {
-    ctx.fillText(header, xOffset, 145);
+    ctx.fillText(header, xOffset, 195);
     xOffset += columnWidths[index];
   });
 
   // Draw table rows
   ctx.font = '16px Arial';
   table.forEach((team, index) => {
-    const y = 190 + index * 40;
-    xOffset = 50;
+    const y = 240 + index * 40;
+    xOffset = 60;
 
     // Set row background color
     if (isAFCQualification) {
       if (index < 2) {
-        ctx.fillStyle = 'rgba(40, 167, 69, 0.3)';  // Darker green for positions 1-2
+        ctx.fillStyle = 'rgba(46, 204, 113, 0.2)';  // Green for positions 1-2
       } else if (index < 4) {
-        ctx.fillStyle = 'rgba(255, 193, 7, 0.3)';  // Darker yellow for positions 3-4
+        ctx.fillStyle = 'rgba(241, 196, 15, 0.2)';  // Yellow for positions 3-4
       } else {
         ctx.fillStyle = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
       }
     } else {
       ctx.fillStyle = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
     }
-    ctx.fillRect(40, y - 25, canvas.width - 80, 40);
+    ctx.fillRect(50, y - 25, canvas.width - 100, 40);
 
-    ctx.fillStyle = '#333333';
+    ctx.fillStyle = '#34495e';
     ctx.textAlign = 'center';
     ctx.fillText(team.position.toString(), xOffset + 30, y);
     xOffset += columnWidths[0];
 
     ctx.textAlign = 'left';
-    ctx.fillText(formatTeamName(team.name, 40), xOffset, y);
+    ctx.fillText(formatTeamName(team.name, 45), xOffset, y);
     xOffset += columnWidths[1];
 
     ctx.textAlign = 'center';
@@ -324,20 +332,20 @@ async function generateImageResponse(leagueName, table) {
   if (isAFCQualification) {
     const legendY = canvas.height - 80;
     ctx.font = 'bold 16px Arial';
-    ctx.fillStyle = '#333333';
+    ctx.fillStyle = '#2c3e50';
     ctx.textAlign = 'left';
-    ctx.fillText('Keterangan:', 50, legendY - 20);
+    ctx.fillText('Keterangan:', 60, legendY - 20);
 
     ctx.font = '14px Arial';
-    ctx.fillStyle = 'rgba(40, 167, 69, 0.3)';
-    ctx.fillRect(50, legendY, 20, 20);
-    ctx.fillStyle = '#333333';
-    ctx.fillText('Lolos langsung ke Piala Dunia 2026', 80, legendY + 15);
+    ctx.fillStyle = 'rgba(46, 204, 113, 0.2)';
+    ctx.fillRect(60, legendY, 20, 20);
+    ctx.fillStyle = '#34495e';
+    ctx.fillText('Lolos langsung ke Piala Dunia 2026', 90, legendY + 15);
 
-    ctx.fillStyle = 'rgba(255, 193, 7, 0.3)';
-    ctx.fillRect(350, legendY, 20, 20);
-    ctx.fillStyle = '#333333';
-    ctx.fillText('Lanjut ke putaran playoff', 380, legendY + 15);
+    ctx.fillStyle = 'rgba(241, 196, 15, 0.2)';
+    ctx.fillRect(360, legendY, 20, 20);
+    ctx.fillStyle = '#34495e';
+    ctx.fillText('Lanjut ke putaran selanjutnya', 390, legendY + 15);
   }
 
   return canvas.toBuffer('image/png');
