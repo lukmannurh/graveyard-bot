@@ -160,8 +160,14 @@ async function handleWorldCupQualificationAFC(message, leagueData) {
     const groups = ['A', 'B', 'C'];
     let allGroupsData = [];
 
+    // Periksa apakah data yang diperlukan tersedia
+    if (!leagueData.table || !Array.isArray(leagueData.table)) {
+      await message.reply("Maaf, data klasemen tidak tersedia untuk Kualifikasi Piala Dunia AFC saat ini.");
+      return;
+    }
+
     for (const group of groups) {
-      const groupData = leagueData.tables.find(table => table.title.includes(`Group ${group}`));
+      const groupData = leagueData.table.find(table => table.name.includes(`Group ${group}`));
       if (groupData && groupData.table) {
         const simplifiedGroupData = groupData.table.map(team => ({
           position: team.idx || team.position || team.rank || '',
