@@ -1,7 +1,6 @@
-import pkg from "whatsapp-web.js";
-const { MessageMedia } = pkg;
-import { createCanvas } from "canvas";
-import logger from "../utils/logger.js";
+import { MessageMedia } from 'whatsapp-web.js';
+import { createCanvas } from 'canvas';
+import logger from '../utils/logger.js';
 
 const activeGames = new Map();
 
@@ -113,7 +112,10 @@ const handleDaduChoice = async (message) => {
       game.state === 'choosing'
     )?.[0];
 
-    if (!gameId) return false;
+    if (!gameId) {
+      logger.debug('No active game found for this choice');
+      return false;
+    }
 
     const game = activeGames.get(gameId);
     const choice = parseInt(message.body);
@@ -122,8 +124,12 @@ const handleDaduChoice = async (message) => {
       game.choices[sender.id._serialized] = choice === 1 ? 'ganjil' : 'genap';
       activeGames.set(gameId, game);
 
+      logger.debug(`Player ${sender.id._serialized} chose ${game.choices[sender.id._serialized]}`);
+
       if (Object.keys(game.choices).length === 2) {
-        await resolveDaduGame(chat, gameId);
+        await resolveDaduGame(message.client, chat, gameId);
+      } else {
+        await chat.sendMessage(`${sender.pushname} telah memilih. Menunggu pemain lain...`);
       }
 
       return true;
@@ -132,13 +138,16 @@ const handleDaduChoice = async (message) => {
     return false;
   } catch (error) {
     logger.error('Error in handleDaduChoice:', error);
+    return false;
   }
 };
 
 const handleTimeoutChoices = async (chat, gameId) => {
   const game = activeGames.get(gameId);
-  const challenger = await chat.getContactById(game.challenger);
-  const opponent = await chat.getContactById(game.opponent);
+  if (!game) return;
+
+  const challenger = await chat.client.getContactById(game.challenger);
+  const opponent = await chat.client.getContactById(game.opponent);
 
   if (!game.choices[game.challenger] && !game.choices[game.opponent]) {
     await chat.sendMessage('Kedua pemain tidak memberi respon. Permainan dibatalkan.');
@@ -155,10 +164,12 @@ const handleTimeoutChoices = async (chat, gameId) => {
   activeGames.delete(gameId);
 };
 
-const resolveDaduGame = async (chat, gameId) => {
+const resolveDaduGame = async (client, chat, gameId) => {
   const game = activeGames.get(gameId);
-  const challenger = await chat.getContactById(game.challenger);
-  const opponent = await chat.getContactById(game.opponent);
+  if (!game) return;
+
+  const challenger = await client.getContactById(game.challenger);
+  const opponent = await client.getContactById(game.opponent);
 
   const diceRoll1 = Math.floor(Math.random() * 6) + 1;
   const diceRoll2 = Math.floor(Math.random() * 6) + 1;
@@ -270,3 +281,5 @@ export const handleDaduGame = async (message) => {
     return false;
   }
 };
+
+export { dadu, handleDaduGame };
