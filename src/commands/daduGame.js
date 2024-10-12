@@ -206,62 +206,101 @@ const resolveDaduGame = async (client, chat, gameId) => {
 };
 
 const generateDiceImage = async (dice1, dice2) => {
-  const canvas = createCanvas(200, 100);
+  const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-
-  // Function to draw a single die
-  const drawDie = (x, y, value) => {
-    ctx.fillStyle = 'white';
-    ctx.fillRect(x, y, 80, 80);
-    ctx.strokeStyle = 'black';
-    ctx.strokeRect(x, y, 80, 80);
-
-    ctx.fillStyle = 'black';
-    ctx.beginPath();
-    
-    switch(value) {
-      case 1:
-        ctx.arc(x + 40, y + 40, 5, 0, Math.PI * 2);
-        break;
-      case 2:
-        ctx.arc(x + 20, y + 20, 5, 0, Math.PI * 2);
-        ctx.arc(x + 60, y + 60, 5, 0, Math.PI * 2);
-        break;
-      case 3:
-        ctx.arc(x + 20, y + 20, 5, 0, Math.PI * 2);
-        ctx.arc(x + 40, y + 40, 5, 0, Math.PI * 2);
-        ctx.arc(x + 60, y + 60, 5, 0, Math.PI * 2);
-        break;
-      case 4:
-        ctx.arc(x + 20, y + 20, 5, 0, Math.PI * 2);
-        ctx.arc(x + 60, y + 20, 5, 0, Math.PI * 2);
-        ctx.arc(x + 20, y + 60, 5, 0, Math.PI * 2);
-        ctx.arc(x + 60, y + 60, 5, 0, Math.PI * 2);
-        break;
-      case 5:
-        ctx.arc(x + 20, y + 20, 5, 0, Math.PI * 2);
-        ctx.arc(x + 60, y + 20, 5, 0, Math.PI * 2);
-        ctx.arc(x + 40, y + 40, 5, 0, Math.PI * 2);
-        ctx.arc(x + 20, y + 60, 5, 0, Math.PI * 2);
-        ctx.arc(x + 60, y + 60, 5, 0, Math.PI * 2);
-        break;
-      case 6:
-        ctx.arc(x + 20, y + 20, 5, 0, Math.PI * 2);
-        ctx.arc(x + 60, y + 20, 5, 0, Math.PI * 2);
-        ctx.arc(x + 20, y + 40, 5, 0, Math.PI * 2);
-        ctx.arc(x + 60, y + 40, 5, 0, Math.PI * 2);
-        ctx.arc(x + 20, y + 60, 5, 0, Math.PI * 2);
-        ctx.arc(x + 60, y + 60, 5, 0, Math.PI * 2);
-        break;
+  canvas.width = 300;
+  canvas.height = 150;
+  
+  // Fungsi untuk menggambar dadu
+  function drawDie(x, y, size, value) {
+    // Gambar kubus dasar
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2;
+    ctx.fillRect(x, y, size, size);
+    ctx.strokeRect(x, y, size, size);
+  
+    // Gambar titik-titik
+    ctx.fillStyle = '#000000';
+    const dotSize = size / 10;
+    const padding = size / 5;
+  
+    const positions = [
+      [[1,1]], // 1
+      [[0,0],[2,2]], // 2
+      [[0,0],[1,1],[2,2]], // 3
+      [[0,0],[0,2],[2,0],[2,2]], // 4
+      [[0,0],[0,2],[1,1],[2,0],[2,2]], // 5
+      [[0,0],[0,2],[1,0],[1,2],[2,0],[2,2]] // 6
+    ];
+  
+    positions[value - 1].forEach(([dx, dy]) => {
+      ctx.beginPath();
+      ctx.arc(
+        x + padding + dx * padding,
+        y + padding + dy * padding,
+        dotSize,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    });
+  
+    // Efek 3D sederhana
+    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+    ctx.fillRect(x + size, y, size / 10, size);
+    ctx.fillRect(x, y + size, size, size / 10);
+  }
+  
+  // Fungsi animasi
+  function animate() {
+    let frame = 0;
+    const totalFrames = 20;
+    const die1Value = Math.floor(Math.random() * 6) + 1;
+    const die2Value = Math.floor(Math.random() * 6) + 1;
+  
+    function drawFrame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const rotation = (frame / totalFrames) * Math.PI * 2;
+      const scale = 0.8 + Math.sin(rotation) * 0.2;
+      
+      ctx.save();
+      ctx.translate(75, 75);
+      ctx.scale(scale, scale);
+      ctx.rotate(rotation);
+      ctx.translate(-50, -50);
+      drawDie(0, 0, 100, die1Value);
+      ctx.restore();
+  
+      ctx.save();
+      ctx.translate(225, 75);
+      ctx.scale(scale, scale);
+      ctx.rotate(-rotation);
+      ctx.translate(-50, -50);
+      drawDie(0, 0, 100, die2Value);
+      ctx.restore();
+  
+      frame++;
+      if (frame < totalFrames) {
+        requestAnimationFrame(drawFrame);
+      }
     }
-    ctx.fill();
-  };
-
-  // Draw both dice
-  drawDie(10, 10, dice1);
-  drawDie(110, 10, dice2);
-
-  return canvas.toBuffer();
+  
+    drawFrame();
+  }
+  
+  // Mulai animasi
+  animate();
+  
+  // Menambahkan canvas ke DOM
+  document.body.appendChild(canvas);
+  
+  // Tombol untuk melempar dadu lagi
+  const rollButton = document.createElement('button');
+  rollButton.textContent = 'Roll Dice';
+  rollButton.onclick = animate;
+  document.body.appendChild(rollButton);
 };
 
 export const handleDaduGame = async (message) => {
