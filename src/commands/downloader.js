@@ -5,7 +5,9 @@ import { fileURLToPath } from 'url';
 import pkg from "whatsapp-web.js";
 const { MessageMedia } = pkg;
 import logger from '../utils/logger.js';
-import { fileTypeFromBuffer } from 'file-type';
+import pkg from 'file-type';
+const { fileTypeFromBuffer } = pkg;
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
