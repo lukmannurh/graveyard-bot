@@ -26,24 +26,40 @@ async function downloadMedia(url, type) {
           format: 'mp3'
         });
       }
-    } else if (['ytmp3', 'ytmp4', 'fbdl', 'igdl'].includes(type)) {
+    } else if (['ytmp3', 'ytmp4', 'ytdl'].includes(type)) {
+      // Penanganan khusus untuk YouTube
+      if (response.data.status && response.data.data) {
+        const data = response.data.data;
+        if (type === 'ytdl') {
+          if (data.video) {
+            mediaUrls.push({
+              url: data.video,
+              filename: `ytdl_video_${Date.now()}`,
+              format: 'mp4'
+            });
+          }
+          if (data.audio) {
+            mediaUrls.push({
+              url: data.audio,
+              filename: `ytdl_audio_${Date.now()}`,
+              format: 'mp3'
+            });
+          }
+        } else {
+          mediaUrls.push({
+            url: data.url || data.link,
+            filename: `${type}_${Date.now()}`,
+            format: type === 'ytmp3' ? 'mp3' : 'mp4'
+          });
+        }
+      }
+    } else if (['fbdl', 'igdl'].includes(type)) {
       if (response.data.status && response.data.data) {
         const dataArray = Array.isArray(response.data.data) ? response.data.data : [response.data.data];
         mediaUrls = dataArray.map((item, index) => ({
-          url: item.url,
+          url: item.url || item.link,
           filename: `${type}_${index + 1}_${Date.now()}`
         }));
-      }
-    } else if (type === 'ytdl') {
-      const result = response.data.result?.resultUrl;
-      if (result?.video?.length > 0) {
-        const highestQualityVideo = result.video.reduce((prev, current) => (prev.quality > current.quality) ? prev : current);
-        if (highestQualityVideo.download) {
-          mediaUrls.push({ url: highestQualityVideo.download, filename: `ytdl_video_${Date.now()}`, format: 'mp4' });
-        }
-      }
-      if (result?.audio?.[0]?.download) {
-        mediaUrls.push({ url: result.audio[0].download, filename: `ytdl_audio_${Date.now()}`, format: 'mp3' });
       }
     }
 
@@ -64,17 +80,17 @@ async function downloadMedia(url, type) {
             extension = 'mp3';
             break;
           case 'ytdl':
-            extension = mediaUrl.format; // 'mp4' or 'mp3'
+          case 'ytmp4':
+            extension = 'mp4';
             break;
           case 'igdl':
             extension = buffer[0] === 0xFF && buffer[1] === 0xD8 ? 'jpg' : 'mp4';
             break;
-          case 'ytmp4':
           case 'fbdl':
             extension = 'mp4';
             break;
           default:
-            extension = 'bin'; // fallback extension
+            extension = mediaUrl.format || 'bin'; // Use format if provided, otherwise fallback
         }
         
         const filename = `${mediaUrl.filename}.${extension}`;
