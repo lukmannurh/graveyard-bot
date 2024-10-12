@@ -55,16 +55,27 @@ const handleDaduResponse = async (message) => {
       game.opponent === sender.id._serialized && game.state === 'waiting_confirmation'
     )?.[0];
 
-    if (!gameId) return false;
+    logger.debug(`Checking dadu response for gameId: ${gameId}`);
+
+    if (!gameId) {
+      logger.debug('No active game found for this response');
+      return false;
+    }
 
     const game = activeGames.get(gameId);
+    const response = message.body.toLowerCase();
 
-    if (message.body.toLowerCase() === 'y') {
+    logger.debug(`Received response: ${response} for gameId: ${gameId}`);
+
+    if (response === 'y') {
       game.state = 'choosing';
       activeGames.set(gameId, game);
 
+      const challenger = await chat.getContactById(game.challenger);
+      const opponent = await chat.getContactById(game.opponent);
+
       await chat.sendMessage('Permainan dadu dimulai! Silakan pilih:\n1. Ganjil\n2. Genap', {
-        mentions: [await chat.getContactById(game.challenger), await chat.getContactById(game.opponent)]
+        mentions: [challenger, opponent]
       });
 
       // Set timeout for choices
@@ -75,14 +86,20 @@ const handleDaduResponse = async (message) => {
         }
       }, 60 * 1000); // 1 minute
 
-    } else if (message.body.toLowerCase() === 'n') {
+      logger.debug('Game started successfully');
+    } else if (response === 'n') {
       activeGames.delete(gameId);
       await chat.sendMessage('Tantangan ditolak.');
+      logger.debug('Challenge declined');
+    } else {
+      logger.debug('Invalid response received');
+      return false;
     }
 
     return true;
   } catch (error) {
     logger.error('Error in handleDaduResponse:', error);
+    return false;
   }
 };
 
@@ -235,7 +252,20 @@ const generateDiceImage = async (dice1, dice2) => {
 };
 
 export const handleDaduGame = async (message) => {
-    if (await handleDaduResponse(message)) return true;
-    if (await handleDaduChoice(message)) return true;
+  try {
+    logger.debug(`Handling dadu game response: ${message.body}`);
+    if (await handleDaduResponse(message)) {
+      logger.debug('Dadu response handled successfully');
+      return true;
+    }
+    if (await handleDaduChoice(message)) {
+      logger.debug('Dadu choice handled successfully');
+      return true;
+    }
+    logger.debug('Message not related to dadu game');
     return false;
-  };
+  } catch (error) {
+    logger.error('Error in handleDaduGame:', error);
+    return false;
+  }
+};
