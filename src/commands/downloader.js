@@ -26,30 +26,35 @@ async function downloadMedia(url, type) {
           format: 'mp3'
         });
       }
-    } else if (['ytmp3', 'ytmp4', 'ytdl'].includes(type)) {
-      // Penanganan khusus untuk YouTube
-      if (response.data.status && response.data.data) {
-        const data = response.data.data;
-        if (type === 'ytdl') {
-          if (data.video) {
-            mediaUrls.push({
-              url: data.video,
-              filename: `ytdl_video_${Date.now()}`,
-              format: 'mp4'
-            });
-          }
-          if (data.audio) {
-            mediaUrls.push({
-              url: data.audio,
-              filename: `ytdl_audio_${Date.now()}`,
-              format: 'mp3'
-            });
-          }
-        } else {
+    } else if (['ytmp3', 'ytmp4'].includes(type)) {
+      // Handle ytmp3 and ytmp4
+      if (response.data.url) {
+        mediaUrls.push({
+          url: response.data.url,
+          filename: `${type}_${Date.now()}`,
+          format: type === 'ytmp3' ? 'mp3' : 'mp4'
+        });
+      }
+    } else if (type === 'ytdl') {
+      // Handle ytdl
+      if (response.data.result && response.data.result.resultUrl) {
+        const resultUrl = response.data.result.resultUrl;
+        if (resultUrl.video && resultUrl.video.length > 0) {
+          // Get the highest quality video
+          const highestQualityVideo = resultUrl.video.reduce((prev, current) => 
+            (parseInt(prev.quality) > parseInt(current.quality)) ? prev : current
+          );
           mediaUrls.push({
-            url: data.url || data.link,
-            filename: `${type}_${Date.now()}`,
-            format: type === 'ytmp3' ? 'mp3' : 'mp4'
+            url: highestQualityVideo.download,
+            filename: `ytdl_video_${Date.now()}`,
+            format: 'mp4'
+          });
+        }
+        if (resultUrl.audio && resultUrl.audio.length > 0) {
+          mediaUrls.push({
+            url: resultUrl.audio[0].download,
+            filename: `ytdl_audio_${Date.now()}`,
+            format: 'mp3'
           });
         }
       }
@@ -73,24 +78,9 @@ async function downloadMedia(url, type) {
         const mediaResponse = await axios.get(mediaUrl.url, { responseType: 'arraybuffer' });
         const buffer = Buffer.from(mediaResponse.data);
         
-        let extension;
-        switch (type) {
-          case 'spotify':
-          case 'ytmp3':
-            extension = 'mp3';
-            break;
-          case 'ytdl':
-          case 'ytmp4':
-            extension = 'mp4';
-            break;
-          case 'igdl':
-            extension = buffer[0] === 0xFF && buffer[1] === 0xD8 ? 'jpg' : 'mp4';
-            break;
-          case 'fbdl':
-            extension = 'mp4';
-            break;
-          default:
-            extension = mediaUrl.format || 'bin'; // Use format if provided, otherwise fallback
+        let extension = mediaUrl.format || 'bin';
+        if (type === 'igdl' && !mediaUrl.format) {
+          extension = buffer[0] === 0xFF && buffer[1] === 0xD8 ? 'jpg' : 'mp4';
         }
         
         const filename = `${mediaUrl.filename}.${extension}`;
