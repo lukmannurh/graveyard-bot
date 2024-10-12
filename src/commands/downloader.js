@@ -18,7 +18,15 @@ async function downloadMedia(url, type) {
     logger.debug(`API Response for ${type}: ${JSON.stringify(response.data)}`);
 
     let mediaUrls = [];
-    if (['ytmp3', 'ytmp4', 'fbdl', 'igdl', 'spotify'].includes(type)) {
+    if (type === 'spotify') {
+      if (response.data.success && response.data.link) {
+        mediaUrls.push({
+          url: response.data.link,
+          filename: `spotify_${response.data.metadata.title}_${Date.now()}`,
+          format: 'mp3'
+        });
+      }
+    } else if (['ytmp3', 'ytmp4', 'fbdl', 'igdl'].includes(type)) {
       if (response.data.status && response.data.data) {
         const dataArray = Array.isArray(response.data.data) ? response.data.data : [response.data.data];
         mediaUrls = dataArray.map((item, index) => ({
@@ -51,15 +59,15 @@ async function downloadMedia(url, type) {
         
         let extension;
         switch (type) {
+          case 'spotify':
+          case 'ytmp3':
+            extension = 'mp3';
+            break;
           case 'ytdl':
             extension = mediaUrl.format; // 'mp4' or 'mp3'
             break;
           case 'igdl':
             extension = buffer[0] === 0xFF && buffer[1] === 0xD8 ? 'jpg' : 'mp4';
-            break;
-          case 'ytmp3':
-          case 'spotify':
-            extension = 'mp3';
             break;
           case 'ytmp4':
           case 'fbdl':
