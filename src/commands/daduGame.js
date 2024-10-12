@@ -27,6 +27,7 @@ export const dadu = async (message, args) => {
     };
 
     activeGames.set(gameId, game);
+    logger.debug(`New game created with ID: ${gameId}`);
 
     await chat.sendMessage(`@${opponent.number} Anda ditantang bermain dadu oleh @${challenger.number}. Ketik Y untuk menerima atau N untuk menolak.`, {
       mentions: [opponent, challenger]
@@ -71,8 +72,8 @@ const handleDaduResponse = async (message) => {
       game.state = 'choosing';
       activeGames.set(gameId, game);
 
-      const challenger = await chat.getContactById(game.challenger);
-      const opponent = await chat.getContactById(game.opponent);
+      const challenger = await message.client.getContactById(game.challenger);
+      const opponent = await message.client.getContactById(game.opponent);
 
       await chat.sendMessage('Permainan dadu dimulai! Silakan pilih:\n1. Ganjil\n2. Genap', {
         mentions: [challenger, opponent]
