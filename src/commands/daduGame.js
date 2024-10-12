@@ -127,10 +127,12 @@ const handleDaduChoice = async (message) => {
 
       logger.debug(`Player ${sender.id._serialized} chose ${game.choices[sender.id._serialized]}`);
 
+      await chat.sendMessage(`${sender.pushname} telah memilih ${game.choices[sender.id._serialized]}.`);
+
       if (Object.keys(game.choices).length === 2) {
         await resolveDaduGame(message.client, chat, gameId);
       } else {
-        await chat.sendMessage(`${sender.pushname} telah memilih. Menunggu pemain lain...`);
+        await chat.sendMessage('Menunggu pilihan pemain lain...');
       }
 
       return true;
@@ -172,29 +174,23 @@ const resolveDaduGame = async (client, chat, gameId) => {
   const challenger = await client.getContactById(game.challenger);
   const opponent = await client.getContactById(game.opponent);
 
-  const diceRoll1 = Math.floor(Math.random() * 6) + 1;
-  const diceRoll2 = Math.floor(Math.random() * 6) + 1;
-  const total = diceRoll1 + diceRoll2;
-  const result = total % 2 === 0 ? 'genap' : 'ganjil';
+  const diceImage = await generateDiceImage();
+  const { die1Value, die2Value, total, result } = diceImage;
 
-  // Generate dice image
-  const diceImage = await generateDiceImage(diceRoll1, diceRoll2);
-  const media = new MessageMedia('image/png', diceImage.toString('base64'));
-
-  await chat.sendMessage(media, { 
-    caption: `Dadu menunjukkan: ${diceRoll1} dan ${diceRoll2}. Total: ${total} (${result.toUpperCase()})`
+  await chat.sendMessage(diceImage.media, { 
+    caption: `Dadu menunjukkan: ${die1Value} dan ${die2Value}. Total: ${total} (${result.toUpperCase()})`
   });
 
   let winnerMessage = '';
   if (game.choices[game.challenger] === game.choices[game.opponent]) {
-    if (game.choices[game.challenger] === result) {
+    if (game.choices[game.challenger] === result.toLowerCase()) {
       winnerMessage = 'Permainan berakhir seri!';
     } else {
       winnerMessage = 'Kedua pemain salah tebak. Tidak ada pemenang!';
     }
-  } else if (game.choices[game.challenger] === result) {
+  } else if (game.choices[game.challenger] === result.toLowerCase()) {
     winnerMessage = `Selamat @${challenger.number}, Anda menang!`;
-  } else if (game.choices[game.opponent] === result) {
+  } else if (game.choices[game.opponent] === result.toLowerCase()) {
     winnerMessage = `Selamat @${opponent.number}, Anda menang!`;
   }
 
@@ -205,102 +201,51 @@ const resolveDaduGame = async (client, chat, gameId) => {
   activeGames.delete(gameId);
 };
 
-const generateDiceImage = async (dice1, dice2) => {
-  const canvas = document.createElement('canvas');
+const generateDiceImage = async () => {
+  const canvas = createCanvas(300, 150);
   const ctx = canvas.getContext('2d');
-  canvas.width = 300;
-  canvas.height = 150;
   
-  // Fungsi untuk menggambar dadu
   function drawDie(x, y, size, value) {
-    // Gambar kubus dasar
     ctx.fillStyle = '#ffffff';
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 2;
     ctx.fillRect(x, y, size, size);
     ctx.strokeRect(x, y, size, size);
   
-    // Gambar titik-titik
     ctx.fillStyle = '#000000';
     const dotSize = size / 10;
     const padding = size / 5;
   
     const positions = [
-      [[1,1]], // 1
-      [[0,0],[2,2]], // 2
-      [[0,0],[1,1],[2,2]], // 3
-      [[0,0],[0,2],[2,0],[2,2]], // 4
-      [[0,0],[0,2],[1,1],[2,0],[2,2]], // 5
-      [[0,0],[0,2],[1,0],[1,2],[2,0],[2,2]] // 6
+      [[1,1]], [[0,0],[2,2]], [[0,0],[1,1],[2,2]],
+      [[0,0],[0,2],[2,0],[2,2]], [[0,0],[0,2],[1,1],[2,0],[2,2]],
+      [[0,0],[0,2],[1,0],[1,2],[2,0],[2,2]]
     ];
   
     positions[value - 1].forEach(([dx, dy]) => {
       ctx.beginPath();
-      ctx.arc(
-        x + padding + dx * padding,
-        y + padding + dy * padding,
-        dotSize,
-        0,
-        Math.PI * 2
-      );
+      ctx.arc(x + padding + dx * padding, y + padding + dy * padding, dotSize, 0, Math.PI * 2);
       ctx.fill();
     });
   
-    // Efek 3D sederhana
     ctx.fillStyle = 'rgba(0,0,0,0.2)';
     ctx.fillRect(x + size, y, size / 10, size);
     ctx.fillRect(x, y + size, size, size / 10);
   }
   
-  // Fungsi animasi
-  function animate() {
-    let frame = 0;
-    const totalFrames = 20;
-    const die1Value = Math.floor(Math.random() * 6) + 1;
-    const die2Value = Math.floor(Math.random() * 6) + 1;
+  const die1Value = Math.floor(Math.random() * 6) + 1;
+  const die2Value = Math.floor(Math.random() * 6) + 1;
   
-    function drawFrame() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      const rotation = (frame / totalFrames) * Math.PI * 2;
-      const scale = 0.8 + Math.sin(rotation) * 0.2;
-      
-      ctx.save();
-      ctx.translate(75, 75);
-      ctx.scale(scale, scale);
-      ctx.rotate(rotation);
-      ctx.translate(-50, -50);
-      drawDie(0, 0, 100, die1Value);
-      ctx.restore();
+  drawDie(25, 25, 100, die1Value);
+  drawDie(175, 25, 100, die2Value);
   
-      ctx.save();
-      ctx.translate(225, 75);
-      ctx.scale(scale, scale);
-      ctx.rotate(-rotation);
-      ctx.translate(-50, -50);
-      drawDie(0, 0, 100, die2Value);
-      ctx.restore();
+  const buffer = canvas.toBuffer('image/png');
+  const media = new MessageMedia('image/png', buffer.toString('base64'));
   
-      frame++;
-      if (frame < totalFrames) {
-        requestAnimationFrame(drawFrame);
-      }
-    }
+  const total = die1Value + die2Value;
+  const result = total % 2 === 0 ? 'Genap' : 'Ganjil';
   
-    drawFrame();
-  }
-  
-  // Mulai animasi
-  animate();
-  
-  // Menambahkan canvas ke DOM
-  document.body.appendChild(canvas);
-  
-  // Tombol untuk melempar dadu lagi
-  const rollButton = document.createElement('button');
-  rollButton.textContent = 'Roll Dice';
-  rollButton.onclick = animate;
-  document.body.appendChild(rollButton);
+  return { media, die1Value, die2Value, total, result };
 };
 
 export const handleDaduGame = async (message) => {
