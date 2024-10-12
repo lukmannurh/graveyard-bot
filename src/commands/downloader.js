@@ -5,9 +5,8 @@ import { fileURLToPath } from 'url';
 import pkg from "whatsapp-web.js";
 const { MessageMedia } = pkg;
 import logger from '../utils/logger.js';
-import pkg2 from 'file-type';
-const { fileTypeFromBuffer } = pkg2;
-
+import fileType from 'file-type';
+const { fileTypeFromBuffer } = fileType;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,8 +53,14 @@ async function downloadMedia(url, type) {
         const mediaResponse = await axios.get(mediaUrl.url, { responseType: 'arraybuffer' });
         const buffer = Buffer.from(mediaResponse.data);
         
-        const fileType = await fileTypeFromBuffer(buffer);
-        const extension = fileType ? `.${fileType.ext}` : '';
+        let extension = '';
+        try {
+          const fileTypeResult = await fileTypeFromBuffer(buffer);
+          extension = fileTypeResult ? `.${fileTypeResult.ext}` : '';
+        } catch (fileTypeError) {
+          logger.error('Error determining file type:', fileTypeError);
+          // Fallback to a default extension or leave it empty
+        }
         
         const filename = `${mediaUrl.filename}${extension}`;
         const tempFilePath = path.join(__dirname, '../../temp', filename);
