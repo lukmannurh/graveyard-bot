@@ -1,5 +1,5 @@
 import axios from 'axios';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import pkg from "whatsapp-web.js";
@@ -10,6 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const API_BASE_URL = 'https://api.ryzendesu.vip/api/downloader';
+const MAX_DOCUMENT_SIZE = 12 * 1024 * 1024; // 12MB
 
 async function downloadMedia(url, type) {
   try {
@@ -17,31 +18,27 @@ async function downloadMedia(url, type) {
     logger.debug(`API Response for ${type}: ${JSON.stringify(response.data)}`);
 
     let mediaUrls = [];
-    if (type === 'ytmp3' || type === 'ytmp4') {
+    if (['ytmp3', 'ytmp4'].includes(type)) {
       if (response.data.url) {
         mediaUrls.push({ url: response.data.url, filename: `${type}_${Date.now()}.${type === 'ytmp3' ? 'mp3' : 'mp4'}` });
       }
     } else if (type === 'ytdl') {
-      if (response.data.result && response.data.result.resultUrl) {
-        if (response.data.result.resultUrl.video && response.data.result.resultUrl.video.length > 0) {
-          const videoFormats = response.data.result.resultUrl.video;
-          const highestQualityVideo = videoFormats.reduce((prev, current) => 
-            (prev.quality > current.quality) ? prev : current
-          );
-          if (highestQualityVideo.download) {
-            mediaUrls.push({ url: highestQualityVideo.download, filename: `ytdl_video_${Date.now()}.mp4` });
-          }
-        }
-        if (response.data.result.resultUrl.audio && response.data.result.resultUrl.audio.length > 0 && response.data.result.resultUrl.audio[0].download) {
-          mediaUrls.push({ url: response.data.result.resultUrl.audio[0].download, filename: `ytdl_audio_${Date.now()}.mp3` });
+      const result = response.data.result?.resultUrl;
+      if (result?.video?.length > 0) {
+        const highestQualityVideo = result.video.reduce((prev, current) => (prev.quality > current.quality) ? prev : current);
+        if (highestQualityVideo.download) {
+          mediaUrls.push({ url: highestQualityVideo.download, filename: `ytdl_video_${Date.now()}.mp4` });
         }
       }
+      if (result?.audio?.[0]?.download) {
+        mediaUrls.push({ url: result.audio[0].download, filename: `ytdl_audio_${Date.now()}.mp3` });
+      }
     } else if (type === 'fbdl') {
-      if (response.data.status && response.data.data && response.data.data.length > 0 && response.data.data[0].url) {
+      if (response.data.status && response.data.data?.[0]?.url) {
         mediaUrls.push({ url: response.data.data[0].url, filename: `fbdl_${Date.now()}.mp4` });
       }
     } else if (type === 'igdl') {
-      if (response.data.status && response.data.data && response.data.data.length > 0) {
+      if (response.data.status && response.data.data?.length > 0) {
         response.data.data.forEach((item, index) => {
           if (item.url) {
             const extension = item.url.split('.').pop().split('?')[0];
@@ -49,10 +46,8 @@ async function downloadMedia(url, type) {
           }
         });
       }
-    } else {
-      if (response.data.data && response.data.data.url) {
-        mediaUrls.push({ url: response.data.data.url, filename: `${type}_${Date.now()}.mp4` });
-      }
+    } else if (response.data.data?.url) {
+      mediaUrls.push({ url: response.data.data.url, filename: `${type}_${Date.now()}.mp4` });
     }
 
     if (mediaUrls.length === 0) {
@@ -63,17 +58,17 @@ async function downloadMedia(url, type) {
     for (const mediaUrl of mediaUrls) {
       try {
         const mediaResponse = await axios.get(mediaUrl.url, { responseType: 'arraybuffer' });
-        const buffer = Buffer.from(mediaResponse.data, 'binary');
+        const buffer = Buffer.from(mediaResponse.data);
         
         const tempFilePath = path.join(__dirname, '../../temp', mediaUrl.filename);
-        fs.writeFileSync(tempFilePath, buffer);
+        await fs.writeFile(tempFilePath, buffer);
 
-        const fileSize = fs.statSync(tempFilePath).size;
-        const isDocument = fileSize > 12 * 1024 * 1024; // Check if file is larger than 12MB
+        const fileSize = (await fs.stat(tempFilePath)).size;
+        const isDocument = fileSize > MAX_DOCUMENT_SIZE;
 
         const media = MessageMedia.fromFilePath(tempFilePath);
         
-        fs.unlinkSync(tempFilePath);
+        await fs.unlink(tempFilePath);
 
         downloadedMedia.push({ media, isDocument, filename: mediaUrl.filename });
       } catch (downloadError) {
@@ -118,21 +113,18 @@ async function handleDownload(message, args, type) {
         }
       } catch (sendError) {
         logger.error(`Error sending ${filename}: ${sendError.message}`);
-        await message.reply(`Download successful, but there was an error sending ${filename}. Error: ${sendError.message}`);
+        await message.reply(`Download successful, but there was an error sending ${filename}. Trying to send as document...`);
         
-        // If failed to send as media, try to send as document
-        if (!isDocument) {
-          try {
-            const sent = await message.reply(media, null, { sendMediaAsDocument: true, caption: filename });
-            if (sent) {
-              logger.info(`${filename} sent successfully as document.`);
-            } else {
-              throw new Error('Failed to send media as document');
-            }
-          } catch (docError) {
-            logger.error(`Error sending ${filename} as document: ${docError.message}`);
-            await message.reply(`Failed to send ${filename} as media or document. You may need to download it manually.`);
+        try {
+          const sent = await message.reply(media, null, { sendMediaAsDocument: true, caption: filename });
+          if (sent) {
+            logger.info(`${filename} sent successfully as document.`);
+          } else {
+            throw new Error('Failed to send media as document');
           }
+        } catch (docError) {
+          logger.error(`Error sending ${filename} as document: ${docError.message}`);
+          await message.reply(`Failed to send ${filename}. You may need to download it manually.`);
         }
       }
     }
