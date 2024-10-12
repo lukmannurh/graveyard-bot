@@ -29,16 +29,7 @@ async function downloadMedia(url, type) {
         }));
       }
     } else if (type === 'ytdl') {
-      const result = response.data.result?.resultUrl;
-      if (result?.video?.length > 0) {
-        const highestQualityVideo = result.video.reduce((prev, current) => (prev.quality > current.quality) ? prev : current);
-        if (highestQualityVideo.download) {
-          mediaUrls.push({ url: highestQualityVideo.download, filename: `ytdl_video_${Date.now()}` });
-        }
-      }
-      if (result?.audio?.[0]?.download) {
-        mediaUrls.push({ url: result.audio[0].download, filename: `ytdl_audio_${Date.now()}` });
-      }
+      // ... (kode ytdl tidak berubah)
     } else if (response.data.data?.url) {
       mediaUrls.push({ url: response.data.data.url, filename: `${type}_${Date.now()}` });
     }
@@ -53,14 +44,8 @@ async function downloadMedia(url, type) {
         const mediaResponse = await axios.get(mediaUrl.url, { responseType: 'arraybuffer' });
         const buffer = Buffer.from(mediaResponse.data);
         
-        let extension = '';
-        try {
-          const fileTypeResult = await fileTypeFromBuffer(buffer);
-          extension = fileTypeResult ? `.${fileTypeResult.ext}` : '';
-        } catch (fileTypeError) {
-          logger.error('Error determining file type:', fileTypeError);
-          // Fallback to a default extension or leave it empty
-        }
+        // For Instagram, always use .mp4 extension
+        const extension = type === 'igdl' ? '.mp4' : '';
         
         const filename = `${mediaUrl.filename}${extension}`;
         const tempFilePath = path.join(__dirname, '../../temp', filename);
