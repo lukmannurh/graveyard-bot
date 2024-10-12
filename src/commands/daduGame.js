@@ -1,4 +1,5 @@
-import { MessageMedia } from 'whatsapp-web.js';
+import pkg from 'whatsapp-web.js';
+const { MessageMedia } = pkg;
 import { createCanvas } from 'canvas';
 import logger from '../utils/logger.js';
 
@@ -82,7 +83,7 @@ const handleDaduResponse = async (message) => {
       setTimeout(async () => {
         const currentGame = activeGames.get(gameId);
         if (currentGame && currentGame.state === 'choosing') {
-          await handleTimeoutChoices(chat, gameId);
+          await handleTimeoutChoices(message.client, chat, gameId);
         }
       }, 60 * 1000); // 1 minute
 
@@ -142,12 +143,12 @@ const handleDaduChoice = async (message) => {
   }
 };
 
-const handleTimeoutChoices = async (chat, gameId) => {
+const handleTimeoutChoices = async (client, chat, gameId) => {
   const game = activeGames.get(gameId);
   if (!game) return;
 
-  const challenger = await chat.client.getContactById(game.challenger);
-  const opponent = await chat.client.getContactById(game.opponent);
+  const challenger = await client.getContactById(game.challenger);
+  const opponent = await client.getContactById(game.opponent);
 
   if (!game.choices[game.challenger] && !game.choices[game.opponent]) {
     await chat.sendMessage('Kedua pemain tidak memberi respon. Permainan dibatalkan.');
@@ -281,5 +282,3 @@ export const handleDaduGame = async (message) => {
     return false;
   }
 };
-
-export { dadu, handleDaduGame };
