@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import pkg from "whatsapp-web.js";
 const { MessageMedia } = pkg;
 import logger from '../utils/logger.js';
+import { fileTypeFromBuffer } from 'file-type';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,36 +19,27 @@ async function downloadMedia(url, type) {
     logger.debug(`API Response for ${type}: ${JSON.stringify(response.data)}`);
 
     let mediaUrls = [];
-    if (['ytmp3', 'ytmp4'].includes(type)) {
-      if (response.data.url) {
-        mediaUrls.push({ url: response.data.url, filename: `${type}_${Date.now()}.${type === 'ytmp3' ? 'mp3' : 'mp4'}` });
+    if (['ytmp3', 'ytmp4', 'fbdl', 'igdl'].includes(type)) {
+      if (response.data.status && response.data.data) {
+        const dataArray = Array.isArray(response.data.data) ? response.data.data : [response.data.data];
+        mediaUrls = dataArray.map((item, index) => ({
+          url: item.url,
+          filename: `${type}_${index + 1}_${Date.now()}`
+        }));
       }
     } else if (type === 'ytdl') {
       const result = response.data.result?.resultUrl;
       if (result?.video?.length > 0) {
         const highestQualityVideo = result.video.reduce((prev, current) => (prev.quality > current.quality) ? prev : current);
         if (highestQualityVideo.download) {
-          mediaUrls.push({ url: highestQualityVideo.download, filename: `ytdl_video_${Date.now()}.mp4` });
+          mediaUrls.push({ url: highestQualityVideo.download, filename: `ytdl_video_${Date.now()}` });
         }
       }
       if (result?.audio?.[0]?.download) {
-        mediaUrls.push({ url: result.audio[0].download, filename: `ytdl_audio_${Date.now()}.mp3` });
-      }
-    } else if (type === 'fbdl') {
-      if (response.data.status && response.data.data?.[0]?.url) {
-        mediaUrls.push({ url: response.data.data[0].url, filename: `fbdl_${Date.now()}.mp4` });
-      }
-    } else if (type === 'igdl') {
-      if (response.data.status && response.data.data?.length > 0) {
-        response.data.data.forEach((item, index) => {
-          if (item.url) {
-            const extension = item.url.split('.').pop().split('?')[0];
-            mediaUrls.push({ url: item.url, filename: `igdl_${index + 1}_${Date.now()}.${extension}` });
-          }
-        });
+        mediaUrls.push({ url: result.audio[0].download, filename: `ytdl_audio_${Date.now()}` });
       }
     } else if (response.data.data?.url) {
-      mediaUrls.push({ url: response.data.data.url, filename: `${type}_${Date.now()}.mp4` });
+      mediaUrls.push({ url: response.data.data.url, filename: `${type}_${Date.now()}` });
     }
 
     if (mediaUrls.length === 0) {
@@ -60,7 +52,12 @@ async function downloadMedia(url, type) {
         const mediaResponse = await axios.get(mediaUrl.url, { responseType: 'arraybuffer' });
         const buffer = Buffer.from(mediaResponse.data);
         
-        const tempFilePath = path.join(__dirname, '../../temp', mediaUrl.filename);
+        const fileType = await fileTypeFromBuffer(buffer);
+        const extension = fileType ? `.${fileType.ext}` : '';
+        
+        const filename = `${mediaUrl.filename}${extension}`;
+        const tempFilePath = path.join(__dirname, '../../temp', filename);
+        
         await fs.writeFile(tempFilePath, buffer);
 
         const fileSize = (await fs.stat(tempFilePath)).size;
@@ -70,7 +67,7 @@ async function downloadMedia(url, type) {
         
         await fs.unlink(tempFilePath);
 
-        downloadedMedia.push({ media, isDocument, filename: mediaUrl.filename });
+        downloadedMedia.push({ media, isDocument, filename });
       } catch (downloadError) {
         logger.error(`Error downloading ${mediaUrl.filename}: ${downloadError.message}`);
       }
