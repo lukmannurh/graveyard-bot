@@ -12,7 +12,7 @@ const LEAGUE_MAPPING = {
   "Serie A": { id: 55, ccode: "ITA" },
   "Bundesliga": { id: 54, ccode: "GER" },
   "Ligue 1": { id: 53, ccode: "FRA" },
-  "BRI Liga 1": { id: 403, ccode: "IDN" },
+  "BRI Liga 1": { id: 8983, ccode: "IDN" },
   "Europa Conference League": { id: 73, ccode: "INT" },
   "Europa League": { id: 73, ccode: "INT" },
   "World Cup Qualification AFC Group C": { id: 10197, ccode: "INT" }
