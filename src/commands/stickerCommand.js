@@ -32,9 +32,13 @@ async function stickerCommand(message) {
     await fs.mkdir(tempDir, { recursive: true });
 
     if (media.mimetype.startsWith("image/")) {
-      await processImage(media, message, tempDir);
+      if (media.mimetype === "image/gif") {
+        await processAnimatedMedia(media, message, tempDir);
+      } else {
+        await processImage(media, message, tempDir);
+      }
     } else if (media.mimetype.startsWith("video/")) {
-      await processVideo(media, message, tempDir);
+      await processAnimatedMedia(media, message, tempDir);
     } else {
       await message.reply(
         "File yang dikirim bukan gambar atau video. Silakan kirim gambar atau video untuk diubah menjadi stiker."
@@ -74,18 +78,20 @@ async function processImage(media, message, tempDir) {
   }
 }
 
-async function processVideo(media, message, tempDir) {
-  const videoPath = path.join(tempDir, `video_${Date.now()}.mp4`);
+async function processAnimatedMedia(media, message, tempDir) {
+  const inputPath = path.join(
+    tempDir,
+    `input_${Date.now()}.${media.mimetype.split("/")[1]}`
+  );
   const outputPath = path.join(tempDir, `sticker_${Date.now()}.webp`);
 
   try {
-    await fs.writeFile(videoPath, Buffer.from(media.data, "base64"));
+    await fs.writeFile(inputPath, Buffer.from(media.data, "base64"));
 
     await new Promise((resolve, reject) => {
-      ffmpeg(videoPath)
-        .setStartTime(0)
-        .setDuration(10) // Limit to 10 seconds
-        .addOutputOptions([
+      ffmpeg(inputPath)
+        .inputOptions(["-t", "10"]) // Limit to 10 seconds
+        .outputOptions([
           "-vcodec",
           "libwebp",
           "-vf",
@@ -97,8 +103,8 @@ async function processVideo(media, message, tempDir) {
           "-an",
           "-vsync",
           "0",
-          "-t",
-          "00:00:10",
+          "-ss",
+          "00:00:00",
         ])
         .toFormat("webp")
         .on("stderr", (stderrLine) => {
@@ -117,14 +123,14 @@ async function processVideo(media, message, tempDir) {
 
     await message.reply(stickerMedia, null, { sendMediaAsSticker: true });
 
-    logger.info("Video sticker sent successfully");
+    logger.info("Animated sticker sent successfully");
   } catch (error) {
-    logger.error("Error processing video:", error);
+    logger.error("Error processing animated media:", error);
     await message.reply(
-      "Terjadi kesalahan saat memproses video. Silakan coba lagi nanti."
+      "Terjadi kesalahan saat memproses media. Silakan coba lagi nanti."
     );
   } finally {
-    await fs.unlink(videoPath).catch(() => {});
+    await fs.unlink(inputPath).catch(() => {});
     await fs.unlink(outputPath).catch(() => {});
   }
 }
