@@ -28,21 +28,15 @@ async function stickerCommand(message) {
       return;
     }
 
+    logger.info(`Processing media of type: ${media.mimetype}`);
+
     const tempDir = path.join(__dirname, "../../temp");
     await fs.mkdir(tempDir, { recursive: true });
 
-    if (media.mimetype.startsWith("image/")) {
-      if (media.mimetype === "image/gif") {
-        await processAnimatedMedia(media, message, tempDir);
-      } else {
-        await processImage(media, message, tempDir);
-      }
-    } else if (media.mimetype.startsWith("video/")) {
-      await processAnimatedMedia(media, message, tempDir);
+    if (media.mimetype.startsWith("image/") && media.mimetype !== "image/gif") {
+      await processImage(media, message, tempDir);
     } else {
-      await message.reply(
-        "File yang dikirim bukan gambar atau video. Silakan kirim gambar atau video untuk diubah menjadi stiker."
-      );
+      await processAnimatedMedia(media, message, tempDir);
     }
   } catch (error) {
     logger.error("Error in stickerCommand:", error);
@@ -87,15 +81,16 @@ async function processAnimatedMedia(media, message, tempDir) {
 
   try {
     await fs.writeFile(inputPath, Buffer.from(media.data, "base64"));
+    logger.info(`Input file saved: ${inputPath}`);
 
     await new Promise((resolve, reject) => {
       ffmpeg(inputPath)
-        .inputOptions(["-t", "10"]) // Limit to 10 seconds
+        .inputOptions(["-t", "5"])
         .outputOptions([
           "-vcodec",
           "libwebp",
           "-vf",
-          "scale=512:512:force_original_aspect_ratio=decrease,fps=15,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=white@0.0,split[a][b];[a]palettegen=reserve_transparent=on:transparency_color=ffffff[p];[b][p]paletteuse",
+          "scale=512:512:force_original_aspect_ratio=decrease,fps=15,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=white@0.0",
           "-loop",
           "0",
           "-preset",
@@ -107,11 +102,25 @@ async function processAnimatedMedia(media, message, tempDir) {
           "00:00:00",
         ])
         .toFormat("webp")
+        .on("start", (commandLine) => {
+          logger.info("FFmpeg process started:", commandLine);
+        })
+        .on("progress", (progress) => {
+          logger.info(`Processing: ${progress.percent}% done`);
+        })
         .on("stderr", (stderrLine) => {
           logger.debug("FFmpeg stderr:", stderrLine);
         })
-        .on("end", () => resolve())
-        .on("error", (err) => reject(err))
+        .on("error", (err, stdout, stderr) => {
+          logger.error("FFmpeg error:", err);
+          logger.error("FFmpeg stdout:", stdout);
+          logger.error("FFmpeg stderr:", stderr);
+          reject(err);
+        })
+        .on("end", () => {
+          logger.info("FFmpeg process completed");
+          resolve();
+        })
         .save(outputPath);
     });
 
@@ -130,8 +139,12 @@ async function processAnimatedMedia(media, message, tempDir) {
       "Terjadi kesalahan saat memproses media. Silakan coba lagi nanti."
     );
   } finally {
-    await fs.unlink(inputPath).catch(() => {});
-    await fs.unlink(outputPath).catch(() => {});
+    await fs
+      .unlink(inputPath)
+      .catch((e) => logger.error("Error deleting input file:", e));
+    await fs
+      .unlink(outputPath)
+      .catch((e) => logger.error("Error deleting output file:", e));
   }
 }
 
