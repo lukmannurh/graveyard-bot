@@ -23,6 +23,11 @@ async function stickerCommand(message) {
     }
 
     const media = await message.downloadMedia();
+    if (!media) {
+      await message.reply("Gagal mengunduh media. Silakan coba lagi.");
+      return;
+    }
+
     const tempDir = path.join(__dirname, "../../temp");
     await fs.mkdir(tempDir, { recursive: true });
 
@@ -44,16 +49,38 @@ async function stickerCommand(message) {
 }
 
 async function processImage(media, message, tempDir) {
-  // ... (kode processImage tetap sama)
+  try {
+    const imageBuffer = Buffer.from(media.data, "base64");
+    const stickerBuffer = await sharp(imageBuffer)
+      .resize(512, 512, {
+        fit: "contain",
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      })
+      .webp()
+      .toBuffer();
+
+    const stickerMedia = new MessageMedia(
+      "image/webp",
+      stickerBuffer.toString("base64")
+    );
+    await message.reply(stickerMedia, null, { sendMediaAsSticker: true });
+
+    logger.info("Image sticker sent successfully");
+  } catch (error) {
+    logger.error("Error processing image:", error);
+    await message.reply(
+      "Terjadi kesalahan saat memproses gambar. Silakan coba lagi nanti."
+    );
+  }
 }
 
 async function processVideo(media, message, tempDir) {
   const videoPath = path.join(tempDir, `video_${Date.now()}.mp4`);
-  await fs.writeFile(videoPath, Buffer.from(media.data, "base64"));
-
   const outputPath = path.join(tempDir, `sticker_${Date.now()}.webp`);
 
   try {
+    await fs.writeFile(videoPath, Buffer.from(media.data, "base64"));
+
     await new Promise((resolve, reject) => {
       ffmpeg(videoPath)
         .setStartTime(0)
@@ -70,8 +97,13 @@ async function processVideo(media, message, tempDir) {
           "-an",
           "-vsync",
           "0",
+          "-t",
+          "00:00:10",
         ])
         .toFormat("webp")
+        .on("stderr", (stderrLine) => {
+          logger.debug("FFmpeg stderr:", stderrLine);
+        })
         .on("end", () => resolve())
         .on("error", (err) => reject(err))
         .save(outputPath);
@@ -82,7 +114,8 @@ async function processVideo(media, message, tempDir) {
       "image/webp",
       stickerBuffer.toString("base64")
     );
-    await message.reply(stickerMedia, undefined, { sendMediaAsSticker: true });
+
+    await message.reply(stickerMedia, null, { sendMediaAsSticker: true });
 
     logger.info("Video sticker sent successfully");
   } catch (error) {
