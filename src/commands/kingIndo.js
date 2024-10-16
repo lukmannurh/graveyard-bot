@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const FOTMOB_API_URL = 'https://www.fotmob.com/api';
-const INDONESIA_TEAM_ID = 8068; // ID Tim Nasional Indonesia di Fotmob
+const INDONESIA_TEAM_ID = 6324; // ID Tim Nasional Indonesia di Fotmob
 
 async function getIndonesiaMatches() {
     try {
