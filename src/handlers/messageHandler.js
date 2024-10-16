@@ -35,6 +35,7 @@ import {
   getForbiddenWordResponse,
 } from "../utils/wordFilter.js";
 import { warnUser } from "../utils/enhancedModerationSystem.js";
+import { startTicTacToe, makeMove } from "../commands/ticTacToeCommands.js";
 
 const messageHandler = async (message) => {
   try {
@@ -129,6 +130,13 @@ const messageHandler = async (message) => {
           return;
         case "dadu":
           await dadu(message, args);
+          return;
+        case "ttc":
+          if (args.length === 0) {
+            await makeMove(message, args);
+          } else {
+            await startTicTacToe(message, args);
+          }
           return;
       }
 
