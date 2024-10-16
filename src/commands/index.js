@@ -51,6 +51,7 @@ export {
   klasemenLiga,
   dadu,
   handleDaduGame,
+  kingIndo
 };
 
 export const GENERAL_COMMANDS = [

@@ -110,6 +110,7 @@ const messageHandler = async (message) => {
       // Handle specific commands
       switch (commandName) {
         case "kingindo":
+          logger.info("KingIndo command detected");
           await kingIndo(message, args);
           return;
         case "tt":
