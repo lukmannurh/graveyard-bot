@@ -1,24 +1,51 @@
-import { OWNER_NUMBER } from '../config/index.js';
+import { OWNER_NUMBER } from "../config/index.js";
 
-const forbiddenWords = ['goblok', 'tolol', 'idiot', 'memek', 'kontol', 'jancuk',
-    'jokowi', 'mulyono', 'owi', 'goblog', 'jancok', 'anjing', 'babi', 'nigga',
-    'nigger', 'kanjut', 'itil', 'ngentot', 'ngentod', 'bangsat', 'bangsad', 'goblog'
+const forbiddenWords = [
+  "goblok",
+  "tolol",
+  "idiot",
+  "memek",
+  "kontol",
+  "jancuk",
+  "jokowi",
+  "mulyono",
+  "owi",
+  "goblog",
+  "jancok",
+  "anjing",
+  "babi",
+  "nigga",
+  "hok",
+  "goblok",
+  "kanjut",
+  "hokmok",
+  "nigger",
+  "kanjut",
+  "itil",
+  "ngentot",
+  "ngentod",
+  "bangsat",
+  "bangsad",
+  "goblog",
+  '.tagall'
 ];
 
 export function checkForbiddenWord(message, userId) {
-  if (OWNER_NUMBER.includes(userId.replace('@c.us', ''))) {
+  if (OWNER_NUMBER.includes(userId.replace("@c.us", ""))) {
     return { found: false };
   }
 
   const words = message.split(/\s+/);
   for (const word of words) {
     const lowercaseWord = word.toLowerCase();
-    const forbiddenWord = forbiddenWords.find(fw => lowercaseWord.includes(fw));
+    const forbiddenWord = forbiddenWords.find((fw) =>
+      lowercaseWord.includes(fw)
+    );
     if (forbiddenWord) {
       return {
         found: true,
         word: word,
-        lowercaseWord: forbiddenWord
+        lowercaseWord: forbiddenWord,
       };
     }
   }
