@@ -30,6 +30,11 @@ import {
   handleKlasemenResponse,
 } from "../commands/klasemenLiga.js";
 import { dadu, handleDaduGame } from "../commands/daduGame.js";
+import {
+  checkForbiddenWord,
+  getForbiddenWordResponse,
+} from "../utils/wordFilter.js";
+import { warnUser } from "../utils/enhancedModerationSystem.js";
 
 const messageHandler = async (message) => {
   try {
@@ -62,6 +67,29 @@ const messageHandler = async (message) => {
           userId.split("@")[0]
         }, You are currently banned in this group. Your message has been deleted. The ban will end in 1 hour.`
       );
+      return;
+    }
+
+    // Check for forbidden words
+    const forbiddenCheck = checkForbiddenWord(message.body, userId);
+    if (forbiddenCheck.found) {
+      const updatedStatus = await warnUser(groupId, userId);
+      await message.reply(
+        getForbiddenWordResponse(
+          forbiddenCheck.word,
+          forbiddenCheck.lowercaseWord
+        )
+      );
+
+      if (updatedStatus.banned) {
+        await message.reply(
+          "Anda telah mencapai batas peringatan dan sekarang di-ban dari grup ini selama 1 jam."
+        );
+      } else {
+        await message.reply(
+          `Peringatan ${updatedStatus.warnings}/5. Hati-hati dalam penggunaan kata-kata.`
+        );
+      }
       return;
     }
 
@@ -136,9 +164,9 @@ const messageHandler = async (message) => {
       if (!klasemenHandled) {
         // Handle dadu game response
         const daduHandled = await handleDaduGame(message);
-        if (daduHandled) {
-          logger.debug("Dadu game handled");
-          return;
+        if (!daduHandled) {
+          // Handle non-command messages
+          await handleNonCommandMessage(message, chat, sender);
         }
       }
     }
