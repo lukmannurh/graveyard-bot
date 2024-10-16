@@ -5,7 +5,7 @@ export const startTicTacToe = async (message, args) => {
     try {
         const mentions = await message.getMentions();
         if (mentions.length !== 1) {
-            await message.reply('Please mention one player to start the game with.');
+            await message.reply('Please mention one player or @bot to start the game with.');
             return;
         }
 
@@ -23,7 +23,7 @@ export const startTicTacToe = async (message, args) => {
             // Bot automatically accepts and makes a move
             await TicTacToe.confirmGame(groupId, player2.id._serialized);
             const botMove = TicTacToe.makeBotMove(groupId);
-            if (botMove) {
+            if (botMove !== null) {
                 await sendGameState(message, groupId, `Bot memilih kotak ${botMove + 1}`);
             }
         } else {

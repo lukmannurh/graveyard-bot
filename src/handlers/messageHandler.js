@@ -164,6 +164,13 @@ const messageHandler = async (message) => {
       const pendingSelection = adventureManager.getPendingSelection(groupId);
       const isGameActive = adventureManager.isGameActive(groupId);
       
+      // Check if the message is tagging @bot for Tic Tac Toe
+      const mentions = await message.getMentions();
+      if (mentions.length === 1 && mentions[0].id.user === 'status@broadcast') {
+        await startTicTacToe(message, []);
+        return;
+      }
+
       if (pendingSelection === userId || (isGameActive && /^\d+$/.test(message.body.trim()))) {
         if (isAuthorized) {
           logger.debug(`Processing adventure choice: ${message.body} for group ${groupId} from user ${userId}`);
