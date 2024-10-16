@@ -23,6 +23,7 @@ import animeRecommendation from "./animeRecommendation.js";
 import { klasemenLiga } from "./klasemenLiga.js";
 import { dadu, handleDaduGame } from "./daduGame.js";
 import { startTicTacToe, makeMove } from "./ticTacToeCommands.js";
+import { kingIndo } from './kingIndo.js';
 
 export {
   menu,
@@ -61,6 +62,7 @@ export const GENERAL_COMMANDS = [
   "random",
   "waifu",
   "tt",
+  'kingindo',
   "bandarsabu",
   "cekjomok",
   "adventure",
@@ -96,6 +98,7 @@ const exportedCommands = {
   authorizeGroup,
   ban,
   unban,
+  kingindo: kingIndo,
   waifu,
   random,
   bandarsabu,

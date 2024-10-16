@@ -41,6 +41,7 @@ import {
   rejectTicTacToe,
   makeMove,
 } from "../commands/ticTacToeCommands.js";
+import { kingIndo } from "../commands/kingIndo.js";
 
 const messageHandler = async (message) => {
   try {
@@ -108,6 +109,9 @@ const messageHandler = async (message) => {
 
       // Handle specific commands
       switch (commandName) {
+        case "kingindo":
+          await kingIndo(message, args);
+          return;
         case "tt":
           await downloadTikTokVideo(message, args);
           return;
