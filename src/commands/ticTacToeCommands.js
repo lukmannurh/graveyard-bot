@@ -35,7 +35,7 @@ export const confirmTicTacToe = async (message) => {
         const groupId = message.from;
         const player2 = await message.getContact();
 
-        const boardImage = TicTacToe.confirmGame(groupId, player2.id._serialized);
+        const boardImage = await TicTacToe.confirmGame(groupId, player2.id._serialized);
         if (boardImage) {
             await message.reply(boardImage, null, { caption: 'Game started! Player X goes first. Use numbers 1-9 to make your move.' });
         } else {
@@ -73,7 +73,7 @@ export const makeMove = async (message) => {
         const groupId = message.from;
         const player = await message.getContact();
 
-        const result = TicTacToe.makeMove(groupId, player.id._serialized, position);
+        const result = await TicTacToe.makeMove(groupId, player.id._serialized, position);
         if (!result) {
             return false; // Not a valid move or not player's turn, ignore
         }

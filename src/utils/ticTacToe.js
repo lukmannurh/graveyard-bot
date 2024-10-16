@@ -1,6 +1,12 @@
 import { createCanvas } from 'canvas';
 import pkg from 'whatsapp-web.js';
 const { MessageMedia } = pkg;
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class TicTacToe {
     constructor() {
@@ -13,7 +19,7 @@ class TicTacToe {
         return `@${player2.split('@')[0]}, Anda diajak bermain Tic Tac Toe oleh @${player1.split('@')[0]}. Ketik Y untuk menerima atau N untuk menolak dalam 5 menit.`;
     }
 
-    confirmGame(groupId, player2) {
+    async confirmGame(groupId, player2) {
         const pendingGame = this.pendingGames.get(groupId);
         if (pendingGame && pendingGame.player2 === player2) {
             const game = {
@@ -24,7 +30,7 @@ class TicTacToe {
             };
             this.games.set(groupId, game);
             this.pendingGames.delete(groupId);
-            return this.getBoardImage(game.board);
+            return await this.getBoardImage(game.board);
         }
         return null;
     }
@@ -38,7 +44,7 @@ class TicTacToe {
         return false;
     }
 
-    makeMove(groupId, player, position) {
+    async makeMove(groupId, player, position) {
         const game = this.games.get(groupId);
         if (!game || game.players[game.currentPlayer] !== player || game.board[position] !== null) {
             return null;
@@ -49,13 +55,13 @@ class TicTacToe {
         const winner = this.checkWinner(game.board);
         
         if (winner || !game.board.includes(null)) {
-            const result = this.getBoardImage(game.board);
+            const result = await this.getBoardImage(game.board);
             this.games.delete(groupId);
-            return { result, winner };
+            return { result, winner, board: game.board };
         }
 
         game.currentPlayer = game.currentPlayer === 'X' ? 'O' : 'X';
-        return this.getBoardImage(game.board);
+        return await this.getBoardImage(game.board);
     }
 
     checkWinner(board) {
@@ -75,7 +81,7 @@ class TicTacToe {
         return null;
     }
 
-    getBoardImage(board) {
+    async getBoardImage(board) {
         const canvas = createCanvas(300, 300);
         const ctx = canvas.getContext('2d');
 
@@ -115,7 +121,16 @@ class TicTacToe {
             }
         }
 
-        return MessageMedia.fromBuffer(canvas.toBuffer(), 'board.png', 'image/png');
+        const buffer = canvas.toBuffer('image/png');
+        const tempFilePath = path.join(__dirname, '../../temp', `board_${Date.now()}.png`);
+        await fs.writeFile(tempFilePath, buffer);
+
+        const media = MessageMedia.fromFilePath(tempFilePath);
+
+        // Delete the temporary file
+        await fs.unlink(tempFilePath);
+
+        return media;
     }
 
     checkTimeout(groupId) {
