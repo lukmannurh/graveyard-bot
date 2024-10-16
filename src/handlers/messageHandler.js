@@ -43,8 +43,6 @@ import {
 } from "../commands/ticTacToeCommands.js";
 import { kingIndo, handleKingIndoResponse } from "../commands/kingIndo.js";
 
-let awaitingKingIndoResponse = new Map();
-
 const messageHandler = async (message) => {
   try {
     const chat = await message.getChat();
@@ -61,7 +59,6 @@ const messageHandler = async (message) => {
     const isOwnerUser = isOwner(userId);
     const isGroupAdmin = await isAdmin(chat, sender);
 
-    // Log message for stats
     if (message.fromMe === false) {
       groupStats.logMessage(groupId, userId);
     }
@@ -79,7 +76,6 @@ const messageHandler = async (message) => {
       return;
     }
 
-    // Check for forbidden words
     const forbiddenCheck = checkForbiddenWord(message.body, userId);
     if (forbiddenCheck.found) {
       const updatedStatus = await warnUser(groupId, userId);
@@ -109,12 +105,10 @@ const messageHandler = async (message) => {
         .split(/ +/);
       const commandName = command.toLowerCase();
 
-      // Handle specific commands
       switch (commandName) {
         case "kingindo":
           logger.info("KingIndo command detected");
           await kingIndo(message, args);
-          awaitingKingIndoResponse.set(message.from, true);
           return;
         case "tt":
           await downloadTikTokVideo(message, args);
@@ -188,26 +182,17 @@ const messageHandler = async (message) => {
         logger.debug("Processing adventure choice");
         await handleAdventureChoice(message);
       }
-    } else if (awaitingKingIndoResponse.get(message.from)) {
-      // Handle KingIndo response
-      await handleKingIndoResponse(message);
-      awaitingKingIndoResponse.delete(message.from);
-      return;
     } else if (isAuthorized) {
-      // Handle klasemen liga response
       const klasemenHandled = await handleKlasemenResponse(message);
       if (!klasemenHandled) {
-        // Handle dadu game response
         const daduHandled = await handleDaduGame(message);
         if (!daduHandled) {
-          // Handle non-command messages
           await handleNonCommandMessage(message, chat, sender);
         }
       }
     }
   } catch (error) {
     logger.error("Error in messageHandler:", error);
-    // Do not send error message to avoid responding to banned users
   }
 };
 
