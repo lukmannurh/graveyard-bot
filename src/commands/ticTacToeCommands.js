@@ -13,17 +13,28 @@ export const startTicTacToe = async (message, args) => {
         const player2 = mentions[0];
         const groupId = message.from;
 
-        const inviteMessage = TicTacToe.newGame(groupId, player1.id._serialized, player2.id._serialized);
+        // Check if player2 is a bot
+        const isBot = player2.id.user === 'status@broadcast';
+        
+        const inviteMessage = TicTacToe.newGame(groupId, player1.id._serialized, player2.id._serialized, isBot);
         await message.reply(inviteMessage, null, { mentions: [player2] });
 
-        // Set timeout for game confirmation
-        setTimeout(async () => {
-            if (TicTacToe.pendingGames.has(groupId)) {
-                TicTacToe.pendingGames.delete(groupId);
-                await message.reply('Game invitation has expired.');
+        if (isBot) {
+            // Bot automatically accepts and makes a move
+            await TicTacToe.confirmGame(groupId, player2.id._serialized);
+            const botMove = TicTacToe.makeBotMove(groupId);
+            if (botMove) {
+                await sendGameState(message, groupId, `Bot memilih kotak ${botMove + 1}`);
             }
-        }, 5 * 60 * 1000);
-
+        } else {
+            // Set timeout for game confirmation
+            setTimeout(async () => {
+                if (TicTacToe.pendingGames.has(groupId)) {
+                    TicTacToe.pendingGames.delete(groupId);
+                    await message.reply('Game invitation has expired.');
+                }
+            }, 5 * 60 * 1000);
+        }
     } catch (error) {
         logger.error('Error in startTicTacToe:', error);
         await message.reply('An error occurred while starting the game. Please try again.');
@@ -35,9 +46,9 @@ export const confirmTicTacToe = async (message) => {
         const groupId = message.from;
         const player2 = await message.getContact();
 
-        const boardImage = await TicTacToe.confirmGame(groupId, player2.id._serialized);
-        if (boardImage) {
-            await message.reply(boardImage, null, { caption: 'Game started! Player X goes first. Use numbers 1-9 to make your move.' });
+        const gameState = await TicTacToe.confirmGame(groupId, player2.id._serialized);
+        if (gameState) {
+            await sendGameState(message, groupId, 'Game started! Player X goes first.');
         } else {
             await message.reply('No pending game invitation found for you.');
         }
@@ -78,29 +89,43 @@ export const makeMove = async (message) => {
             return false; // Not a valid move or not player's turn, ignore
         }
 
-        if (result.winner) {
-            const winnerContact = await message.client.getContactById(result.winner);
-            await message.reply(result.result, null, { caption: `Game Over! ${winnerContact.pushname} (${result.winner === 'X' ? 'X' : 'O'}) wins! Congratulations!` });
-        } else if (result.winner === null && !result.board.includes(null)) {
-            await message.reply(result.result, null, { caption: 'Game Over! It\'s a draw!' });
-        } else {
-            const game = TicTacToe.games.get(groupId);
-            const nextPlayer = await message.client.getContactById(game.players[game.currentPlayer]);
-            await message.reply(result, null, { caption: `${nextPlayer.pushname}'s turn (${game.currentPlayer}). Use numbers 1-9 to make your move.` });
+        await sendGameState(message, groupId, `${player.pushname} memilih kotak ${position + 1}`);
 
-            // Set timeout for next move
+        if (result.winner || (result.board && !result.board.includes(null))) {
+            // Game ended
+            let endMessage = result.winner ? 
+                `Game Over! ${result.winner === 'X' ? 'X' : 'O'} wins!` : 
+                'Game Over! It\'s a draw!';
+            await message.reply(endMessage);
+            TicTacToe.endGame(groupId);
+        } else if (result.nextPlayer === 'bot') {
+            // Bot's turn
             setTimeout(async () => {
-                const timeoutWinner = TicTacToe.checkTimeout(groupId);
-                if (timeoutWinner) {
-                    const winnerContact = await message.client.getContactById(game.players[timeoutWinner]);
-                    await message.reply(`Game Over! ${winnerContact.pushname} (${timeoutWinner}) wins by timeout! Congratulations!`);
+                const botMove = TicTacToe.makeBotMove(groupId);
+                if (botMove !== null) {
+                    await sendGameState(message, groupId, `Bot memilih kotak ${botMove + 1}`);
+                    const finalResult = TicTacToe.checkGameEnd(groupId);
+                    if (finalResult) {
+                        let endMessage = finalResult.winner ? 
+                            `Game Over! ${finalResult.winner === 'X' ? 'X' : 'O'} wins!` : 
+                            'Game Over! It\'s a draw!';
+                        await message.reply(endMessage);
+                        TicTacToe.endGame(groupId);
+                    }
                 }
-            }, 5 * 60 * 1000);
+            }, 1000); // Delay bot's move by 1 second
         }
 
         return true;
     } catch (error) {
         logger.error('Error in makeMove:', error);
         await message.reply('An error occurred while making the move. Please try again.');
+    }
+};
+
+const sendGameState = async (message, groupId, caption) => {
+    const gameState = await TicTacToe.getGameState(groupId);
+    if (gameState) {
+        await message.reply(gameState, null, { caption: caption });
     }
 };

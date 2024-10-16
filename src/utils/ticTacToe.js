@@ -14,23 +14,24 @@ class TicTacToe {
         this.pendingGames = new Map();
     }
 
-    newGame(groupId, player1, player2) {
-        this.pendingGames.set(groupId, { player1, player2, confirmed: false });
-        return `@${player2.split('@')[0]}, Anda diajak bermain Tic Tac Toe oleh @${player1.split('@')[0]}. Ketik Y untuk menerima atau N untuk menolak dalam 5 menit.`;
+    newGame(groupId, player1, player2, isBot = false) {
+        this.pendingGames.set(groupId, { player1, player2, confirmed: false, isBot });
+        return `@${player2.split('@')[0]}, ${isBot ? 'Bot' : 'Anda'} diajak bermain Tic Tac Toe oleh @${player1.split('@')[0]}. ${isBot ? 'Bot akan mulai bermain.' : 'Ketik Y untuk menerima atau N untuk menolak dalam 5 menit.'}`;
     }
 
     async confirmGame(groupId, player2) {
         const pendingGame = this.pendingGames.get(groupId);
-        if (pendingGame && pendingGame.player2 === player2) {
+        if (pendingGame && (pendingGame.player2 === player2 || pendingGame.isBot)) {
             const game = {
                 board: Array(9).fill(null),
                 currentPlayer: 'X',
                 players: { X: pendingGame.player1, O: player2 },
-                lastMoveTime: Date.now()
+                lastMoveTime: Date.now(),
+                isBot: pendingGame.isBot
             };
             this.games.set(groupId, game);
             this.pendingGames.delete(groupId);
-            return await this.getBoardImage(game.board);
+            return await this.getGameState(groupId);
         }
         return null;
     }
@@ -52,16 +53,37 @@ class TicTacToe {
 
         game.board[position] = game.currentPlayer;
         game.lastMoveTime = Date.now();
-        const winner = this.checkWinner(game.board);
         
+        const winner = this.checkWinner(game.board);
         if (winner || !game.board.includes(null)) {
-            const result = await this.getBoardImage(game.board);
-            this.games.delete(groupId);
-            return { result, winner, board: game.board };
+            return { winner, board: game.board };
         }
 
         game.currentPlayer = game.currentPlayer === 'X' ? 'O' : 'X';
-        return await this.getBoardImage(game.board);
+        return { nextPlayer: game.isBot && game.currentPlayer === 'O' ? 'bot' : game.currentPlayer };
+    }
+
+    makeBotMove(groupId) {
+        const game = this.games.get(groupId);
+        if (!game || !game.isBot || game.currentPlayer !== 'O') {
+            return null;
+        }
+
+        const availableMoves = game.board.reduce((acc, cell, index) => {
+            if (cell === null) acc.push(index);
+            return acc;
+        }, []);
+
+        if (availableMoves.length === 0) {
+            return null;
+        }
+
+        const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+        game.board[randomMove] = 'O';
+        game.lastMoveTime = Date.now();
+        game.currentPlayer = 'X';
+
+        return randomMove;
     }
 
     checkWinner(board) {
@@ -79,6 +101,25 @@ class TicTacToe {
         }
 
         return null;
+    }
+
+    checkGameEnd(groupId) {
+        const game = this.games.get(groupId);
+        if (!game) return null;
+
+        const winner = this.checkWinner(game.board);
+        if (winner || !game.board.includes(null)) {
+            return { winner, board: game.board };
+        }
+
+        return null;
+    }
+
+    async getGameState(groupId) {
+        const game = this.games.get(groupId);
+        if (!game) return null;
+
+        return await this.getBoardImage(game.board);
     }
 
     async getBoardImage(board) {
@@ -103,7 +144,7 @@ class TicTacToe {
         ctx.lineTo(300, 200);
         ctx.stroke();
 
-        // Draw X and O
+        // Draw X, O, and numbers
         ctx.font = '80px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -118,6 +159,11 @@ class TicTacToe {
             } else if (board[i] === 'O') {
                 ctx.fillStyle = '#0000ff';
                 ctx.fillText('O', x, y);
+            } else {
+                ctx.fillStyle = '#888888';
+                ctx.font = '40px Arial';
+                ctx.fillText((i + 1).toString(), x, y);
+                ctx.font = '80px Arial';
             }
         }
 
@@ -133,14 +179,8 @@ class TicTacToe {
         return media;
     }
 
-    checkTimeout(groupId) {
-        const game = this.games.get(groupId);
-        if (game && Date.now() - game.lastMoveTime > 5 * 60 * 1000) {
-            const winner = game.currentPlayer === 'X' ? 'O' : 'X';
-            this.games.delete(groupId);
-            return winner;
-        }
-        return null;
+    endGame(groupId) {
+        this.games.delete(groupId);
     }
 }
 

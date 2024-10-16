@@ -172,13 +172,12 @@ const messageHandler = async (message) => {
         }
       }
 
-      // If not an adventure choice, continue with other handlers
-      if (message.body.toLowerCase() === "y" || message.body.toLowerCase() === "n") {
-        if (message.body.toLowerCase() === "y") {
-          await confirmTicTacToe(message);
-        } else {
-          await rejectTicTacToe(message);
-        }
+      // Handle Tic Tac Toe responses
+      if (message.body.toLowerCase() === "y") {
+        await confirmTicTacToe(message);
+        return;
+      } else if (message.body.toLowerCase() === "n") {
+        await rejectTicTacToe(message);
         return;
       } else if (/^[1-9]$/.test(message.body)) {
         const moveMade = await makeMove(message);
