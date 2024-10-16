@@ -159,41 +159,40 @@ const messageHandler = async (message) => {
           `Unauthorized group ${groupId}, ignoring command from non-owner`
         );
       }
-    } else if (
-      message.body.toLowerCase() === "y" ||
-      message.body.toLowerCase() === "n"
-    ) {
-      if (message.body.toLowerCase() === "y") {
-        await confirmTicTacToe(message);
-      } else {
-        await rejectTicTacToe(message);
+    } else {
+      // Handling non-command messages
+      const pendingSelection = adventureManager.getPendingSelection(groupId);
+      const isGameActive = adventureManager.isGameActive(groupId);
+      
+      if (pendingSelection === userId || (isGameActive && /^\d+$/.test(message.body.trim()))) {
+        if (isAuthorized) {
+          logger.debug(`Processing adventure choice: ${message.body} for group ${groupId} from user ${userId}`);
+          await handleAdventureChoice(message);
+          return;
+        }
       }
-      return;
-    } else if (/^[1-9]$/.test(message.body)) {
-      const moveMade = await makeMove(message);
-      if (moveMade) return;
-    } else if (
-      adventureManager.getPendingSelection(groupId) === userId ||
-      (adventureManager.isGameActive(groupId) &&
-        /^\d+$/.test(message.body.trim()))
-    ) {
-      if (isAuthorized) {
-        logger.debug("Processing adventure choice");
-        await handleAdventureChoice(message);
-        return;
-      }
-    }
 
-    // If we've reached this point, it's a non-command message
-    if (isAuthorized) {
-      // Handle klasemen liga response
-      const klasemenHandled = await handleKlasemenResponse(message);
-      if (!klasemenHandled) {
-        // Handle dadu game response
-        const daduHandled = await handleDaduGame(message);
-        if (!daduHandled) {
-          // Handle other non-command messages
-          await handleNonCommandMessage(message, chat, sender);
+      // If not an adventure choice, continue with other handlers
+      if (message.body.toLowerCase() === "y" || message.body.toLowerCase() === "n") {
+        if (message.body.toLowerCase() === "y") {
+          await confirmTicTacToe(message);
+        } else {
+          await rejectTicTacToe(message);
+        }
+        return;
+      } else if (/^[1-9]$/.test(message.body)) {
+        const moveMade = await makeMove(message);
+        if (moveMade) return;
+      }
+
+      // If still not handled, proceed with other non-command handlers
+      if (isAuthorized) {
+        const klasemenHandled = await handleKlasemenResponse(message);
+        if (!klasemenHandled) {
+          const daduHandled = await handleDaduGame(message);
+          if (!daduHandled) {
+            await handleNonCommandMessage(message, chat, sender);
+          }
         }
       }
     }
