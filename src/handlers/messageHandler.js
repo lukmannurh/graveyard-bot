@@ -35,7 +35,12 @@ import {
   getForbiddenWordResponse,
 } from "../utils/wordFilter.js";
 import { warnUser } from "../utils/enhancedModerationSystem.js";
-import { startTicTacToe, makeMove } from "../commands/ticTacToeCommands.js";
+import {
+  startTicTacToe,
+  confirmTicTacToe,
+  rejectTicTacToe,
+  makeMove,
+} from "../commands/ticTacToeCommands.js";
 
 const messageHandler = async (message) => {
   try {
@@ -132,11 +137,7 @@ const messageHandler = async (message) => {
           await dadu(message, args);
           return;
         case "ttc":
-          if (args.length === 0) {
-            await makeMove(message, args);
-          } else {
-            await startTicTacToe(message, args);
-          }
+          await startTicTacToe(message, args);
           return;
       }
 
@@ -157,6 +158,19 @@ const messageHandler = async (message) => {
           `Unauthorized group ${groupId}, ignoring command from non-owner`
         );
       }
+    } else if (
+      message.body.toLowerCase() === "y" ||
+      message.body.toLowerCase() === "n"
+    ) {
+      if (message.body.toLowerCase() === "y") {
+        await confirmTicTacToe(message);
+      } else {
+        await rejectTicTacToe(message);
+      }
+      return;
+    } else if (/^[1-9]$/.test(message.body)) {
+      const moveMade = await makeMove(message);
+      if (moveMade) return;
     } else if (
       adventureManager.getPendingSelection(groupId) === userId ||
       (adventureManager.isGameActive(groupId) &&

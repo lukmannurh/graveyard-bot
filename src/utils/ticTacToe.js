@@ -5,16 +5,37 @@ const { MessageMedia } = pkg;
 class TicTacToe {
     constructor() {
         this.games = new Map();
+        this.pendingGames = new Map();
     }
 
     newGame(groupId, player1, player2) {
-        const game = {
-            board: Array(9).fill(null),
-            currentPlayer: 'X',
-            players: { X: player1, O: player2 }
-        };
-        this.games.set(groupId, game);
-        return this.getBoardImage(game.board);
+        this.pendingGames.set(groupId, { player1, player2, confirmed: false });
+        return `@${player2.split('@')[0]}, Anda diajak bermain Tic Tac Toe oleh @${player1.split('@')[0]}. Ketik Y untuk menerima atau N untuk menolak dalam 5 menit.`;
+    }
+
+    confirmGame(groupId, player2) {
+        const pendingGame = this.pendingGames.get(groupId);
+        if (pendingGame && pendingGame.player2 === player2) {
+            const game = {
+                board: Array(9).fill(null),
+                currentPlayer: 'X',
+                players: { X: pendingGame.player1, O: player2 },
+                lastMoveTime: Date.now()
+            };
+            this.games.set(groupId, game);
+            this.pendingGames.delete(groupId);
+            return this.getBoardImage(game.board);
+        }
+        return null;
+    }
+
+    rejectGame(groupId, player2) {
+        const pendingGame = this.pendingGames.get(groupId);
+        if (pendingGame && pendingGame.player2 === player2) {
+            this.pendingGames.delete(groupId);
+            return true;
+        }
+        return false;
     }
 
     makeMove(groupId, player, position) {
@@ -24,6 +45,7 @@ class TicTacToe {
         }
 
         game.board[position] = game.currentPlayer;
+        game.lastMoveTime = Date.now();
         const winner = this.checkWinner(game.board);
         
         if (winner || !game.board.includes(null)) {
@@ -93,7 +115,17 @@ class TicTacToe {
             }
         }
 
-        return MessageMedia.fromFilePath(canvas.toBuffer('image/png'));
+        return MessageMedia.fromBuffer(canvas.toBuffer(), 'board.png', 'image/png');
+    }
+
+    checkTimeout(groupId) {
+        const game = this.games.get(groupId);
+        if (game && Date.now() - game.lastMoveTime > 5 * 60 * 1000) {
+            const winner = game.currentPlayer === 'X' ? 'O' : 'X';
+            this.games.delete(groupId);
+            return winner;
+        }
+        return null;
     }
 }
 
