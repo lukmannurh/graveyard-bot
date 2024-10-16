@@ -72,10 +72,6 @@ ${createMenuSection("🎮 Game", [
     name: "ttc @user",
     description: "Memulai permainan Tic Tac Toe dengan pengguna yang di-tag",
   },
-  {
-    name: "ttc [1-9]",
-    description: "Membuat langkah dalam permainan Tic Tac Toe",
-  },
   { name: "dadu", description: "Bermain dadu dengan pemain lain" },
 ])}
 

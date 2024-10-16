@@ -1,5 +1,5 @@
-import adventureManager from '../utils/adventureManager.js';
-import logger from '../utils/logger.js';
+import adventureManager from "../utils/adventureManager.js";
+import logger from "../utils/logger.js";
 
 export const adventure = async (message, args) => {
   try {
@@ -8,37 +8,51 @@ export const adventure = async (message, args) => {
     const groupId = chat.id._serialized;
     const userId = sender.id._serialized;
 
-    logger.debug(`Adventure command called - Group: ${groupId}, User: ${userId}`);
+    logger.debug(
+      `Adventure command called - Group: ${groupId}, User: ${userId}`
+    );
 
     const isActive = adventureManager.isGameActive(groupId);
     logger.debug(`Is game active: ${isActive}`);
 
     if (!isActive) {
-      if (args[0]?.toLowerCase() === 'random') {
+      if (args[0]?.toLowerCase() === "random") {
         const randomAdventure = adventureManager.getRandomAdventure();
         if (randomAdventure) {
-          const startNode = adventureManager.startAdventure(groupId, userId, randomAdventure.id, 
-            (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
+          const startNode = adventureManager.startAdventure(
+            groupId,
+            userId,
+            randomAdventure.id,
+            (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId)
+          );
           if (startNode) {
             await sendAdventureMessage(message, startNode, groupId);
           } else {
-            await message.reply('Terjadi kesalahan saat memulai petualangan acak. Mohon coba lagi.');
+            await message.reply(
+              "Terjadi kesalahan saat memulai petualangan acak. Mohon coba lagi."
+            );
           }
         } else {
-          await message.reply('Tidak ada petualangan yang tersedia saat ini.');
+          await message.reply("Tidak ada petualangan yang tersedia saat ini.");
         }
       } else {
         const adventureList = adventureManager.getAdventureList();
-        await message.reply(`Pilih petualangan yang ingin Anda jalani:\n\n${adventureList}\n\nBalas dengan nomor petualangan yang Anda pilih dalam 1 menit, ketik 'batal' untuk membatalkan, atau gunakan '.adventure random' untuk petualangan acak.`);
+        await message.reply(
+          `Pilih petualangan yang ingin Anda jalani:\n\n${adventureList}\n\nBalas dengan nomor petualangan yang Anda pilih dalam 1 menit, ketik 'batal' untuk membatalkan, atau gunakan '.adventure random' untuk petualangan acak.`
+        );
         adventureManager.setPendingSelection(groupId, userId);
-        
-        logger.debug(`Set pending selection for group ${groupId}, user ${userId}`);
-        
+
+        logger.debug(
+          `Set pending selection for group ${groupId}, user ${userId}`
+        );
+
         // Set timeout for selection
         setTimeout(async () => {
           if (adventureManager.getPendingSelection(groupId) === userId) {
             adventureManager.clearPendingSelection(groupId);
-            await message.reply('Waktu pemilihan petualangan habis. Silakan mulai ulang dengan .adventure');
+            await message.reply(
+              "Waktu pemilihan petualangan habis. Silakan mulai ulang dengan .adventure"
+            );
           }
         }, 60000); // 1 minute timeout
       }
@@ -46,17 +60,21 @@ export const adventure = async (message, args) => {
       const activeGame = adventureManager.getActiveGame(groupId);
       logger.debug(`Active game: ${JSON.stringify(activeGame)}`);
       if (activeGame.userId !== userId) {
-        logger.debug('Another user is playing');
-        await message.reply('Ada petualangan yang sedang berlangsung. Tunggu hingga selesai untuk memulai yang baru.');
+        logger.debug("Another user is playing");
+        await message.reply(
+          "Ada petualangan yang sedang berlangsung. Tunggu hingga selesai untuk memulai yang baru."
+        );
       } else {
-        logger.debug('Current user is already playing');
+        logger.debug("Current user is already playing");
         const currentNode = adventureManager.getCurrentNode(groupId);
         await sendAdventureMessage(message, currentNode, groupId);
       }
     }
   } catch (error) {
-    logger.error('Error in adventure command:', error);
-    await message.reply('Terjadi kesalahan saat memulai petualangan. Mohon coba lagi.');
+    logger.error("Error in adventure command:", error);
+    await message.reply(
+      "Terjadi kesalahan saat memulai petualangan. Mohon coba lagi."
+    );
   }
 };
 
@@ -67,32 +85,48 @@ export const handleAdventureChoice = async (message) => {
     const groupId = chat.id._serialized;
     const userId = sender.id._serialized;
 
-    logger.debug(`Handling adventure choice - Group: ${groupId}, User: ${userId}, Choice: ${message.body}`);
+    logger.debug(
+      `Handling adventure choice - Group: ${groupId}, User: ${userId}, Choice: ${message.body}`
+    );
 
     const pendingUserId = adventureManager.getPendingSelection(groupId);
     logger.debug(`Pending selection for group ${groupId}: ${pendingUserId}`);
 
     if (pendingUserId === userId) {
-      if (message.body.toLowerCase() === 'batal') {
+      if (message.body.toLowerCase() === "batal") {
         adventureManager.clearPendingSelection(groupId);
-        await message.reply('Pemilihan petualangan dibatalkan.');
+        await message.reply("Pemilihan petualangan dibatalkan.");
         return;
       }
 
-      const startNode = adventureManager.selectAdventure(groupId, userId, message.body, 
-        (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
-      
+      const selection = parseInt(message.body);
+      if (isNaN(selection) || selection < 1) {
+        await message.reply(
+          'Pilihan tidak valid. Silakan pilih nomor yang sesuai atau ketik "batal".'
+        );
+        return;
+      }
+
+      const startNode = adventureManager.selectAdventure(
+        groupId,
+        userId,
+        selection.toString(),
+        (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId)
+      );
+
       if (startNode) {
         adventureManager.clearPendingSelection(groupId);
         await sendAdventureMessage(message, startNode, groupId);
       } else {
-        await message.reply('Pilihan tidak valid. Silakan pilih nomor yang sesuai atau ketik "batal".');
+        await message.reply(
+          'Pilihan tidak valid. Silakan pilih nomor yang sesuai atau ketik "batal".'
+        );
       }
       return;
     }
 
     if (!adventureManager.isGameActive(groupId)) {
-      logger.debug('No active game found');
+      logger.debug("No active game found");
       return;
     }
 
@@ -100,8 +134,8 @@ export const handleAdventureChoice = async (message) => {
     logger.debug(`Active game: ${JSON.stringify(activeGame)}`);
 
     if (activeGame.userId !== userId) {
-      logger.debug('User is not the active player');
-      await message.reply('Anda bukan pemain aktif dalam petualangan ini.');
+      logger.debug("User is not the active player");
+      await message.reply("Anda bukan pemain aktif dalam petualangan ini.");
       return;
     }
 
@@ -109,10 +143,16 @@ export const handleAdventureChoice = async (message) => {
     logger.debug(`Current node: ${JSON.stringify(currentNode)}`);
 
     const choice = parseInt(message.body) - 1;
-    
-    if (isNaN(choice) || choice < 0 || choice >= (currentNode.options ? currentNode.options.length : 0)) {
-      logger.debug('Invalid choice');
-      await message.reply('Pilihan tidak valid. Silakan pilih nomor yang sesuai.');
+
+    if (
+      isNaN(choice) ||
+      choice < 0 ||
+      choice >= (currentNode.options ? currentNode.options.length : 0)
+    ) {
+      logger.debug("Invalid choice");
+      await message.reply(
+        "Pilihan tidak valid. Silakan pilih nomor yang sesuai."
+      );
       return;
     }
 
@@ -123,56 +163,70 @@ export const handleAdventureChoice = async (message) => {
 
     if (!nextNode) {
       logger.error(`Next node not found: ${nextNodeId}`);
-      await message.reply('Terjadi kesalahan. Mohon coba lagi atau mulai petualangan baru.');
+      await message.reply(
+        "Terjadi kesalahan. Mohon coba lagi atau mulai petualangan baru."
+      );
       return;
     }
 
     logger.debug(`Updating node to: ${nextNodeId}`);
-    const updateResult = adventureManager.updateCurrentNode(groupId, nextNodeId);
+    const updateResult = adventureManager.updateCurrentNode(
+      groupId,
+      nextNodeId
+    );
     logger.debug(`Update result: ${updateResult}`);
 
     await sendAdventureMessage(message, nextNode, groupId);
   } catch (error) {
-    logger.error('Error in handling adventure choice:', error);
-    await message.reply('Terjadi kesalahan saat memproses pilihan. Mohon coba lagi.');
+    logger.error("Error in handling adventure choice:", error);
+    await message.reply(
+      "Terjadi kesalahan saat memproses pilihan. Mohon coba lagi."
+    );
   }
 };
 
 const sendAdventureMessage = async (message, node, groupId) => {
   try {
     logger.debug(`Sending adventure message: ${JSON.stringify(node)}`);
-    const options = node.options ? node.options.map((opt, index) => `${index + 1}. ${opt.text}`).join('\n') : '';
-    
+    const options = node.options
+      ? node.options.map((opt, index) => `${index + 1}. ${opt.text}`).join("\n")
+      : "";
+
     const activeGame = adventureManager.getActiveGame(groupId);
     if (!activeGame) {
-      logger.error('No active game found for group');
-      throw new Error('No active game found for group');
+      logger.error("No active game found for group");
+      throw new Error("No active game found for group");
     }
 
-    const adventureTitle = activeGame.adventure.title || 'Unknown Adventure';
-    
+    const adventureTitle = activeGame.adventure.title || "Unknown Adventure";
+
     let replyMessage = `*${adventureTitle}*\n\n${node.text}`;
     if (options) {
       replyMessage += `\n\nPilihan:\n${options}\n\nBalas dengan nomor pilihan Anda untuk melanjutkan.\nAnda memiliki waktu 5 menit untuk menjawab.`;
     }
-    
+
     await message.reply(replyMessage);
-    logger.debug('Adventure message sent');
+    logger.debug("Adventure message sent");
 
     if (node.end) {
-      logger.debug('Adventure ended');
+      logger.debug("Adventure ended");
       if (node.win) {
-        await message.reply('🎉 Selamat! Anda telah menyelesaikan petualangan dengan sukses!');
+        await message.reply(
+          "🎉 Selamat! Anda telah menyelesaikan petualangan dengan sukses!"
+        );
       } else {
-        await message.reply('😔 Petualangan berakhir. Terima kasih telah bermain!');
+        await message.reply(
+          "😔 Petualangan berakhir. Terima kasih telah bermain!"
+        );
       }
       adventureManager.endGame(groupId);
     } else {
-      adventureManager.resetTimeout(groupId, 
-        (timeoutGroupId) => handleAdventureTimeout(message, timeoutGroupId));
+      adventureManager.resetTimeout(groupId, (timeoutGroupId) =>
+        handleAdventureTimeout(message, timeoutGroupId)
+      );
     }
   } catch (error) {
-    logger.error('Error in sendAdventureMessage:', error);
+    logger.error("Error in sendAdventureMessage:", error);
     throw error;
   }
 };
@@ -181,9 +235,11 @@ export const handleAdventureTimeout = async (message, groupId) => {
   try {
     logger.debug(`Adventure timeout for group ${groupId}`);
     const chat = await message.getChat();
-    await chat.sendMessage('Waktu habis! Petualangan telah berakhir karena tidak ada respon dalam 5 menit.');
+    await chat.sendMessage(
+      "Waktu habis! Petualangan telah berakhir karena tidak ada respon dalam 5 menit."
+    );
     adventureManager.endGame(groupId);
   } catch (error) {
-    logger.error('Error in handling adventure timeout:', error);
+    logger.error("Error in handling adventure timeout:", error);
   }
 };

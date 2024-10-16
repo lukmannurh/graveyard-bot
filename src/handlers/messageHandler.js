@@ -139,17 +139,18 @@ const messageHandler = async (message) => {
         case "ttc":
           await startTicTacToe(message, args);
           return;
+        case "adventure":
+          if (isAuthorized) {
+            await adventure(message, args);
+          } else {
+            logger.debug(
+              `Unauthorized group ${groupId}, ignoring command from non-owner`
+            );
+          }
+          return;
       }
 
-      if (commandName === "adventure") {
-        if (isAuthorized) {
-          await adventure(message, args);
-        } else {
-          logger.debug(
-            `Unauthorized group ${groupId}, ignoring command from non-owner`
-          );
-        }
-      } else if (isOwnerUser) {
+      if (isOwnerUser) {
         await handleOwnerCommand(message, groupId);
       } else if (isAuthorized) {
         await handleRegularCommand(message, chat, sender, isGroupAdmin);
@@ -179,15 +180,19 @@ const messageHandler = async (message) => {
       if (isAuthorized) {
         logger.debug("Processing adventure choice");
         await handleAdventureChoice(message);
+        return;
       }
-    } else if (isAuthorized) {
+    }
+
+    // If we've reached this point, it's a non-command message
+    if (isAuthorized) {
       // Handle klasemen liga response
       const klasemenHandled = await handleKlasemenResponse(message);
       if (!klasemenHandled) {
         // Handle dadu game response
         const daduHandled = await handleDaduGame(message);
         if (!daduHandled) {
-          // Handle non-command messages
+          // Handle other non-command messages
           await handleNonCommandMessage(message, chat, sender);
         }
       }
