@@ -41,7 +41,9 @@ import {
   rejectTicTacToe,
   makeMove,
 } from "../commands/ticTacToeCommands.js";
-import { kingIndo } from "../commands/kingIndo.js";
+import { kingIndo, handleKingIndoResponse } from "../commands/kingIndo.js";
+
+let awaitingKingIndoResponse = new Map();
 
 const messageHandler = async (message) => {
   try {
@@ -112,6 +114,7 @@ const messageHandler = async (message) => {
         case "kingindo":
           logger.info("KingIndo command detected");
           await kingIndo(message, args);
+          awaitingKingIndoResponse.set(message.from, true);
           return;
         case "tt":
           await downloadTikTokVideo(message, args);
@@ -185,6 +188,11 @@ const messageHandler = async (message) => {
         logger.debug("Processing adventure choice");
         await handleAdventureChoice(message);
       }
+    } else if (awaitingKingIndoResponse.get(message.from)) {
+      // Handle KingIndo response
+      await handleKingIndoResponse(message);
+      awaitingKingIndoResponse.delete(message.from);
+      return;
     } else if (isAuthorized) {
       // Handle klasemen liga response
       const klasemenHandled = await handleKlasemenResponse(message);
