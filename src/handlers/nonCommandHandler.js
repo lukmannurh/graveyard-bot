@@ -1,61 +1,28 @@
-import { checkForbiddenWord, getForbiddenWordResponse } from '../utils/wordFilter.js';
-import { warnUser, isUserBanned, checkUserStatus, logViolation } from '../utils/enhancedModerationSystem.js';
-import adventureManager from '../utils/adventureManager.js';
-import logger from '../utils/logger.js';
 import { handleAdventureChoice } from '../commands/adventureCommand.js';
+import { handleDaduGame } from '../commands/daduGame.js';
+import { handleTicTacToeResponse } from '../commands/ticTacToeCommands.js';
+import { handleKlasemenResponse } from '../commands/klasemenLiga.js';
+import adventureManager from '../utils/adventureManager.js';
 
-export const handleNonCommandMessage = async (message, chat, sender) => {
-  const groupId = chat.id._serialized;
-  const userId = sender.id._serialized;
+export const handleNonCommand = async (message, isAuthorized) => {
+  const groupId = message.chat.id._serialized;
+  const userId = message.author || message.from;
 
-  logger.debug(`Handling non-command message: ${message.body} in group ${groupId} from user ${userId}`);
-
-  // Check if user is banned
-  if (isUserBanned(groupId, userId)) {
-    logger.info(`Banned user ${sender.id.user} attempted to send a message in group ${chat.name}`);
-    await logViolation(groupId, userId, "Attempted to send message while banned");
-    
-    try {
-      await message.delete(true);
-      logger.info(`Deleted message from banned user ${sender.id.user} in group ${chat.name}`);
-    } catch (deleteError) {
-      logger.error('Failed to delete message from banned user:', deleteError);
-    }
-
-    await sender.sendMessage("Anda sedang dalam status ban di grup ini. Pesan Anda telah dihapus. Ban akan berakhir dalam 1 jam.");
-    return;
+  if (isAuthorized) {
+    if (await handleAdventureResponse(message, groupId, userId)) return;
+    if (await handleDaduGame(message)) return;
+    if (await handleTicTacToeResponse(message)) return;
+    if (await handleKlasemenResponse(message)) return;
   }
+};
 
-  // Check for adventure choice
-  if (adventureManager.isGameActive(groupId)) {
-    logger.debug(`Active game found for group ${groupId}`);
-    if (/^\d+$/.test(message.body.trim())) {
-      logger.debug(`Processing adventure choice: ${message.body} for group ${groupId} from user ${userId}`);
-      try {
-        await handleAdventureChoice(message);
-        return; // Return here to prevent further processing
-      } catch (error) {
-        logger.error('Error processing adventure choice:', error);
-      }
-    } else {
-      logger.debug(`Non-numeric message received during active game: ${message.body}`);
-    }
-  } else {
-    logger.debug(`No active game for group ${groupId}`);
+const handleAdventureResponse = async (message, groupId, userId) => {
+  const pendingSelection = adventureManager.getPendingSelection(groupId);
+  const isGameActive = adventureManager.isGameActive(groupId);
+  
+  if (pendingSelection === userId || (isGameActive && /^\d+$/.test(message.body.trim()))) {
+    await handleAdventureChoice(message);
+    return true;
   }
-
-  // Check for forbidden words
-  const forbiddenCheck = checkForbiddenWord(message.body, userId);
-  if (forbiddenCheck.found) {
-    const updatedStatus = await warnUser(groupId, userId);
-    await message.reply(getForbiddenWordResponse(forbiddenCheck.word, forbiddenCheck.lowercaseWord));
-    
-    if (updatedStatus.banned) {
-      await message.reply("Anda telah mencapai batas peringatan dan sekarang di-ban dari grup ini selama 1 jam.");
-      await logViolation(groupId, userId, `Banned due to repeated use of forbidden word: ${forbiddenCheck.word}`);
-    } else {
-      await message.reply(`Peringatan ${updatedStatus.warnings}/5. Hati-hati dalam penggunaan kata-kata.`);
-      await logViolation(groupId, userId, `Warned for using forbidden word: ${forbiddenCheck.word}`);
-    }
-  }
+  return false;
 };
