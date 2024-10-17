@@ -163,42 +163,52 @@ const messageHandler = async (message) => {
       // Handling non-command messages
       const pendingSelection = adventureManager.getPendingSelection(groupId);
       const isGameActive = adventureManager.isGameActive(groupId);
-      
+
       // Check if the message is tagging @bot for Tic Tac Toe
       const mentions = await message.getMentions();
-      if (mentions.length === 1 && mentions[0].id.user === 'status@broadcast') {
+      if (mentions.length === 1 && mentions[0].id.user === "status@broadcast") {
         await startTicTacToe(message, []);
         return;
       }
 
-      if (pendingSelection === userId || (isGameActive && /^\d+$/.test(message.body.trim()))) {
+      if (
+        pendingSelection === userId ||
+        (isGameActive && /^\d+$/.test(message.body.trim()))
+      ) {
         if (isAuthorized) {
-          logger.debug(`Processing adventure choice: ${message.body} for group ${groupId} from user ${userId}`);
+          logger.debug(
+            `Processing adventure choice: ${message.body} for group ${groupId} from user ${userId}`
+          );
           await handleAdventureChoice(message);
           return;
         }
       }
 
+      // Handle Dadu game responses
+      if (await handleDaduGame(message)) {
+        return;
+      }
+
       // Handle Tic Tac Toe responses
       if (message.body.toLowerCase() === "y") {
-        await confirmTicTacToe(message);
-        return;
+        if (await confirmTicTacToe(message)) {
+          return;
+        }
       } else if (message.body.toLowerCase() === "n") {
-        await rejectTicTacToe(message);
-        return;
+        if (await rejectTicTacToe(message)) {
+          return;
+        }
       } else if (/^[1-9]$/.test(message.body)) {
-        const moveMade = await makeMove(message);
-        if (moveMade) return;
+        if (await makeMove(message)) {
+          return;
+        }
       }
 
       // If still not handled, proceed with other non-command handlers
       if (isAuthorized) {
         const klasemenHandled = await handleKlasemenResponse(message);
         if (!klasemenHandled) {
-          const daduHandled = await handleDaduGame(message);
-          if (!daduHandled) {
-            await handleNonCommandMessage(message, chat, sender);
-          }
+          await handleNonCommandMessage(message, chat, sender);
         }
       }
     }
