@@ -178,7 +178,7 @@ async function deleteBannedUserMessage(message) {
 loadModerationData();
 
 // Export all functions
-export {
+export { 
   isOwner,
   warnUser,
   banUser,

@@ -1,5 +1,5 @@
 import { checkForbiddenWord, getForbiddenWordResponse } from './wordFilter.js';
-import { warnUser, deleteBannedUserMessage } from './enhancedModerationSystem.js';
+import { warnUser, deleteBannedUserMessage, isUserBanned } from './enhancedModerationSystem.js';
 
 export const checkAndHandleForbiddenWords = async (message, groupId, userId) => {
   if (isUserBanned(groupId, userId)) {
