@@ -197,15 +197,17 @@ const sendGameState = async (message, groupId, caption) => {
   }
 };
 
-// Tambahkan fungsi ini untuk menangani respons Tic Tac Toe
 export const handleTicTacToeResponse = async (message) => {
-  const body = message.body.toLowerCase();
-  if (body === "y") {
-    return await confirmTicTacToe(message);
-  } else if (body === "n") {
-    return await rejectTicTacToe(message);
-  } else if (/^[1-9]$/.test(body)) {
-    return await makeMove(message);
-  }
-  return false;
+    const body = message.body.toLowerCase();
+    if (body === 'y') {
+        return await confirmTicTacToe(message);
+    } else if (body === 'n') {
+        return await rejectTicTacToe(message);
+    } else if (/^[1-9]$/.test(body)) {
+        return await makeMove(message);
+    }
+    return false;
 };
+
+// Pastikan untuk mengekspor semua fungsi yang diperlukan
+export { startTicTacToe, confirmTicTacToe, rejectTicTacToe, makeMove };

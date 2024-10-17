@@ -1,10 +1,11 @@
+
 import { handleAdventureChoice } from '../commands/adventureCommand.js';
 import { handleDaduGame } from '../commands/daduGame.js';
 import { handleTicTacToeResponse } from '../commands/ticTacToeCommands.js';
 import { handleKlasemenResponse } from '../commands/klasemenLiga.js';
 import adventureManager from '../utils/adventureManager.js';
 
-export const handleNonCommand = async (message, isAuthorized) => {
+const handleNonCommand = async (message, isAuthorized) => {
   const groupId = message.chat.id._serialized;
   const userId = message.author || message.from;
 
@@ -27,4 +28,5 @@ const handleAdventureResponse = async (message, groupId, userId) => {
   return false;
 };
 
+// Hanya ekspor handleNonCommand satu kali
 export { handleNonCommand };
