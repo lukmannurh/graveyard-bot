@@ -89,14 +89,17 @@ export const makeMove = async (message) => {
             return false; // Not a valid move or not player's turn, ignore
         }
 
-        await sendGameState(message, groupId, `${player.pushname} memilih kotak ${position + 1}`);
+        await sendGameState(message, groupId, `@${player.id.user} memilih kotak ${position + 1}`);
 
         if (result.winner || (result.board && !result.board.includes(null))) {
             // Game ended
             let endMessage = result.winner ? 
-                `Game Over! ${result.winner === 'X' ? 'X' : 'O'} wins!` : 
+                `Game Over! @${result.winner === 'X' ? TicTacToe.getPlayerX(groupId) : TicTacToe.getPlayerO(groupId)} wins!` : 
                 'Game Over! It\'s a draw!';
-            await message.reply(endMessage);
+            await message.reply(endMessage, null, { mentions: [
+                await message.client.getContactById(TicTacToe.getPlayerX(groupId)),
+                await message.client.getContactById(TicTacToe.getPlayerO(groupId))
+            ]});
             TicTacToe.endGame(groupId);
         } else if (result.nextPlayer === 'bot') {
             // Bot's turn
@@ -107,13 +110,20 @@ export const makeMove = async (message) => {
                     const finalResult = TicTacToe.checkGameEnd(groupId);
                     if (finalResult) {
                         let endMessage = finalResult.winner ? 
-                            `Game Over! ${finalResult.winner === 'X' ? 'X' : 'O'} wins!` : 
+                            `Game Over! @${finalResult.winner === 'X' ? TicTacToe.getPlayerX(groupId) : TicTacToe.getPlayerO(groupId)} wins!` : 
                             'Game Over! It\'s a draw!';
-                        await message.reply(endMessage);
+                        await message.reply(endMessage, null, { mentions: [
+                            await message.client.getContactById(TicTacToe.getPlayerX(groupId)),
+                            await message.client.getContactById(TicTacToe.getPlayerO(groupId))
+                        ]});
                         TicTacToe.endGame(groupId);
                     }
                 }
             }, 1000); // Delay bot's move by 1 second
+        } else {
+            // Notify next player
+            const nextPlayer = result.nextPlayer === 'X' ? TicTacToe.getPlayerX(groupId) : TicTacToe.getPlayerO(groupId);
+            await message.reply(`It's @${nextPlayer}'s turn!`, null, { mentions: [await message.client.getContactById(nextPlayer)] });
         }
 
         return true;

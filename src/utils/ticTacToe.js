@@ -123,47 +123,39 @@ class TicTacToe {
     }
 
     async getBoardImage(board) {
-        const canvas = createCanvas(300, 300);
+        const canvas = createCanvas(600, 600);
         const ctx = canvas.getContext('2d');
 
         // Draw background
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, 300, 300);
+        const gradient = ctx.createLinearGradient(0, 0, 600, 600);
+        gradient.addColorStop(0, '#4e54c8');
+        gradient.addColorStop(1, '#8f94fb');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 600, 600);
 
-        // Draw grid
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.moveTo(100, 0);
-        ctx.lineTo(100, 300);
-        ctx.moveTo(200, 0);
-        ctx.lineTo(200, 300);
-        ctx.moveTo(0, 100);
-        ctx.lineTo(300, 100);
-        ctx.moveTo(0, 200);
-        ctx.lineTo(300, 200);
-        ctx.stroke();
+        // Draw 3D grid
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 10;
+        ctx.lineCap = 'round';
 
-        // Draw X, O, and numbers
-        ctx.font = '80px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        // Vertical lines
+        this.draw3DLine(ctx, 200, 50, 200, 550);
+        this.draw3DLine(ctx, 400, 50, 400, 550);
 
+        // Horizontal lines
+        this.draw3DLine(ctx, 50, 200, 550, 200);
+        this.draw3DLine(ctx, 50, 400, 550, 400);
+
+        // Draw X and O
+        ctx.lineWidth = 15;
         for (let i = 0; i < 9; i++) {
-            const x = (i % 3) * 100 + 50;
-            const y = Math.floor(i / 3) * 100 + 50;
+            const x = (i % 3) * 200 + 100;
+            const y = Math.floor(i / 3) * 200 + 100;
 
             if (board[i] === 'X') {
-                ctx.fillStyle = '#ff0000';
-                ctx.fillText('X', x, y);
+                this.draw3DX(ctx, x, y);
             } else if (board[i] === 'O') {
-                ctx.fillStyle = '#0000ff';
-                ctx.fillText('O', x, y);
-            } else {
-                ctx.fillStyle = '#888888';
-                ctx.font = '40px Arial';
-                ctx.fillText((i + 1).toString(), x, y);
-                ctx.font = '80px Arial';
+                this.draw3DO(ctx, x, y);
             }
         }
 
@@ -177,6 +169,47 @@ class TicTacToe {
         await fs.unlink(tempFilePath);
 
         return media;
+    }
+
+    draw3DLine(ctx, x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.beginPath();
+        ctx.moveTo(x1 + 5, y1 + 5);
+        ctx.lineTo(x2 + 5, y2 + 5);
+        ctx.stroke();
+    }
+
+    draw3DX(ctx, x, y) {
+        ctx.strokeStyle = '#ff6b6b';
+        this.draw3DLine(ctx, x - 60, y - 60, x + 60, y + 60);
+        this.draw3DLine(ctx, x + 60, y - 60, x - 60, y + 60);
+    }
+
+    draw3DO(ctx, x, y) {
+        ctx.strokeStyle = '#4ecdc4';
+        ctx.beginPath();
+        ctx.arc(x, y, 60, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(78, 205, 196, 0.5)';
+        ctx.beginPath();
+        ctx.arc(x + 5, y + 5, 60, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+
+    getPlayerX(groupId) {
+        const game = this.games.get(groupId);
+        return game ? game.players.X.split('@')[0] : null;
+    }
+
+    getPlayerO(groupId) {
+        const game = this.games.get(groupId);
+        return game ? game.players.O.split('@')[0] : null;
     }
 
     endGame(groupId) {
