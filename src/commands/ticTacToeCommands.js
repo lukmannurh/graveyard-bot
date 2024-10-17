@@ -1,7 +1,7 @@
 import TicTacToe from "../utils/ticTacToe.js";
 import logger from "../utils/logger.js";
 
-export const startTicTacToe = async (message, args) => {
+const startTicTacToe = async (message, args) => {
   try {
     const mentions = await message.getMentions();
     if (mentions.length !== 1) {
@@ -56,7 +56,7 @@ export const startTicTacToe = async (message, args) => {
   }
 };
 
-export const confirmTicTacToe = async (message) => {
+const confirmTicTacToe = async (message) => {
   try {
     const groupId = message.from;
     const player2 = await message.getContact();
@@ -82,7 +82,7 @@ export const confirmTicTacToe = async (message) => {
   }
 };
 
-export const rejectTicTacToe = async (message) => {
+const rejectTicTacToe = async (message) => {
   try {
     const groupId = message.from;
     const player2 = await message.getContact();
@@ -100,7 +100,7 @@ export const rejectTicTacToe = async (message) => {
   }
 };
 
-export const makeMove = async (message) => {
+const makeMove = async (message) => {
   try {
     const position = parseInt(message.body) - 1;
     if (isNaN(position) || position < 0 || position > 8) {
@@ -198,16 +198,22 @@ const sendGameState = async (message, groupId, caption) => {
 };
 
 const handleTicTacToeResponse = async (message) => {
-    const body = message.body.toLowerCase();
-    if (body === 'y') {
-        return await confirmTicTacToe(message);
-    } else if (body === 'n') {
-        return await rejectTicTacToe(message);
-    } else if (/^[1-9]$/.test(body)) {
-        return await makeMove(message);
-    }
-    return false;
+  const body = message.body.toLowerCase();
+  if (body === "y") {
+    return await confirmTicTacToe(message);
+  } else if (body === "n") {
+    return await rejectTicTacToe(message);
+  } else if (/^[1-9]$/.test(body)) {
+    return await makeMove(message);
+  }
+  return false;
 };
 
 // Ekspor semua fungsi yang diperlukan dalam satu statement
-export { startTicTacToe, confirmTicTacToe, rejectTicTacToe, makeMove, handleTicTacToeResponse };
+export {
+  startTicTacToe,
+  confirmTicTacToe,
+  rejectTicTacToe,
+  makeMove,
+  handleTicTacToeResponse,
+};
