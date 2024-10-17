@@ -5,7 +5,7 @@ import { PREFIX, OWNER_NUMBER } from "../config/constants.js";
 import logger from "../utils/logger.js";
 import authorizeGroup from "../commands/authorizeGroup.js";
 import { handleRegularCommand } from "./regularCommandHandler.js";
-import { handleNonCommandMessage } from "./nonCommandHandler.js";
+import { handleNonCommand } from "./nonCommandHandler.js";
 import adventureManager from "../utils/adventureManager.js";
 import { handleAdventureChoice } from "../commands/adventureCommand.js";
 
@@ -99,7 +99,7 @@ export const handleOwnerCommand = async (message, groupId) => {
         logger.error("Error processing owner's adventure choice:", error);
       }
     } else {
-      await handleNonCommandMessage(message, chat, sender);
+      await handleNonCommand(message, chat, sender);
     }
   }
 };
