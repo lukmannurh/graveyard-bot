@@ -1,7 +1,7 @@
 import TicTacToe from "../utils/ticTacToe.js";
 import logger from "../utils/logger.js";
 
-const startTicTacToe = async (message, args) => {
+export const startTicTacToe = async (message, args) => {
   try {
     const mentions = await message.getMentions();
     if (mentions.length !== 1) {
@@ -24,9 +24,8 @@ const startTicTacToe = async (message, args) => {
       player2.id._serialized,
       isBot
     );
-    await message.reply(inviteMessage, null, {
-      mentions: [player2.id._serialized],
-    });
+
+    await message.reply(inviteMessage, null, { mentions: [player2] });
 
     if (isBot) {
       // Bot automatically accepts and makes a move
@@ -56,7 +55,7 @@ const startTicTacToe = async (message, args) => {
   }
 };
 
-const confirmTicTacToe = async (message) => {
+export const confirmTicTacToe = async (message) => {
   try {
     const groupId = message.from;
     const player2 = await message.getContact();
@@ -82,7 +81,7 @@ const confirmTicTacToe = async (message) => {
   }
 };
 
-const rejectTicTacToe = async (message) => {
+export const rejectTicTacToe = async (message) => {
   try {
     const groupId = message.from;
     const player2 = await message.getContact();
@@ -100,7 +99,7 @@ const rejectTicTacToe = async (message) => {
   }
 };
 
-const makeMove = async (message) => {
+export const makeMove = async (message) => {
   try {
     const position = parseInt(message.body) - 1;
     if (isNaN(position) || position < 0 || position > 8) {
@@ -136,8 +135,8 @@ const makeMove = async (message) => {
         : "Game Over! It's a draw!";
       await message.reply(endMessage, null, {
         mentions: [
-          TicTacToe.getPlayerX(groupId),
-          TicTacToe.getPlayerO(groupId),
+          await message.client.getContactById(TicTacToe.getPlayerX(groupId)),
+          await message.client.getContactById(TicTacToe.getPlayerO(groupId)),
         ],
       });
       TicTacToe.endGame(groupId);
@@ -162,8 +161,12 @@ const makeMove = async (message) => {
               : "Game Over! It's a draw!";
             await message.reply(endMessage, null, {
               mentions: [
-                TicTacToe.getPlayerX(groupId),
-                TicTacToe.getPlayerO(groupId),
+                await message.client.getContactById(
+                  TicTacToe.getPlayerX(groupId)
+                ),
+                await message.client.getContactById(
+                  TicTacToe.getPlayerO(groupId)
+                ),
               ],
             });
             TicTacToe.endGame(groupId);
@@ -177,7 +180,7 @@ const makeMove = async (message) => {
           ? TicTacToe.getPlayerX(groupId)
           : TicTacToe.getPlayerO(groupId);
       await message.reply(`It's @${nextPlayer}'s turn!`, null, {
-        mentions: [nextPlayer],
+        mentions: [await message.client.getContactById(nextPlayer)],
       });
     }
 
@@ -195,25 +198,4 @@ const sendGameState = async (message, groupId, caption) => {
   if (gameState) {
     await message.reply(gameState, null, { caption: caption });
   }
-};
-
-const handleTicTacToeResponse = async (message) => {
-  const body = message.body.toLowerCase();
-  if (body === "y") {
-    return await confirmTicTacToe(message);
-  } else if (body === "n") {
-    return await rejectTicTacToe(message);
-  } else if (/^[1-9]$/.test(body)) {
-    return await makeMove(message);
-  }
-  return false;
-};
-
-// Ekspor semua fungsi yang diperlukan dalam satu statement
-export {
-  startTicTacToe,
-  confirmTicTacToe,
-  rejectTicTacToe,
-  makeMove,
-  handleTicTacToeResponse,
 };
