@@ -18,7 +18,7 @@ class TicTacToe {
         this.pendingGames.set(groupId, { player1, player2, confirmed: false, isBot });
         return `@${player2.split('@')[0]}, ${isBot ? 'Bot' : 'Anda'} diajak bermain Tic Tac Toe oleh @${player1.split('@')[0]}. ${isBot ? 'Bot akan mulai bermain.' : 'Ketik Y untuk menerima atau N untuk menolak dalam 5 menit.'}`;
     }
-
+//
     async confirmGame(groupId, player2) {
         const pendingGame = this.pendingGames.get(groupId);
         if (pendingGame && (pendingGame.player2 === player2 || pendingGame.isBot)) {
