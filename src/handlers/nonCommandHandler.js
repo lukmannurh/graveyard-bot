@@ -26,3 +26,5 @@ const handleAdventureResponse = async (message, groupId, userId) => {
   }
   return false;
 };
+
+export { handleNonCommand };

@@ -24,7 +24,9 @@ export const startTicTacToe = async (message, args) => {
       player2.id._serialized,
       isBot
     );
-    await message.reply(inviteMessage, null, { mentions: [player2] });
+    await message.reply(inviteMessage, null, {
+      mentions: [player2.id._serialized],
+    });
 
     if (isBot) {
       // Bot automatically accepts and makes a move
@@ -134,8 +136,8 @@ export const makeMove = async (message) => {
         : "Game Over! It's a draw!";
       await message.reply(endMessage, null, {
         mentions: [
-          await message.client.getContactById(TicTacToe.getPlayerX(groupId)),
-          await message.client.getContactById(TicTacToe.getPlayerO(groupId)),
+          TicTacToe.getPlayerX(groupId),
+          TicTacToe.getPlayerO(groupId),
         ],
       });
       TicTacToe.endGame(groupId);
@@ -160,12 +162,8 @@ export const makeMove = async (message) => {
               : "Game Over! It's a draw!";
             await message.reply(endMessage, null, {
               mentions: [
-                await message.client.getContactById(
-                  TicTacToe.getPlayerX(groupId)
-                ),
-                await message.client.getContactById(
-                  TicTacToe.getPlayerO(groupId)
-                ),
+                TicTacToe.getPlayerX(groupId),
+                TicTacToe.getPlayerO(groupId),
               ],
             });
             TicTacToe.endGame(groupId);
@@ -179,7 +177,7 @@ export const makeMove = async (message) => {
           ? TicTacToe.getPlayerX(groupId)
           : TicTacToe.getPlayerO(groupId);
       await message.reply(`It's @${nextPlayer}'s turn!`, null, {
-        mentions: [await message.client.getContactById(nextPlayer)],
+        mentions: [nextPlayer],
       });
     }
 
@@ -197,4 +195,17 @@ const sendGameState = async (message, groupId, caption) => {
   if (gameState) {
     await message.reply(gameState, null, { caption: caption });
   }
+};
+
+// Tambahkan fungsi ini untuk menangani respons Tic Tac Toe
+export const handleTicTacToeResponse = async (message) => {
+  const body = message.body.toLowerCase();
+  if (body === "y") {
+    return await confirmTicTacToe(message);
+  } else if (body === "n") {
+    return await rejectTicTacToe(message);
+  } else if (/^[1-9]$/.test(body)) {
+    return await makeMove(message);
+  }
+  return false;
 };
