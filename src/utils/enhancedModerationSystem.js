@@ -3,6 +3,10 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import logger from './logger.js';
 import { OWNER_NUMBER } from '../config/index.js';
+import { checkForbiddenWord, getForbiddenWordResponse } from './wordFilter.js';
+import { warnUser, deleteBannedUserMessage, isUserBanned } from './enhancedModerationSystem.js';
+
+// Sisa kode tetap sama
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -119,7 +123,7 @@ async function unbanAllUsers(groupId) {
   return unbanCount;
 }
 
-function isUserBanned(groupId, userId) {
+export function isUserBanned(groupId, userId) {
   if (isOwner(userId)) {
     return false;
   }
