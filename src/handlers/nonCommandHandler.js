@@ -1,4 +1,3 @@
-
 import { handleAdventureChoice } from '../commands/adventureCommand.js';
 import { handleDaduGame } from '../commands/daduGame.js';
 import { handleTicTacToeResponse } from '../commands/ticTacToeCommands.js';
@@ -28,5 +27,5 @@ const handleAdventureResponse = async (message, groupId, userId) => {
   return false;
 };
 
-// Hanya ekspor handleNonCommand satu kali
+// Ekspor hanya handleNonCommand
 export { handleNonCommand };

@@ -197,7 +197,7 @@ const sendGameState = async (message, groupId, caption) => {
   }
 };
 
-export const handleTicTacToeResponse = async (message) => {
+const handleTicTacToeResponse = async (message) => {
     const body = message.body.toLowerCase();
     if (body === 'y') {
         return await confirmTicTacToe(message);
@@ -209,5 +209,5 @@ export const handleTicTacToeResponse = async (message) => {
     return false;
 };
 
-// Pastikan untuk mengekspor semua fungsi yang diperlukan
-export { startTicTacToe, confirmTicTacToe, rejectTicTacToe, makeMove };
+// Ekspor semua fungsi yang diperlukan dalam satu statement
+export { startTicTacToe, confirmTicTacToe, rejectTicTacToe, makeMove, handleTicTacToeResponse };
