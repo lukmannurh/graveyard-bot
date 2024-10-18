@@ -2,6 +2,12 @@ import pkg from 'whatsapp-web.js';
 const { MessageMedia } = pkg;
 import { createCanvas } from 'canvas';
 import logger from '../utils/logger.js';
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const activeGames = new Map();
 
@@ -206,12 +212,38 @@ const generateDiceImage = async () => {
   const ctx = canvas.getContext('2d');
   
   function drawDie(x, y, size, value) {
+    // Draw cube
     ctx.fillStyle = '#ffffff';
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 2;
+    
+    // Front face
     ctx.fillRect(x, y, size, size);
     ctx.strokeRect(x, y, size, size);
+    
+    // Top face
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + size * 0.2, y - size * 0.2);
+    ctx.lineTo(x + size * 1.2, y - size * 0.2);
+    ctx.lineTo(x + size, y);
+    ctx.closePath();
+    ctx.fillStyle = '#e0e0e0';
+    ctx.fill();
+    ctx.stroke();
+    
+    // Right face
+    ctx.beginPath();
+    ctx.moveTo(x + size, y);
+    ctx.lineTo(x + size * 1.2, y - size * 0.2);
+    ctx.lineTo(x + size * 1.2, y + size * 0.8);
+    ctx.lineTo(x + size, y + size);
+    ctx.closePath();
+    ctx.fillStyle = '#d0d0d0';
+    ctx.fill();
+    ctx.stroke();
   
+    // Draw dots
     ctx.fillStyle = '#000000';
     const dotSize = size / 10;
     const padding = size / 5;
@@ -227,10 +259,6 @@ const generateDiceImage = async () => {
       ctx.arc(x + padding + dx * padding, y + padding + dy * padding, dotSize, 0, Math.PI * 2);
       ctx.fill();
     });
-  
-    ctx.fillStyle = 'rgba(0,0,0,0.2)';
-    ctx.fillRect(x + size, y, size / 10, size);
-    ctx.fillRect(x, y + size, size, size / 10);
   }
   
   const die1Value = Math.floor(Math.random() * 6) + 1;
@@ -240,7 +268,12 @@ const generateDiceImage = async () => {
   drawDie(175, 25, 100, die2Value);
   
   const buffer = canvas.toBuffer('image/png');
-  const media = new MessageMedia('image/png', buffer.toString('base64'));
+  const tempFilePath = path.join(__dirname, '../../temp', `dice_${Date.now()}.png`);
+  await fs.writeFile(tempFilePath, buffer);
+  const media = MessageMedia.fromFilePath(tempFilePath);
+  
+  // Delete the temporary file
+  await fs.unlink(tempFilePath);
   
   const total = die1Value + die2Value;
   const result = total % 2 === 0 ? 'Genap' : 'Ganjil';
