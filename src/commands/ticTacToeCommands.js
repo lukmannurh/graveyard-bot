@@ -121,24 +121,18 @@ export const makeMove = async (message) => {
     const position = parseInt(message.body) - 1;
     if (isNaN(position) || position < 0 || position > 8) {
       logger.debug(`Invalid move: ${message.body}`);
-      return false; // Not a valid move, ignore
+      return false;
     }
 
     const groupId = message.from;
     const player = await message.getContact();
 
-    logger.debug(
-      `Player ${player.id._serialized} attempting move at position ${position}`
-    );
+    logger.debug(`Player ${player.id._serialized} attempting move at position ${position}`);
 
-    const result = await TicTacToe.makeMove(
-      groupId,
-      player.id._serialized,
-      position
-    );
+    const result = await TicTacToe.makeMove(groupId, player.id._serialized, position);
     if (!result) {
       logger.debug(`Invalid move or not player's turn`);
-      return false; // Not a valid move or not player's turn, ignore
+      return false;
     }
 
     logger.debug(`Move result: ${JSON.stringify(result)}`);
@@ -147,10 +141,17 @@ export const makeMove = async (message) => {
 
     if (result.winner || result.winner === "draw") {
       logger.info(`Game ended. Winner: ${result.winner}`);
-      await message.reply("Permainan telah berakhir.");
+      const finalState = await TicTacToe.getGameState(groupId);
+      let endMessage;
+      if (result.winner === "draw") {
+        endMessage = "Permainan berakhir seri!";
+      } else {
+        const winnerContact = await message.client.getContactById(TicTacToe.getPlayerBySymbol(groupId, result.winner));
+        endMessage = `Permainan berakhir! @${winnerContact.id.user} (${result.winner}) menang!`;
+      }
+      await sendGameState(message, groupId, endMessage, finalState, true);
       TicTacToe.endGame(groupId);
     } else if (result.nextPlayer === "bot") {
-      // Bot's turn
       logger.debug("Bot's turn");
       setTimeout(async () => {
         const botMove = TicTacToe.makeBotMove(groupId);
@@ -158,15 +159,12 @@ export const makeMove = async (message) => {
         if (botMove !== null) {
           const botResult = TicTacToe.checkGameEnd(groupId);
           if (botResult) {
-            logger.info(
-              `Game ended after bot move. Result: ${JSON.stringify(botResult)}`
-            );
-            await sendGameState(
-              message,
-              groupId,
-              botResult.message,
-              botResult.state
-            );
+            logger.info(`Game ended after bot move. Result: ${JSON.stringify(botResult)}`);
+            const finalState = await TicTacToe.getGameState(groupId);
+            let endMessage = botResult.winner === "draw" 
+              ? "Permainan berakhir seri!" 
+              : `Permainan berakhir! Bot (O) menang!`;
+            await sendGameState(message, groupId, endMessage, finalState, true);
             TicTacToe.endGame(groupId);
           } else {
             const nextState = await TicTacToe.getGameState(groupId);
@@ -174,26 +172,22 @@ export const makeMove = async (message) => {
             await sendGameState(
               message,
               groupId,
-              `Bot memilih kotak ${botMove + 1}. Giliran @${
-                playerX.split("@")[0]
-              } (X).`,
+              `Bot memilih kotak ${botMove + 1}. Giliran @${playerX.split("@")[0]} (X).`,
               nextState
             );
           }
         }
-      }, 1000); // Delay bot's move by 1 second
+      }, 1000);
     }
 
     return true;
   } catch (error) {
     logger.error("Error in makeMove:", error);
-    await message.reply(
-      "An error occurred while making the move. Please try again."
-    );
+    await message.reply("Terjadi kesalahan saat melakukan langkah. Silakan coba lagi.");
   }
 };
 
-const sendGameState = async (message, groupId, caption, gameState) => {
+const sendGameState = async (message, groupId, caption, gameState, isFinal = false) => {
   try {
     const mentions = [];
     const playerX = TicTacToe.getPlayerX(groupId);
@@ -205,9 +199,15 @@ const sendGameState = async (message, groupId, caption, gameState) => {
       caption: caption,
       mentions: mentions,
     });
+
+    if (isFinal) {
+      // Kirim notifikasi tambahan untuk hasil akhir
+      const notificationMessage = `🎮 Permainan Tic Tac Toe telah berakhir!\n\n${caption}\n\nTerima kasih telah bermain!`;
+      await message.reply(notificationMessage, null, { mentions: mentions });
+    }
   } catch (error) {
     logger.error("Error in sendGameState:", error);
-    await message.reply("An error occurred while updating the game state.");
+    await message.reply("Terjadi kesalahan saat memperbarui status permainan.");
   }
 };
 

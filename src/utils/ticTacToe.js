@@ -182,7 +182,6 @@ class TicTacToe {
   async getGameState(groupId) {
     const game = this.games.get(groupId);
     if (!game) return null;
-
     return await this.getBoardImage(game.board);
   }
 
@@ -277,6 +276,11 @@ class TicTacToe {
 
   endGame(groupId) {
     this.games.delete(groupId);
+  }
+
+  getPlayerBySymbol(groupId, symbol) {
+    const game = this.games.get(groupId);
+    return game ? game.players[symbol] : null;
   }
 
   getPlayerX(groupId) {
