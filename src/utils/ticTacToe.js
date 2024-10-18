@@ -1,191 +1,275 @@
-import { createCanvas } from 'canvas';
-import pkg from 'whatsapp-web.js';
+import { createCanvas } from "canvas";
+import pkg from "whatsapp-web.js";
 const { MessageMedia } = pkg;
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class TicTacToe {
-    constructor() {
-        this.games = new Map();
-        this.pendingGames = new Map();
+  constructor() {
+    this.games = new Map();
+    this.pendingGames = new Map();
+  }
+
+  newGame(groupId, player1, player2, isBot = false) {
+    this.pendingGames.set(groupId, {
+      player1,
+      player2,
+      confirmed: false,
+      isBot,
+    });
+    return `@${player2.split("@")[0]}, ${
+      isBot ? "Bot" : "Anda"
+    } diajak bermain Tic Tac Toe oleh @${player1.split("@")[0]}. ${
+      isBot
+        ? "Bot akan mulai bermain."
+        : "Ketik Y untuk menerima atau N untuk menolak dalam 5 menit."
+    }`;
+  }
+
+  async confirmGame(groupId, player2) {
+    const pendingGame = this.pendingGames.get(groupId);
+    if (pendingGame && (pendingGame.player2 === player2 || pendingGame.isBot)) {
+      const game = {
+        board: Array(9).fill(null),
+        currentPlayer: "X",
+        players: { X: pendingGame.player1, O: player2 },
+        lastMoveTime: Date.now(),
+        isBot: pendingGame.isBot,
+      };
+      this.games.set(groupId, game);
+      this.pendingGames.delete(groupId);
+      return {
+        state: await this.getGameState(groupId),
+        message: `Permainan dimulai! Giliran @${
+          game.players.X.split("@")[0]
+        } (X).`,
+      };
+    }
+    return null;
+  }
+
+  rejectGame(groupId, player2) {
+    const pendingGame = this.pendingGames.get(groupId);
+    if (pendingGame && pendingGame.player2 === player2) {
+      this.pendingGames.delete(groupId);
+      return true;
+    }
+    return false;
+  }
+
+  async makeMove(groupId, player, position) {
+    const game = this.games.get(groupId);
+    if (
+      !game ||
+      game.players[game.currentPlayer] !== player ||
+      game.board[position] !== null
+    ) {
+      return null;
     }
 
-    newGame(groupId, player1, player2, isBot = false) {
-        this.pendingGames.set(groupId, { player1, player2, confirmed: false, isBot });
-        return `@${player2.split('@')[0]}, ${isBot ? 'Bot' : 'Anda'} diajak bermain Tic Tac Toe oleh @${player1.split('@')[0]}. ${isBot ? 'Bot akan mulai bermain.' : 'Ketik Y untuk menerima atau N untuk menolak dalam 5 menit.'}`;
+    game.board[position] = game.currentPlayer;
+    game.lastMoveTime = Date.now();
+
+    const result = this.checkGameEnd(groupId);
+    if (result) {
+      return result;
     }
 
-    async confirmGame(groupId, player2) {
-        const pendingGame = this.pendingGames.get(groupId);
-        if (pendingGame && (pendingGame.player2 === player2 || pendingGame.isBot)) {
-            const game = {
-                board: Array(9).fill(null),
-                currentPlayer: 'X',
-                players: { X: pendingGame.player1, O: player2 },
-                lastMoveTime: Date.now(),
-                isBot: pendingGame.isBot
-            };
-            this.games.set(groupId, game);
-            this.pendingGames.delete(groupId);
-            return await this.getGameState(groupId);
-        }
-        return null;
+    game.currentPlayer = game.currentPlayer === "X" ? "O" : "X";
+    const nextPlayer =
+      game.isBot && game.currentPlayer === "O" ? "bot" : game.currentPlayer;
+    return {
+      state: await this.getGameState(groupId),
+      message: `Giliran @${game.players[game.currentPlayer].split("@")[0]} (${
+        game.currentPlayer
+      }).`,
+      nextPlayer,
+    };
+  }
+
+  makeBotMove(groupId) {
+    const game = this.games.get(groupId);
+    if (!game || !game.isBot || game.currentPlayer !== "O") {
+      return null;
     }
 
-    rejectGame(groupId, player2) {
-        const pendingGame = this.pendingGames.get(groupId);
-        if (pendingGame && pendingGame.player2 === player2) {
-            this.pendingGames.delete(groupId);
-            return true;
-        }
-        return false;
+    const availableMoves = game.board.reduce((acc, cell, index) => {
+      if (cell === null) acc.push(index);
+      return acc;
+    }, []);
+
+    if (availableMoves.length === 0) {
+      return null;
     }
 
-    async makeMove(groupId, player, position) {
-        const game = this.games.get(groupId);
-        if (!game || game.players[game.currentPlayer] !== player || game.board[position] !== null) {
-            return null;
-        }
+    const randomMove =
+      availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    game.board[randomMove] = "O";
+    game.lastMoveTime = Date.now();
+    game.currentPlayer = "X";
 
-        game.board[position] = game.currentPlayer;
-        game.lastMoveTime = Date.now();
-        
-        const winner = this.checkWinner(game.board);
-        if (winner || !game.board.includes(null)) {
-            return { winner, board: game.board };
-        }
+    return randomMove;
+  }
 
-        game.currentPlayer = game.currentPlayer === 'X' ? 'O' : 'X';
-        return { nextPlayer: game.isBot && game.currentPlayer === 'O' ? 'bot' : game.currentPlayer };
+  checkWinner(board) {
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8], // Horizontal
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8], // Vertical
+      [0, 4, 8],
+      [2, 4, 6], // Diagonal
+    ];
+
+    for (let line of lines) {
+      const [a, b, c] = line;
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        return board[a];
+      }
     }
 
-    makeBotMove(groupId) {
-        const game = this.games.get(groupId);
-        if (!game || !game.isBot || game.currentPlayer !== 'O') {
-            return null;
-        }
+    return null;
+  }
 
-        const availableMoves = game.board.reduce((acc, cell, index) => {
-            if (cell === null) acc.push(index);
-            return acc;
-        }, []);
+  checkGameEnd(groupId) {
+    const game = this.games.get(groupId);
+    if (!game) return null;
 
-        if (availableMoves.length === 0) {
-            return null;
-        }
-
-        const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
-        game.board[randomMove] = 'O';
-        game.lastMoveTime = Date.now();
-        game.currentPlayer = 'X';
-
-        return randomMove;
+    const winner = this.checkWinner(game.board);
+    if (winner) {
+      return {
+        state: this.getGameState(groupId),
+        message: `Permainan berakhir! @${
+          game.players[winner].split("@")[0]
+        } (${winner}) menang!`,
+        winner,
+      };
+    } else if (!game.board.includes(null)) {
+      return {
+        state: this.getGameState(groupId),
+        message: `Permainan berakhir! Hasil imbang!`,
+        winner: "draw",
+      };
     }
 
-    checkWinner(board) {
-        const lines = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontal
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertical
-            [0, 4, 8], [2, 4, 6]             // Diagonal
-        ];
+    return null;
+  }
 
-        for (let line of lines) {
-            const [a, b, c] = line;
-            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                return board[a];
-            }
-        }
+  async getGameState(groupId) {
+    const game = this.games.get(groupId);
+    if (!game) return null;
 
-        return null;
+    return await this.getBoardImage(game.board);
+  }
+
+  async getBoardImage(board) {
+    const canvas = createCanvas(600, 600);
+    const ctx = canvas.getContext("2d");
+
+    // Background
+    ctx.fillStyle = "#f0f0f0";
+    ctx.fillRect(0, 0, 600, 600);
+
+    // 3D effect for the board
+    ctx.fillStyle = "#d0d0d0";
+    ctx.beginPath();
+    ctx.moveTo(20, 580);
+    ctx.lineTo(40, 560);
+    ctx.lineTo(560, 560);
+    ctx.lineTo(580, 580);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "#e0e0e0";
+    ctx.beginPath();
+    ctx.moveTo(580, 20);
+    ctx.lineTo(560, 40);
+    ctx.lineTo(560, 560);
+    ctx.lineTo(580, 580);
+    ctx.closePath();
+    ctx.fill();
+
+    // Main board
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(20, 20, 560, 560);
+
+    // Grid
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 5;
+    for (let i = 1; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(20 + (i * 560) / 3, 20);
+      ctx.lineTo(20 + (i * 560) / 3, 580);
+      ctx.moveTo(20, 20 + (i * 560) / 3);
+      ctx.lineTo(580, 20 + (i * 560) / 3);
+      ctx.stroke();
     }
 
-    checkGameEnd(groupId) {
-        const game = this.games.get(groupId);
-        if (!game) return null;
+    // Draw X, O, and numbers
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
 
-        const winner = this.checkWinner(game.board);
-        if (winner || !game.board.includes(null)) {
-            return { winner, board: game.board };
-        }
+    for (let i = 0; i < 9; i++) {
+      const x = 20 + (((i % 3) + 0.5) * 560) / 3;
+      const y = 20 + ((Math.floor(i / 3) + 0.5) * 560) / 3;
 
-        return null;
-    }
-
-    async getGameState(groupId) {
-        const game = this.games.get(groupId);
-        if (!game) return null;
-
-        return await this.getBoardImage(game.board);
-    }
-
-    async getBoardImage(board) {
-        const canvas = createCanvas(300, 300);
-        const ctx = canvas.getContext('2d');
-
-        // Draw background
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, 300, 300);
-
-        // Draw grid
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 5;
+      if (board[i] === "X") {
+        ctx.strokeStyle = "#ff0000";
+        ctx.lineWidth = 15;
         ctx.beginPath();
-        ctx.moveTo(100, 0);
-        ctx.lineTo(100, 300);
-        ctx.moveTo(200, 0);
-        ctx.lineTo(200, 300);
-        ctx.moveTo(0, 100);
-        ctx.lineTo(300, 100);
-        ctx.moveTo(0, 200);
-        ctx.lineTo(300, 200);
+        ctx.moveTo(x - 60, y - 60);
+        ctx.lineTo(x + 60, y + 60);
+        ctx.moveTo(x + 60, y - 60);
+        ctx.lineTo(x - 60, y + 60);
         ctx.stroke();
-
-        // Draw X, O, and numbers
-        ctx.font = '80px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        for (let i = 0; i < 9; i++) {
-            const x = (i % 3) * 100 + 50;
-            const y = Math.floor(i / 3) * 100 + 50;
-
-            if (board[i] === 'X') {
-                ctx.fillStyle = '#ff0000';
-                ctx.fillText('X', x, y);
-            } else if (board[i] === 'O') {
-                ctx.fillStyle = '#0000ff';
-                ctx.fillText('O', x, y);
-            } else {
-                ctx.fillStyle = '#888888';
-                ctx.font = '40px Arial';
-                ctx.fillText((i + 1).toString(), x, y);
-                ctx.font = '80px Arial';
-            }
-        }
-
-        const buffer = canvas.toBuffer('image/png');
-        const tempFilePath = path.join(__dirname, '../../temp', `board_${Date.now()}.png`);
-        await fs.writeFile(tempFilePath, buffer);
-
-        const media = MessageMedia.fromFilePath(tempFilePath);
-
-        // Delete the temporary file
-        await fs.unlink(tempFilePath);
-
-        return media;
+      } else if (board[i] === "O") {
+        ctx.strokeStyle = "#0000ff";
+        ctx.lineWidth = 15;
+        ctx.beginPath();
+        ctx.arc(x, y, 70, 0, Math.PI * 2);
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = "#888888";
+        ctx.font = "80px Arial";
+        ctx.fillText((i + 1).toString(), x, y);
+      }
     }
 
-    endGame(groupId) {
-        this.games.delete(groupId);
-    }
+    const buffer = canvas.toBuffer("image/png");
+    const tempFilePath = path.join(
+      __dirname,
+      "../../temp",
+      `board_${Date.now()}.png`
+    );
+    await fs.writeFile(tempFilePath, buffer);
+
+    const media = MessageMedia.fromFilePath(tempFilePath);
+
+    // Delete the temporary file
+    await fs.unlink(tempFilePath);
+
+    return media;
+  }
+
+  endGame(groupId) {
+    this.games.delete(groupId);
+  }
+
+  getPlayerX(groupId) {
+    const game = this.games.get(groupId);
+    return game ? game.players.X : null;
+  }
+
+  getPlayerO(groupId) {
+    const game = this.games.get(groupId);
+    return game ? game.players.O : null;
+  }
 }
 
 export default new TicTacToe();
-
-
-
-//test

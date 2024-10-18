@@ -29,14 +29,35 @@ export const startTicTacToe = async (message, args) => {
 
     if (isBot) {
       // Bot automatically accepts and makes a move
-      await TicTacToe.confirmGame(groupId, player2.id._serialized);
-      const botMove = TicTacToe.makeBotMove(groupId);
-      if (botMove !== null) {
+      const gameState = await TicTacToe.confirmGame(
+        groupId,
+        player2.id._serialized
+      );
+      if (gameState) {
         await sendGameState(
           message,
           groupId,
-          `Bot memilih kotak ${botMove + 1}`
+          gameState.message,
+          gameState.state
         );
+        const botMove = TicTacToe.makeBotMove(groupId);
+        if (botMove !== null) {
+          const result = TicTacToe.checkGameEnd(groupId);
+          if (result) {
+            await sendGameState(message, groupId, result.message, result.state);
+            TicTacToe.endGame(groupId);
+          } else {
+            const nextState = await TicTacToe.getGameState(groupId);
+            await sendGameState(
+              message,
+              groupId,
+              `Bot memilih kotak ${botMove + 1}. Giliran @${
+                player1.id.user
+              } (X).`,
+              nextState
+            );
+          }
+        }
       }
     } else {
       // Set timeout for game confirmation
@@ -65,11 +86,7 @@ export const confirmTicTacToe = async (message) => {
       player2.id._serialized
     );
     if (gameState) {
-      await sendGameState(
-        message,
-        groupId,
-        "Game started! Player X goes first."
-      );
+      await sendGameState(message, groupId, gameState.message, gameState.state);
     } else {
       await message.reply("No pending game invitation found for you.");
     }
@@ -118,70 +135,38 @@ export const makeMove = async (message) => {
       return false; // Not a valid move or not player's turn, ignore
     }
 
-    await sendGameState(
-      message,
-      groupId,
-      `@${player.id.user} memilih kotak ${position + 1}`
-    );
+    await sendGameState(message, groupId, result.message, result.state);
 
-    if (result.winner || (result.board && !result.board.includes(null))) {
-      // Game ended
-      let endMessage = result.winner
-        ? `Game Over! @${
-            result.winner === "X"
-              ? TicTacToe.getPlayerX(groupId)
-              : TicTacToe.getPlayerO(groupId)
-          } wins!`
-        : "Game Over! It's a draw!";
-      await message.reply(endMessage, null, {
-        mentions: [
-          await message.client.getContactById(TicTacToe.getPlayerX(groupId)),
-          await message.client.getContactById(TicTacToe.getPlayerO(groupId)),
-        ],
-      });
+    if (result.winner || result.winner === "draw") {
       TicTacToe.endGame(groupId);
     } else if (result.nextPlayer === "bot") {
       // Bot's turn
       setTimeout(async () => {
         const botMove = TicTacToe.makeBotMove(groupId);
         if (botMove !== null) {
-          await sendGameState(
-            message,
-            groupId,
-            `Bot memilih kotak ${botMove + 1}`
-          );
-          const finalResult = TicTacToe.checkGameEnd(groupId);
-          if (finalResult) {
-            let endMessage = finalResult.winner
-              ? `Game Over! @${
-                  finalResult.winner === "X"
-                    ? TicTacToe.getPlayerX(groupId)
-                    : TicTacToe.getPlayerO(groupId)
-                } wins!`
-              : "Game Over! It's a draw!";
-            await message.reply(endMessage, null, {
-              mentions: [
-                await message.client.getContactById(
-                  TicTacToe.getPlayerX(groupId)
-                ),
-                await message.client.getContactById(
-                  TicTacToe.getPlayerO(groupId)
-                ),
-              ],
-            });
+          const botResult = TicTacToe.checkGameEnd(groupId);
+          if (botResult) {
+            await sendGameState(
+              message,
+              groupId,
+              botResult.message,
+              botResult.state
+            );
             TicTacToe.endGame(groupId);
+          } else {
+            const nextState = await TicTacToe.getGameState(groupId);
+            const playerX = TicTacToe.getPlayerX(groupId);
+            await sendGameState(
+              message,
+              groupId,
+              `Bot memilih kotak ${botMove + 1}. Giliran @${
+                playerX.split("@")[0]
+              } (X).`,
+              nextState
+            );
           }
         }
       }, 1000); // Delay bot's move by 1 second
-    } else {
-      // Notify next player
-      const nextPlayer =
-        result.nextPlayer === "X"
-          ? TicTacToe.getPlayerX(groupId)
-          : TicTacToe.getPlayerO(groupId);
-      await message.reply(`It's @${nextPlayer}'s turn!`, null, {
-        mentions: [await message.client.getContactById(nextPlayer)],
-      });
     }
 
     return true;
@@ -193,9 +178,32 @@ export const makeMove = async (message) => {
   }
 };
 
-const sendGameState = async (message, groupId, caption) => {
-  const gameState = await TicTacToe.getGameState(groupId);
-  if (gameState) {
-    await message.reply(gameState, null, { caption: caption });
+const sendGameState = async (message, groupId, caption, gameState) => {
+  try {
+    const mentions = [];
+    const playerX = TicTacToe.getPlayerX(groupId);
+    const playerO = TicTacToe.getPlayerO(groupId);
+    if (playerX) mentions.push(await message.client.getContactById(playerX));
+    if (playerO) mentions.push(await message.client.getContactById(playerO));
+
+    await message.reply(gameState, null, {
+      caption: caption,
+      mentions: mentions,
+    });
+  } catch (error) {
+    logger.error("Error in sendGameState:", error);
+    await message.reply("An error occurred while updating the game state.");
   }
+};
+
+export const handleTicTacToeResponse = async (message) => {
+  const response = message.body.toLowerCase();
+  if (response === "y") {
+    await confirmTicTacToe(message);
+    return true;
+  } else if (response === "n") {
+    await rejectTicTacToe(message);
+    return true;
+  }
+  return await makeMove(message);
 };
