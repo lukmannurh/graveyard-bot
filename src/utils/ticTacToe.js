@@ -4,6 +4,7 @@ const { MessageMedia } = pkg;
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import logger from "./logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -61,27 +62,68 @@ class TicTacToe {
     return false;
   }
 
+  checkGameEnd(groupId) {
+    const game = this.games.get(groupId);
+    if (!game) {
+      logger.debug(`No active game found for group ${groupId}`);
+      return null;
+    }
+
+    const winner = this.checkWinner(game.board);
+    if (winner) {
+      logger.info(`Game ended. Winner: ${winner}`);
+      return {
+        state: this.getGameState(groupId),
+        message: `Permainan berakhir! @${
+          game.players[winner].split("@")[0]
+        } (${winner}) menang!`,
+        winner,
+      };
+    } else if (!game.board.includes(null)) {
+      logger.info(`Game ended in a draw`);
+      return {
+        state: this.getGameState(groupId),
+        message: `Permainan berakhir! Hasil imbang!`,
+        winner: "draw",
+      };
+    }
+
+    logger.debug(`Game continues for group ${groupId}`);
+    return null;
+  }
+
   async makeMove(groupId, player, position) {
     const game = this.games.get(groupId);
-    if (
-      !game ||
-      game.players[game.currentPlayer] !== player ||
-      game.board[position] !== null
-    ) {
+    if (!game) {
+      logger.debug(`No active game found for group ${groupId}`);
+      return null;
+    }
+    if (game.players[game.currentPlayer] !== player) {
+      logger.debug(`Not ${player}'s turn`);
+      return null;
+    }
+    if (game.board[position] !== null) {
+      logger.debug(`Invalid move: position ${position} is already occupied`);
       return null;
     }
 
     game.board[position] = game.currentPlayer;
     game.lastMoveTime = Date.now();
 
+    logger.debug(`Move made: Player ${player} at position ${position}`);
+
     const result = this.checkGameEnd(groupId);
     if (result) {
+      logger.info(`Game ended after move`);
       return result;
     }
 
     game.currentPlayer = game.currentPlayer === "X" ? "O" : "X";
     const nextPlayer =
       game.isBot && game.currentPlayer === "O" ? "bot" : game.currentPlayer;
+
+    logger.debug(`Next player: ${nextPlayer}`);
+
     return {
       state: await this.getGameState(groupId),
       message: `Giliran @${game.players[game.currentPlayer].split("@")[0]} (${
@@ -132,30 +174,6 @@ class TicTacToe {
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
         return board[a];
       }
-    }
-
-    return null;
-  }
-
-  checkGameEnd(groupId) {
-    const game = this.games.get(groupId);
-    if (!game) return null;
-
-    const winner = this.checkWinner(game.board);
-    if (winner) {
-      return {
-        state: this.getGameState(groupId),
-        message: `Permainan berakhir! @${
-          game.players[winner].split("@")[0]
-        } (${winner}) menang!`,
-        winner,
-      };
-    } else if (!game.board.includes(null)) {
-      return {
-        state: this.getGameState(groupId),
-        message: `Permainan berakhir! Hasil imbang!`,
-        winner: "draw",
-      };
     }
 
     return null;

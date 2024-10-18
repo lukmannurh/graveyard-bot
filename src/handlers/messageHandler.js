@@ -40,6 +40,7 @@ import {
   confirmTicTacToe,
   rejectTicTacToe,
   makeMove,
+  handleTicTacToeResponse,
 } from "../commands/ticTacToeCommands.js";
 
 const messageHandler = async (message) => {
@@ -190,18 +191,8 @@ const messageHandler = async (message) => {
       }
 
       // Handle Tic Tac Toe responses
-      if (message.body.toLowerCase() === "y") {
-        if (await confirmTicTacToe(message)) {
-          return;
-        }
-      } else if (message.body.toLowerCase() === "n") {
-        if (await rejectTicTacToe(message)) {
-          return;
-        }
-      } else if (/^[1-9]$/.test(message.body)) {
-        if (await makeMove(message)) {
-          return;
-        }
+      if (await handleTicTacToeResponse(message)) {
+        return;
       }
 
       // If still not handled, proceed with other non-command handlers

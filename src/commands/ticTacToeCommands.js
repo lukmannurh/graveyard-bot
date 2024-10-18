@@ -120,11 +120,16 @@ export const makeMove = async (message) => {
   try {
     const position = parseInt(message.body) - 1;
     if (isNaN(position) || position < 0 || position > 8) {
+      logger.debug(`Invalid move: ${message.body}`);
       return false; // Not a valid move, ignore
     }
 
     const groupId = message.from;
     const player = await message.getContact();
+
+    logger.debug(
+      `Player ${player.id._serialized} attempting move at position ${position}`
+    );
 
     const result = await TicTacToe.makeMove(
       groupId,
@@ -132,20 +137,30 @@ export const makeMove = async (message) => {
       position
     );
     if (!result) {
+      logger.debug(`Invalid move or not player's turn`);
       return false; // Not a valid move or not player's turn, ignore
     }
+
+    logger.debug(`Move result: ${JSON.stringify(result)}`);
 
     await sendGameState(message, groupId, result.message, result.state);
 
     if (result.winner || result.winner === "draw") {
+      logger.info(`Game ended. Winner: ${result.winner}`);
+      await message.reply("Permainan telah berakhir.");
       TicTacToe.endGame(groupId);
     } else if (result.nextPlayer === "bot") {
       // Bot's turn
+      logger.debug("Bot's turn");
       setTimeout(async () => {
         const botMove = TicTacToe.makeBotMove(groupId);
+        logger.debug(`Bot move: ${botMove}`);
         if (botMove !== null) {
           const botResult = TicTacToe.checkGameEnd(groupId);
           if (botResult) {
+            logger.info(
+              `Game ended after bot move. Result: ${JSON.stringify(botResult)}`
+            );
             await sendGameState(
               message,
               groupId,
