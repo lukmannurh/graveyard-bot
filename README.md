@@ -8,7 +8,7 @@ Graveyard Bot is a multifunctional WhatsApp bot that combines artificial intelli
 - **Score Prediction Game**: Interactive feature for predicting soccer match scores.
 - **Text Adventures**: Immersive text-based role-playing experiences.
 - **Anime Explorer**: Anime recommendations and information.
-- **TikTok Downloader**: Easy download of TikTok videos.
+- **Downloader**: Easy download of videos and audio from various social media platforms.
 - **Group Management**: Admin commands for efficient group management.
 - **Sticker Creator**: Convert images to WhatsApp stickers.
 - **And much more!**
@@ -18,15 +18,16 @@ Graveyard Bot is a multifunctional WhatsApp bot that combines artificial intelli
 ### 📱 General Commands
 - `.menu` - Display list of commands
 - `.start [team1] [team2] [prize]` - Start a score prediction session
-- `.predict [score]` - Predict match score (e.g., .predict 1-0)
+- `.tebak [score]` - Predict match score (e.g., .tebak 1-0)
 - `.list` - View list of participants' predictions
 - `.random [num_teams] [name1] [name2] ...` - Create random teams
 - `.ai [question/command]` - Interact with AI
 - `.waifu [count]` - Get random waifu images (1-20 images)
 - `.getpp @user` - Retrieve profile picture of tagged user
 - `.stats` - Display group activity statistics
-- `.prayertimes` - Show prayer times (WIB, WITA, WIT)
+- `.jadwalsholat` - Show prayer times for WIB, WITA, and WIT
 - `.s` - Convert image to sticker
+- `.klasemenliga` - Display league standings (Premier League, La Liga, etc.)
 
 ### 👑 Admin Commands
 - `.end` - End score prediction session
@@ -35,18 +36,26 @@ Graveyard Bot is a multifunctional WhatsApp bot that combines artificial intelli
 - `.unban @user` - Remove user ban
 
 ### 🎮 Games
-- `.checkforever` - Check "forever alone" level (just for fun)
+- `.cekjomok` - Check your "jomok" level
 - `.adventure` - Start interactive text adventure
+- `.ttc @user` - Start a Tic Tac Toe game with tagged user
+- `.dadu` - Play dice game with other players
 
 ### 🌸 Anime Commands
-- `.anime genre [genre_name]` - Anime recommendations by genre
-- `.anime season [year] [season]` - Information on seasonal anime
-- `.anime top` - List top 10 anime
-- `.anime upcoming` - List upcoming anime
-- `.anime [keyword]` - Anime search
+- `.animek genres [genre_name]` - Anime recommendations by genre
+- `.animek season [year] [season]` - Information on seasonal anime (spring/summer/fall/winter)
+- `.animek top` - List top 10 anime
+- `.animek upcoming` - List upcoming anime
+- `.animek [keyword]` - Anime search
 
 ### 📥 Downloader
 - `.tt [URL]` - Download TikTok video
+- `.ytdl [URL]` - Download video or audio from YouTube
+- `.ytmp4 [URL]` - Download video from YouTube
+- `.ytmp3 [URL]` - Download audio from YouTube
+- `.spotify [URL]` - Download from Spotify
+- `.fbdl [URL]` - Download video from Facebook
+- `.igdl [URL]` - Download video from Instagram
 
 ## 🛠 Installation
 

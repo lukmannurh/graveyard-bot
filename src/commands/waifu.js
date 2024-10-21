@@ -5,7 +5,7 @@ import logger from '../utils/logger.js';
 import { WAIFU_API_TOKEN } from '../config/index.js';
 
 const WAIFU_API_URL = 'https://api.waifu.im/search';
-const MAX_IMAGES = 20;
+const MAX_IMAGES = 10;
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 

@@ -33,7 +33,7 @@ ${createMenuSection("📱 Perintah Umum", [
   },
   {
     name: "waifu [jumlah]",
-    description: "Mendapatkan gambar waifu acak (1-20 gambar)",
+    description: "Mendapatkan gambar waifu acak (1-10 gambar)",
   },
   {
     name: "getpp @user",
