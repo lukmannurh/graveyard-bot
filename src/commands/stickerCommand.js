@@ -74,7 +74,7 @@ async function processAnimatedMedia(media, message, tempDir) {
 
     await new Promise((resolve, reject) => {
       ffmpeg(inputPath)
-        .inputOptions(['-t', '5'])
+        .inputOptions(['-t', '6'])
         .outputOptions([
           '-vcodec', 'libwebp',
           '-vf', 'scale=512:512:force_original_aspect_ratio=decrease,fps=15,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=white@0.0',
@@ -99,61 +99,23 @@ async function processAnimatedMedia(media, message, tempDir) {
     const stickerBuffer = await fs.readFile(outputPath);
     const stickerMedia = new MessageMedia('image/webp', stickerBuffer.toString('base64'));
     
-    let sent = false;
+    // Mencoba mengirim stiker dengan cara yang berbeda
     try {
       await message.reply(stickerMedia, null, { sendMediaAsSticker: true });
-      sent = true;
     } catch (sendError) {
       logger.error('Error sending sticker, trying alternative method:', sendError);
       const chat = await message.getChat();
       await chat.sendMessage(stickerMedia, { sendMediaAsSticker: true });
-      sent = true;
     }
 
-    if (sent) {
-      logger.info('Animated sticker sent successfully');
-    }
-
+    logger.info('Animated sticker sent successfully');
   } catch (error) {
     logger.error('Error processing animated media:', error);
     await message.reply('Terjadi kesalahan saat memproses media. Silakan coba lagi nanti.');
   } finally {
-    // Hapus file sementara
-    try {
-      await fs.unlink(inputPath);
-      await fs.unlink(outputPath);
-      logger.info('Temporary files deleted successfully');
-    } catch (deleteError) {
-      logger.error('Error deleting temporary files:', deleteError);
-    }
+    await fs.unlink(inputPath).catch(e => logger.error('Error deleting input file:', e));
+    await fs.unlink(outputPath).catch(e => logger.error('Error deleting output file:', e));
   }
 }
-
-// Fungsi untuk membersihkan file lama di folder temp
-async function cleanupTempFolder(tempDir) {
-  try {
-    const files = await fs.readdir(tempDir);
-    const now = Date.now();
-    const oneHourAgo = now - 3600000; // 1 jam dalam milidetik
-
-    for (const file of files) {
-      const filePath = path.join(tempDir, file);
-      const stats = await fs.stat(filePath);
-
-      if (stats.mtimeMs < oneHourAgo) {
-        await fs.unlink(filePath);
-        logger.info(`Deleted old file: ${filePath}`);
-      }
-    }
-  } catch (error) {
-    logger.error('Error cleaning up temp folder:', error);
-  }
-}
-
-// Jalankan pembersihan setiap jam
-setInterval(() => {
-  const tempDir = path.join(__dirname, '../../temp');
-  cleanupTempFolder(tempDir);
-}, 3600000); // Setiap 1 jam
 
 export default stickerCommand;
