@@ -15,27 +15,18 @@ ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 async function stickerCommand(message) {
   try {
-    logger.info('Sticker command initiated');
-
     if (!message.hasMedia) {
-      logger.info('No media attached to the message');
-      await message.reply('Please send an image or video with the caption .s to convert it to a sticker.');
+      await message.reply('Silakan kirim gambar atau video dengan caption .s untuk mengubahnya menjadi stiker.');
       return;
     }
 
-    logger.info('Attempting to download media');
-    const media = await message.downloadMedia().catch(error => {
-      logger.error('Error downloading media:', error);
-      throw new Error('Failed to download media');
-    });
-
+    const media = await message.downloadMedia();
     if (!media) {
-      logger.error('Media download resulted in null');
-      await message.reply('Failed to download media. Please try again.');
+      await message.reply('Gagal mengunduh media. Silakan coba lagi.');
       return;
     }
 
-    logger.info(`Successfully downloaded media of type: ${media.mimetype}`);
+    logger.info(`Processing media of type: ${media.mimetype}`);
 
     const tempDir = path.join(__dirname, '../../temp');
     await fs.mkdir(tempDir, { recursive: true });
@@ -48,13 +39,12 @@ async function stickerCommand(message) {
 
   } catch (error) {
     logger.error('Error in stickerCommand:', error);
-    await message.reply(`An error occurred: ${error.message}. Please try again later.`);
+    await message.reply('Terjadi kesalahan saat membuat stiker. Silakan coba lagi nanti.');
   }
 }
 
 async function processImage(media, message, tempDir) {
   try {
-    logger.info('Processing static image');
     const imageBuffer = Buffer.from(media.data, 'base64');
     const stickerBuffer = await sharp(imageBuffer)
       .resize(512, 512, {
@@ -66,10 +56,11 @@ async function processImage(media, message, tempDir) {
 
     const stickerMedia = new MessageMedia('image/webp', stickerBuffer.toString('base64'));
     await message.reply(stickerMedia, null, { sendMediaAsSticker: true });
-    logger.info('Static image sticker sent successfully');
+
+    logger.info('Image sticker sent successfully');
   } catch (error) {
-    logger.error('Error processing static image:', error);
-    throw error;
+    logger.error('Error processing image:', error);
+    await message.reply('Terjadi kesalahan saat memproses gambar. Silakan coba lagi nanti.');
   }
 }
 
@@ -78,7 +69,6 @@ async function processAnimatedMedia(media, message, tempDir) {
   const outputPath = path.join(tempDir, `sticker_${Date.now()}.webp`);
 
   try {
-    logger.info('Processing animated media');
     await fs.writeFile(inputPath, Buffer.from(media.data, 'base64'));
     logger.info(`Input file saved: ${inputPath}`);
 
@@ -109,13 +99,26 @@ async function processAnimatedMedia(media, message, tempDir) {
     const stickerBuffer = await fs.readFile(outputPath);
     const stickerMedia = new MessageMedia('image/webp', stickerBuffer.toString('base64'));
     
-    await message.reply(stickerMedia, null, { sendMediaAsSticker: true });
-    logger.info('Animated sticker sent successfully');
+    let sent = false;
+    try {
+      await message.reply(stickerMedia, null, { sendMediaAsSticker: true });
+      sent = true;
+    } catch (sendError) {
+      logger.error('Error sending sticker, trying alternative method:', sendError);
+      const chat = await message.getChat();
+      await chat.sendMessage(stickerMedia, { sendMediaAsSticker: true });
+      sent = true;
+    }
+
+    if (sent) {
+      logger.info('Animated sticker sent successfully');
+    }
 
   } catch (error) {
     logger.error('Error processing animated media:', error);
-    throw error;
+    await message.reply('Terjadi kesalahan saat memproses media. Silakan coba lagi nanti.');
   } finally {
+    // Hapus file sementara
     try {
       await fs.unlink(inputPath);
       await fs.unlink(outputPath);
@@ -143,13 +146,13 @@ async function cleanupTempFolder(tempDir) {
       }
     }
   } catch (error) {
-    logger.error("Error cleaning up temp folder:", error);
+    logger.error('Error cleaning up temp folder:', error);
   }
 }
 
 // Jalankan pembersihan setiap jam
 setInterval(() => {
-  const tempDir = path.join(__dirname, "../../temp");
+  const tempDir = path.join(__dirname, '../../temp');
   cleanupTempFolder(tempDir);
 }, 3600000); // Setiap 1 jam
 
