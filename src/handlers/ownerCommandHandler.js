@@ -14,18 +14,14 @@ function isOwner(userId) {
 }
 
 export const handleOwnerCommand = async (message, groupId) => {
-  const [command, ...args] = message.body
-    .slice(PREFIX.length)
-    .trim()
-    .split(/ +/);
+  const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
   const commandName = command.toLowerCase();
   const sender = await message.getContact();
   const userId = sender.id._serialized;
-
-  logger.info("Owner command received:", commandName);
+  logger.info(`Owner command received: ${commandName} from ${userId}`);
 
   if (!isOwner(userId)) {
-    logger.warn(`Non-owner ${userId} attempted to use owner command: ${commandName}`);
+    logger.warn(`Non-owner ${userId} mencoba menggunakan perintah owner: ${commandName}`);
     return;
   }
 
@@ -35,9 +31,7 @@ export const handleOwnerCommand = async (message, groupId) => {
       logger.info("Authorize command executed successfully");
     } catch (error) {
       logger.error("Error executing authorize command:", error);
-      await message.reply(
-        "Terjadi kesalahan saat menjalankan perintah authorize. Mohon coba lagi."
-      );
+      await message.reply("Terjadi kesalahan saat menjalankan perintah authorize. Mohon coba lagi.");
     }
   } else if (OWNER_COMMANDS.includes(commandName)) {
     const commandFunction = commands[commandName];
@@ -48,51 +42,33 @@ export const handleOwnerCommand = async (message, groupId) => {
         logger.info(`Owner command ${commandName} executed successfully`);
       } catch (error) {
         logger.error(`Error executing owner command ${commandName}:`, error);
-        await message.reply(
-          `Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`
-        );
+        await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
       }
+    } else {
+      logger.warn(`Command function tidak ditemukan untuk owner command: ${commandName}`);
     }
-    logger.debug("GENERAL_COMMANDS:", GENERAL_COMMANDS);
-    logger.debug("exportedCommands keys:", Object.keys(exportedCommands));
   } else if (GENERAL_COMMANDS.includes(commandName)) {
     const commandFunction = exportedCommands[commandName];
     if (commandFunction) {
       logger.info(`Executing general command for owner: ${commandName}`);
       try {
         await commandFunction(message, args);
-        logger.info(
-          `General command ${commandName} executed successfully for owner`
-        );
+        logger.info(`General command ${commandName} executed successfully for owner`);
       } catch (error) {
-        logger.error(
-          `Error executing general command ${commandName} for owner:`,
-          error
-        );
-        await message.reply(
-          `Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`
-        );
+        logger.error(`Error executing general command ${commandName} for owner:`, error);
+        await message.reply(`Terjadi kesalahan saat menjalankan perintah ${commandName}. Mohon coba lagi nanti.`);
       }
     } else {
       logger.warn(`Unknown general command: ${commandName}`);
-      await message.reply(
-        "Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia."
-      );
+      await message.reply("Perintah tidak dikenali. Gunakan .menu untuk melihat daftar perintah yang tersedia.");
     }
   } else if (message.body.startsWith(PREFIX)) {
-    // If it's not an owner command but starts with prefix, handle it as a regular command
     const chat = await message.getChat();
     await handleRegularCommand(message, chat, sender, true);
   } else {
-    // Handle non-command messages from owner, including adventure choices
     const chat = await message.getChat();
-    if (
-      adventureManager.isGameActive(groupId) &&
-      /^\d+$/.test(message.body.trim())
-    ) {
-      logger.debug(
-        `Processing owner's adventure choice: ${message.body} for group ${groupId}`
-      );
+    if (adventureManager.isGameActive(groupId) && /^\d+$/.test(message.body.trim())) {
+      logger.debug(`Processing owner's adventure choice: ${message.body} for group ${groupId}`);
       try {
         await handleAdventureChoice(message);
       } catch (error) {

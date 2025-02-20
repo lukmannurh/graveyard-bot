@@ -5,109 +5,69 @@ import { isGroupAuthorized } from "../utils/authorizedGroups.js";
 import { PREFIX } from "../config/constants.js";
 import logger from "../utils/logger.js";
 import adventureManager from "../utils/adventureManager.js";
-import {
-  handleAdventureChoice,
-  adventure,
-} from "../commands/adventureCommand.js";
+import { handleAdventureChoice, adventure } from "../commands/adventureCommand.js";
 import groupStats from "../utils/groupStats.js";
-import {
-  isUserBanned,
-  deleteBannedUserMessage,
-  isOwner,
-} from "../utils/enhancedModerationSystem.js";
+import { isUserBanned, deleteBannedUserMessage, isOwner } from "../utils/enhancedModerationSystem.js";
 import { isAdmin } from "../utils/adminChecker.js";
 import downloadTikTokVideo from "../commands/tiktokDownloader.js";
-import {
-  ytdl,
-  ytmp4,
-  ytmp3,
-  spotify,
-  fbdl,
-  igdl,
-} from "../commands/downloader.js";
-import {
-  klasemenLiga,
-  handleKlasemenResponse,
-} from "../commands/klasemenLiga.js";
+import { ytdl, ytmp4, ytmp3, spotify, fbdl, igdl } from "../commands/downloader.js";
+import { klasemenLiga, handleKlasemenResponse } from "../commands/klasemenLiga.js";
 import { dadu, handleDaduGame } from "../commands/daduGame.js";
-import {
-  checkForbiddenWord,
-  getForbiddenWordResponse,
-} from "../utils/wordFilter.js";
+import { checkForbiddenWord, getForbiddenWordResponse } from "../utils/wordFilter.js";
 import { warnUser } from "../utils/enhancedModerationSystem.js";
-import {
-  startTicTacToe,
-  confirmTicTacToe,
-  rejectTicTacToe,
-  makeMove,
-  handleTicTacToeResponse,
-} from "../commands/ticTacToeCommands.js";
+import { startTicTacToe, handleTicTacToeResponse } from "../commands/ticTacToeCommands.js";
 
 const messageHandler = async (message) => {
   try {
     const chat = await message.getChat();
-    if (!chat.isGroup) return;
+    // Hanya proses pesan jika berasal dari grup (untuk pengujian, Anda dapat menonaktifkan pengecekan ini)
+    if (!chat.isGroup) {
+      logger.debug("Pesan bukan dari grup, diabaikan.");
+      return;
+    }
 
     const sender = await message.getContact();
     const groupId = chat.id._serialized;
     const userId = sender.id._serialized;
+    logger.info(`Message received in group ${groupId} from ${userId}: ${message.body}`);
 
-    logger.debug(
-      `Message received - Type: ${message.type}, From: ${userId}, Group: ${groupId}, Body: ${message.body}`
-    );
-
-    const isOwnerUser = isOwner(userId);
-    const isGroupAdmin = await isAdmin(chat, sender);
-
-    // Log message for stats
-    if (message.fromMe === false) {
+    // Update statistik grup
+    if (!message.fromMe) {
       groupStats.logMessage(groupId, userId);
     }
 
     const isAuthorized = isGroupAuthorized(groupId);
-    logger.debug(`Group authorization status: ${isAuthorized}`);
+    logger.debug(`Group authorization status for ${groupId}: ${isAuthorized}`);
 
+    // Cek status banned
     if (isUserBanned(groupId, userId)) {
       await deleteBannedUserMessage(message);
       await chat.sendMessage(
-        `@${
-          userId.split("@")[0]
-        }, You are currently banned in this group. Your message has been deleted. The ban will end in 1 hour.`
+        `@${userId.split("@")[0]}, Anda sedang banned. Pesan Anda telah dihapus. Ban akan berakhir dalam 1 jam.`
       );
       return;
     }
 
-    // Check for forbidden words
+    // Cek kata-kata terlarang
     const forbiddenCheck = checkForbiddenWord(message.body, userId);
     if (forbiddenCheck.found) {
       const updatedStatus = await warnUser(groupId, userId);
-      await message.reply(
-        getForbiddenWordResponse(
-          forbiddenCheck.word,
-          forbiddenCheck.lowercaseWord
-        )
-      );
-
+      await message.reply(getForbiddenWordResponse(forbiddenCheck.word, forbiddenCheck.lowercaseWord));
       if (updatedStatus.banned) {
-        await message.reply(
-          "Anda telah mencapai batas peringatan dan sekarang di-ban dari grup ini selama 1 jam."
-        );
+        await message.reply("Anda telah mencapai batas peringatan dan sekarang di-ban dari grup ini selama 1 jam.");
       } else {
-        await message.reply(
-          `Peringatan ${updatedStatus.warnings}/5. Hati-hati dalam penggunaan kata-kata.`
-        );
+        await message.reply(`Peringatan ${updatedStatus.warnings}/5. Hati-hati dalam penggunaan kata-kata.`);
       }
       return;
     }
 
+    // Jika pesan dimulai dengan prefix, anggap sebagai perintah
     if (message.body.startsWith(PREFIX)) {
-      const [command, ...args] = message.body
-        .slice(PREFIX.length)
-        .trim()
-        .split(/ +/);
+      const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
       const commandName = command.toLowerCase();
+      logger.info(`Command received: ${commandName} with args: ${args.join(" ")}`);
 
-      // Handle specific commands
+      // Tangani perintah khusus yang tidak masuk ke handler umum
       switch (commandName) {
         case "tt":
           await downloadTikTokVideo(message, args);
@@ -144,58 +104,49 @@ const messageHandler = async (message) => {
           if (isAuthorized) {
             await adventure(message, args);
           } else {
-            logger.debug(
-              `Unauthorized group ${groupId}, ignoring command from non-owner`
-            );
+            logger.debug(`Group ${groupId} tidak diotorisasi, perintah adventure diabaikan.`);
           }
           return;
       }
 
+      // Jika pengirim adalah owner, gunakan handler owner
+      const isOwnerUser = isOwner(userId);
+      const isGroupAdmin = await isAdmin(chat, sender);
       if (isOwnerUser) {
         await handleOwnerCommand(message, groupId);
       } else if (isAuthorized) {
         await handleRegularCommand(message, chat, sender, isGroupAdmin);
       } else {
-        logger.debug(
-          `Unauthorized group ${groupId}, ignoring command from non-owner`
-        );
+        logger.debug(`Group ${groupId} tidak diotorisasi, perintah dari ${userId} diabaikan.`);
       }
     } else {
-      // Handling non-command messages
+      // Penanganan pesan non-perintah
       const pendingSelection = adventureManager.getPendingSelection(groupId);
       const isGameActive = adventureManager.isGameActive(groupId);
 
-      // Check if the message is tagging @bot for Tic Tac Toe
+      // Cek jika pesan mengandung tag untuk memulai Tic Tac Toe (misalnya tag @bot)
       const mentions = await message.getMentions();
       if (mentions.length === 1 && mentions[0].id.user === "status@broadcast") {
         await startTicTacToe(message, []);
         return;
       }
 
-      if (
-        pendingSelection === userId ||
-        (isGameActive && /^\d+$/.test(message.body.trim()))
-      ) {
+      // Jika pesan berupa angka dan berkaitan dengan pilihan petualangan
+      if (pendingSelection === userId || (isGameActive && /^\d+$/.test(message.body.trim()))) {
         if (isAuthorized) {
-          logger.debug(
-            `Processing adventure choice: ${message.body} for group ${groupId} from user ${userId}`
-          );
+          logger.debug(`Processing adventure choice: ${message.body} for group ${groupId} from user ${userId}`);
           await handleAdventureChoice(message);
           return;
         }
       }
 
-      // Handle Dadu game responses
-      if (await handleDaduGame(message)) {
-        return;
-      }
+      // Tangani respons untuk game Dadu
+      if (await handleDaduGame(message)) return;
 
-      // Handle Tic Tac Toe responses
-      if (await handleTicTacToeResponse(message)) {
-        return;
-      }
+      // Tangani respons untuk Tic Tac Toe
+      if (await handleTicTacToeResponse(message)) return;
 
-      // If still not handled, proceed with other non-command handlers
+      // Jika pesan tidak tertangani, gunakan handler non-command
       if (isAuthorized) {
         const klasemenHandled = await handleKlasemenResponse(message);
         if (!klasemenHandled) {
@@ -205,7 +156,7 @@ const messageHandler = async (message) => {
     }
   } catch (error) {
     logger.error("Error in messageHandler:", error);
-    // Do not send error message to avoid responding to banned users
+    // Jangan mengirim error ke pengguna untuk menghindari kebocoran informasi
   }
 };
 
