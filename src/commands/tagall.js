@@ -4,14 +4,13 @@ const tagall = async (message) => {
   try {
     const chat = await message.getChat();
 
-    // Coba dapatkan peserta dari properti standar atau fallback internal
-    let participants =
-      (chat.participants && Array.isArray(chat.participants) && chat.participants.length > 0) ||
-      (chat.groupMetadata && Array.isArray(chat.groupMetadata.participants) && chat.groupMetadata.participants.length > 0)
-        ? chat.participants || chat.groupMetadata.participants
-        : chat._data?.groupMetadata?.participants;
+    // Gunakan daftar peserta dari chat.participants, atau fallback ke chat.groupMetadata.participants
+    const participants =
+      chat.participants && Array.isArray(chat.participants) && chat.participants.length > 0
+        ? chat.participants
+        : (chat.groupMetadata && chat.groupMetadata.participants) || [];
 
-    if (!participants || !Array.isArray(participants) || participants.length === 0) {
+    if (participants.length === 0) {
       await message.reply("Daftar anggota grup tidak tersedia. Pastikan bot sudah admin dan grup aktif.");
       return;
     }
@@ -19,7 +18,8 @@ const tagall = async (message) => {
     let text = "";
     let mentions = [];
     for (const participant of participants) {
-      mentions.push(participant);
+      // Untuk tagall, kita tag semua anggota tanpa terkecuali
+      mentions.push(participant.id._serialized);
       text += `@${participant.id.user} `;
     }
 
