@@ -4,11 +4,13 @@ import { isOwner } from "../utils/enhancedModerationSystem.js";
 const kick = async (message) => {
   try {
     const chat = await message.getChat();
-
-    // Pastikan daftar peserta grup sudah dimuat
-    let participants = chat.participants;
-    if (!participants || !Array.isArray(participants) || participants.length === 0) {
-      participants = await chat.fetchParticipants();
+    // Gunakan properti chat.participants dan pastikan berupa array
+    const participants = (chat.participants && Array.isArray(chat.participants))
+      ? chat.participants
+      : null;
+    if (!participants || participants.length === 0) {
+      await message.reply("Daftar anggota grup tidak tersedia. Pastikan bot sudah admin dan grup aktif.");
+      return;
     }
 
     const mentioned = await message.getMentions();
@@ -17,14 +19,13 @@ const kick = async (message) => {
       return;
     }
 
-    // Loop untuk setiap peserta yang di-mention
+    // Lakukan kick untuk setiap peserta yang di-mention
     for (const participant of mentioned) {
-      // Jangan keluarkan jika peserta adalah owner bot
+      // Jangan keluarkan jika target adalah owner
       if (isOwner(participant.id._serialized)) {
         await message.reply(`Tidak dapat mengeluarkan owner bot: @${participant.id.user}`);
         continue;
       }
-      // Gunakan fungsi removeParticipant jika tersedia
       if (typeof chat.removeParticipant === "function") {
         await chat.removeParticipant(participant.id._serialized);
         logger.info(`Participant ${participant.id._serialized} dikeluarkan.`);
