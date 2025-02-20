@@ -3,11 +3,14 @@ import logger from "../utils/logger.js";
 const tagall = async (message) => {
   try {
     const chat = await message.getChat();
-    // Coba dapatkan peserta dari chat.participants atau chat.groupMetadata.participants
-    let participants = chat.participants;
-    if (!participants || !Array.isArray(participants) || participants.length === 0) {
-      participants = chat.groupMetadata?.participants;
-    }
+
+    // Coba dapatkan peserta dari properti standar atau fallback internal
+    let participants =
+      (chat.participants && Array.isArray(chat.participants) && chat.participants.length > 0) ||
+      (chat.groupMetadata && Array.isArray(chat.groupMetadata.participants) && chat.groupMetadata.participants.length > 0)
+        ? chat.participants || chat.groupMetadata.participants
+        : chat._data?.groupMetadata?.participants;
+
     if (!participants || !Array.isArray(participants) || participants.length === 0) {
       await message.reply("Daftar anggota grup tidak tersedia. Pastikan bot sudah admin dan grup aktif.");
       return;
