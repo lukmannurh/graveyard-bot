@@ -5,10 +5,9 @@ const kick = async (message) => {
   try {
     const chat = await message.getChat();
 
-    // Pastikan peserta grup sudah dimuat
+    // Pastikan daftar peserta grup sudah dimuat
     let participants = chat.participants;
     if (!participants || !Array.isArray(participants) || participants.length === 0) {
-      // Coba muat peserta grup
       participants = await chat.fetchParticipants();
     }
 
@@ -18,17 +17,17 @@ const kick = async (message) => {
       return;
     }
 
-    // Lakukan kick untuk setiap peserta yang di-mention
-    for (let participant of mentioned) {
-      // Pastikan target bukan owner
+    // Loop untuk setiap peserta yang di-mention
+    for (const participant of mentioned) {
+      // Jangan keluarkan jika peserta adalah owner bot
       if (isOwner(participant.id._serialized)) {
         await message.reply(`Tidak dapat mengeluarkan owner bot: @${participant.id.user}`);
         continue;
       }
-      // Periksa apakah fungsi removeParticipant tersedia
+      // Gunakan fungsi removeParticipant jika tersedia
       if (typeof chat.removeParticipant === "function") {
         await chat.removeParticipant(participant.id._serialized);
-        logger.info(`Participant ${participant.id._serialized} telah dikeluarkan.`);
+        logger.info(`Participant ${participant.id._serialized} dikeluarkan.`);
       } else {
         logger.warn("Fungsi removeParticipant tidak tersedia di objek chat.");
         await message.reply("Tidak dapat mengeluarkan anggota karena fungsi pengeluaran anggota tidak tersedia.");
