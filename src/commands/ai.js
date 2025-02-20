@@ -16,14 +16,21 @@ async function mediaToGenerativePart(media) {
 
 async function run(textPrompt, mediaPart) {
   try {
+    // Tambahkan instruksi agar respons selalu detail, komprehensif, dan informatif.
+    const detailedInstruction = "\nMohon berikan respons yang detail, komprehensif, dan informatif.";
+    textPrompt += detailedInstruction;
+    
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    
     let prompt = [{ text: textPrompt }];
     if (mediaPart) {
       prompt.unshift(mediaPart);
     }
+    
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
+    
     if (text) {
       logger.info("Generated Text:", text);
       return text;
@@ -48,11 +55,14 @@ async function ai(message, args) {
   try {
     let mediaPart = null;
     let textPrompt = args.join(" ");
+    
     if (message.hasMedia) {
       const media = await message.downloadMedia();
       mediaPart = await mediaToGenerativePart(media);
     }
+    
     if (!textPrompt && !mediaPart) return;
+    
     let responseText = await run(textPrompt, mediaPart);
     responseText = formatResponse(responseText);
     await message.reply(responseText);
