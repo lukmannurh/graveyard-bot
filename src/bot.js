@@ -1,4 +1,5 @@
-import { Client, LocalAuth } from 'whatsapp-web.js';
+import pkg from 'whatsapp-web.js';
+const { Client, LocalAuth } = pkg;
 import qrcode from 'qrcode-terminal';
 import logger from './utils/logger.js';
 import { PUPPETEER_ARGS } from './config/constants.js';
@@ -37,7 +38,6 @@ export const startBot = async () => {
 
     client.on('disconnected', (reason) => {
       logger.warn('WhatsApp Web client was disconnected:', reason);
-      // Coba reconnect setelah 5 detik
       setTimeout(() => {
         logger.info('Attempting to reconnect...');
         startBot().catch((startError) => {
@@ -50,7 +50,7 @@ export const startBot = async () => {
     await client.initialize();
     logger.info('WhatsApp client initialized successfully');
 
-    // Muat data petualangan dan statistik grup
+    // Load adventures and group stats
     await adventureManager.loadAdventures();
     await groupStats.loadStats();
     logger.info('Adventure and group stats loaded successfully');
