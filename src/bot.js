@@ -1,14 +1,14 @@
-import pkg from 'whatsapp-web.js';
-const { Client, LocalAuth } = pkg;
+import { Client, LocalAuth } from 'whatsapp-web.js';
 import qrcode from 'qrcode-terminal';
 import logger from './utils/logger.js';
 import { PUPPETEER_ARGS } from './config/constants.js';
 import adventureManager from './utils/adventureManager.js';
 import groupStats from './utils/groupStats.js';
+import messageHandler from './handlers/messageHandler.js';
 
 let client;
 
-const startBot = async (messageHandler) => {
+export const startBot = async () => {
   try {
     logger.info('Initializing WhatsApp client...');
     client = new Client({
@@ -37,25 +37,30 @@ const startBot = async (messageHandler) => {
 
     client.on('disconnected', (reason) => {
       logger.warn('WhatsApp Web client was disconnected:', reason);
-      // Try to reconnect
+      // Coba reconnect setelah 5 detik
       setTimeout(() => {
         logger.info('Attempting to reconnect...');
-        startBot(messageHandler);
+        startBot().catch((startError) => {
+          logger.error('Failed to restart bot after disconnection:', startError);
+        });
       }, 5000);
     });
 
     logger.info('Starting WhatsApp client...');
     await client.initialize();
     logger.info('WhatsApp client initialized successfully');
+
+    // Muat data petualangan dan statistik grup
+    await adventureManager.loadAdventures();
+    await groupStats.loadStats();
+    logger.info('Adventure and group stats loaded successfully');
   } catch (error) {
     logger.error('Failed to start the bot:', error);
     throw error;
   }
-  await adventureManager.loadAdventures();
-  await groupStats.loadStats();
 };
 
-const stopBot = async () => {
+export const stopBot = async () => {
   if (client) {
     logger.info('Destroying WhatsApp client...');
     await client.destroy();
@@ -63,4 +68,4 @@ const stopBot = async () => {
   }
 };
 
-export { startBot, stopBot };
+export const getClient = () => client;

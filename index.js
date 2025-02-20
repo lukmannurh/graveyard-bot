@@ -8,16 +8,10 @@ import { PORT } from './src/config/constants.js';
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import adventureManager from './src/utils/adventureManager.js';
-import messageHandler from './src/handlers/messageHandler.js';
-import groupStats from './src/utils/groupStats.js';  // Perhatikan path yang diperbarui
+import groupStats from './src/utils/groupStats.js';
 
-await adventureManager.loadAdventures();
-await groupStats.loadStats();  // Tambahkan ini
-logger.info('Adventures and stats loaded');
-
+// Set up FFmpeg path
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
-
-// ... sisa kode tidak berubah ...
 
 const app = express();
 
@@ -27,61 +21,73 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100
-});
-app.use(limiter);
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+  })
+);
 
 // Global error handlers
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
   logger.error('Uncaught Exception:', error);
-  // Instead of exiting, we'll try to recover
   setTimeout(() => {
     logger.info('Attempting to recover from uncaught exception...');
-    startBot(messageHandler).catch(startError => {
+    startBot().catch((startError) => {
       logger.error('Failed to restart bot after uncaught exception:', startError);
     });
   }, 5000);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Start the bot
-logger.info('Starting the bot...');
-startBot(messageHandler).catch(error => {
-  logger.error('Failed to start the bot:', error);
-});
+(async () => {
+  try {
+    // Muat data petualangan dan statistik grup
+    await adventureManager.loadAdventures();
+    await groupStats.loadStats();
+    logger.info('Adventures and stats loaded');
 
-// Start the server
-const server = app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
+    // Start bot
+    logger.info('Starting the bot...');
+    await startBot();
+    
+    // Start HTTP server
+    const server = app.listen(PORT, () =>
+      logger.info(`Server running on port ${PORT}`)
+    );
 
-// Graceful shutdown
-const gracefulShutdown = (signal) => {
-  logger.info(`${signal} signal received: closing HTTP server and stopping bot`);
-  server.close(() => {
-    logger.info('HTTP server closed');
-    stopBot().then(() => {
-      logger.info('Bot stopped');
-      process.exit(0);
-    }).catch((error) => {
-      logger.error('Error stopping bot:', error);
-      process.exit(1);
-    });
-  });
-};
+    // Graceful shutdown
+    const gracefulShutdown = (signal) => {
+      logger.info(`${signal} signal received: closing HTTP server and stopping bot`);
+      server.close(() => {
+        logger.info('HTTP server closed');
+        stopBot()
+          .then(() => {
+            logger.info('Bot stopped');
+            process.exit(0);
+          })
+          .catch((error) => {
+            logger.error('Error stopping bot:', error);
+            process.exit(1);
+          });
+      });
+    };
 
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
-logger.info('Application started successfully');
+    logger.info('Application started successfully');
 
-// Memory usage logging
-setInterval(() => {
-  const used = process.memoryUsage();
-  logger.info('Memory usage: ' + JSON.stringify(used));
-}, 300000); // Log every 5 minutes
+    // Memory usage logging every 5 minutes
+    setInterval(() => {
+      const used = process.memoryUsage();
+      logger.info('Memory usage: ' + JSON.stringify(used));
+    }, 300000);
+  } catch (error) {
+    logger.error('Error during startup:', error);
+    process.exit(1);
+  }
+})();
