@@ -22,9 +22,10 @@ const messageHandler = async (message) => {
     const chat = await message.getChat();
     // Log objek chat untuk debugging
     logger.debug("Chat object:", JSON.stringify(chat, null, 2));
-    
-    // Pengecekan grup: jika properti isGroup tidak ada atau falsy, gunakan pengecekan alternatif menggunakan ID
-    if (!chat.isGroup && !chat.id._serialized.includes("-")) {
+
+    // Jika properti isGroup tidak ada atau falsy, gunakan fallback: 
+    // jika ID chat berakhiran "@g.us", maka anggap sebagai grup.
+    if (!chat.isGroup && !chat.id._serialized.endsWith("@g.us")) {
       logger.debug("Pesan bukan dari grup, diabaikan.");
       return;
     }
@@ -34,7 +35,7 @@ const messageHandler = async (message) => {
     const userId = sender.id._serialized;
     logger.info(`Message received in group ${groupId} from ${userId}: ${message.body}`);
 
-    // Update statistik grup
+    // Update statistik grup jika pesan bukan milik bot
     if (!message.fromMe) {
       groupStats.logMessage(groupId, userId);
     }
@@ -42,7 +43,7 @@ const messageHandler = async (message) => {
     const isAuthorized = isGroupAuthorized(groupId);
     logger.debug(`Group authorization status for ${groupId}: ${isAuthorized}`);
 
-    // Cek status banned
+    // Cek apakah pengguna sedang banned
     if (isUserBanned(groupId, userId)) {
       await deleteBannedUserMessage(message);
       await chat.sendMessage(
@@ -64,13 +65,13 @@ const messageHandler = async (message) => {
       return;
     }
 
-    // Jika pesan diawali dengan prefix, anggap sebagai perintah
+    // Jika pesan dimulai dengan prefix, anggap sebagai perintah
     if (message.body.startsWith(PREFIX)) {
       const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
       const commandName = command.toLowerCase();
       logger.info(`Command received: ${commandName} with args: ${args.join(" ")}`);
 
-      // Tangani perintah khusus
+      // Tangani perintah khusus yang tidak masuk ke routing umum
       switch (commandName) {
         case "tt":
           await downloadTikTokVideo(message, args);
@@ -112,7 +113,7 @@ const messageHandler = async (message) => {
           return;
       }
 
-      // Tentukan apakah pengirim adalah owner atau user biasa
+      // Tentukan apakah pengirim adalah owner atau bukan
       const isOwnerUser = isOwner(userId);
       const isGroupAdmin = await isAdmin(chat, sender);
       if (isOwnerUser) {
@@ -123,18 +124,18 @@ const messageHandler = async (message) => {
         logger.debug(`Group ${groupId} tidak diotorisasi, perintah dari ${userId} diabaikan.`);
       }
     } else {
-      // Tangani pesan non-perintah
+      // Penanganan pesan non-perintah
       const pendingSelection = adventureManager.getPendingSelection(groupId);
       const isGameActive = adventureManager.isGameActive(groupId);
 
-      // Jika pesan mengandung tag khusus (misalnya tag @bot) untuk memulai Tic Tac Toe
+      // Jika pesan mengandung tag khusus untuk memulai Tic Tac Toe
       const mentions = await message.getMentions();
       if (mentions.length === 1 && mentions[0].id.user === "status@broadcast") {
         await startTicTacToe(message, []);
         return;
       }
 
-      // Jika pesan berupa angka, mungkin merupakan pilihan petualangan
+      // Jika pesan berupa angka dan berkaitan dengan pilihan petualangan
       if (pendingSelection === userId || (isGameActive && /^\d+$/.test(message.body.trim()))) {
         if (isAuthorized) {
           logger.debug(`Processing adventure choice: ${message.body} for group ${groupId} from user ${userId}`);
@@ -143,10 +144,10 @@ const messageHandler = async (message) => {
         }
       }
 
-      // Tangani respons untuk game Dadu
+      // Tangani respons game Dadu
       if (await handleDaduGame(message)) return;
 
-      // Tangani respons untuk Tic Tac Toe
+      // Tangani respons Tic Tac Toe
       if (await handleTicTacToeResponse(message)) return;
 
       // Jika pesan tidak tertangani, gunakan handler non-command
@@ -159,7 +160,7 @@ const messageHandler = async (message) => {
     }
   } catch (error) {
     logger.error("Error in messageHandler:", error);
-    // Jangan mengirim pesan error ke pengguna untuk menghindari kebocoran informasi
+    // Hindari mengirim pesan error ke pengguna
   }
 };
 
