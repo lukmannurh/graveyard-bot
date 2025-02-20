@@ -1,40 +1,41 @@
-import groupStats from '../utils/groupStats.js';
-import logger from '../utils/logger.js';
+import groupStats from "../utils/groupStats.js";
+import logger from "../utils/logger.js";
 
 const statsCommand = async (message) => {
   try {
     const chat = await message.getChat();
-    if (!chat.isGroup) {
-      await message.reply('Perintah ini hanya dapat digunakan dalam grup.');
+    // Gunakan pengecekan fallback: jika chat.isGroup tidak ada, periksa apakah ID chat berakhiran "@g.us"
+    if (!chat.isGroup && !chat.id._serialized.endsWith("@g.us")) {
+      await message.reply("Perintah ini hanya dapat digunakan dalam grup.");
       return;
     }
 
     const stats = groupStats.getGroupStats(chat.id._serialized);
     if (!stats) {
-      await message.reply('Belum ada statistik yang tersedia untuk grup ini.');
+      await message.reply("Belum ada statistik yang tersedia untuk grup ini.");
       return;
     }
 
     const formatDate = (date) => {
       const options = { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric',
-        weekday: 'long',
-        timeZone: 'Asia/Jakarta'
+        day: "numeric", 
+        month: "long", 
+        year: "numeric",
+        weekday: "long",
+        timeZone: "Asia/Jakarta"
       };
-      return new Date(date).toLocaleDateString('id-ID', options);
+      return new Date(date).toLocaleDateString("id-ID", options);
     };
 
     const formatTime = (date) => {
       const options = {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
         hour12: false,
-        timeZone: 'Asia/Jakarta'
+        timeZone: "Asia/Jakarta"
       };
-      return new Date(date).toLocaleTimeString('id-ID', options);
+      return new Date(date).toLocaleTimeString("id-ID", options);
     };
 
     let response = `*Statistik Grup*\n\n`;
@@ -46,7 +47,7 @@ const statsCommand = async (message) => {
       const user = stats.topUsers[i];
       try {
         const contact = await message.client.getContactById(user.userId);
-        const name = contact.pushname || contact.name || 'Unknown';
+        const name = contact.pushname || contact.name || "Unknown";
         response += `${i + 1}. ${name}: ${user.count} pesan\n`;
       } catch (error) {
         logger.error(`Error getting contact for ${user.userId}:`, error);
@@ -55,12 +56,12 @@ const statsCommand = async (message) => {
     }
 
     const now = new Date();
-    response += `\n*Data ini diambil pada ${formatDate(now)}* \n*Pukul ${formatTime(now)} WIB*`;
+    response += `\n*Data diambil pada ${formatDate(now)} pukul ${formatTime(now)} WIB*`;
 
     await message.reply(response);
   } catch (error) {
-    logger.error('Error in stats command:', error);
-    await message.reply('Terjadi kesalahan saat mengambil statistik. Mohon coba lagi nanti.');
+    logger.error("Error in stats command:", error);
+    await message.reply("Terjadi kesalahan saat mengambil statistik. Mohon coba lagi nanti.");
   }
 };
 
