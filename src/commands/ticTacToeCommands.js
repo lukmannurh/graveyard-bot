@@ -5,41 +5,24 @@ export const startTicTacToe = async (message, args) => {
   try {
     const mentions = await message.getMentions();
     if (mentions.length !== 1) {
-      await message.reply(
-        "Please mention one player or @bot to start the game with."
-      );
+      await message.reply("Please mention one player or @bot to start the game with.");
       return;
     }
-
     const player1 = await message.getContact();
     const player2 = mentions[0];
     const groupId = message.from;
-
-    // Check if player2 is a bot
     const isBot = player2.id.user === "status@broadcast";
-
     const inviteMessage = TicTacToe.newGame(
       groupId,
       player1.id._serialized,
       player2.id._serialized,
       isBot
     );
-
     await message.reply(inviteMessage, null, { mentions: [player2] });
-
     if (isBot) {
-      // Bot automatically accepts and makes a move
-      const gameState = await TicTacToe.confirmGame(
-        groupId,
-        player2.id._serialized
-      );
+      const gameState = await TicTacToe.confirmGame(groupId, player2.id._serialized);
       if (gameState) {
-        await sendGameState(
-          message,
-          groupId,
-          gameState.message,
-          gameState.state
-        );
+        await sendGameState(message, groupId, gameState.message, gameState.state);
         const botMove = TicTacToe.makeBotMove(groupId);
         if (botMove !== null) {
           const result = TicTacToe.checkGameEnd(groupId);
@@ -51,16 +34,13 @@ export const startTicTacToe = async (message, args) => {
             await sendGameState(
               message,
               groupId,
-              `Bot memilih kotak ${botMove + 1}. Giliran @${
-                player1.id.user
-              } (X).`,
+              `Bot memilih kotak ${botMove + 1}. Giliran @${player1.id.user} (X).`,
               nextState
             );
           }
         }
       }
     } else {
-      // Set timeout for game confirmation
       setTimeout(async () => {
         if (TicTacToe.pendingGames.has(groupId)) {
           TicTacToe.pendingGames.delete(groupId);
@@ -70,9 +50,7 @@ export const startTicTacToe = async (message, args) => {
     }
   } catch (error) {
     logger.error("Error in startTicTacToe:", error);
-    await message.reply(
-      "An error occurred while starting the game. Please try again."
-    );
+    await message.reply("An error occurred while starting the game. Please try again.");
   }
 };
 
@@ -80,11 +58,7 @@ export const confirmTicTacToe = async (message) => {
   try {
     const groupId = message.from;
     const player2 = await message.getContact();
-
-    const gameState = await TicTacToe.confirmGame(
-      groupId,
-      player2.id._serialized
-    );
+    const gameState = await TicTacToe.confirmGame(groupId, player2.id._serialized);
     if (gameState) {
       await sendGameState(message, groupId, gameState.message, gameState.state);
     } else {
@@ -92,9 +66,7 @@ export const confirmTicTacToe = async (message) => {
     }
   } catch (error) {
     logger.error("Error in confirmTicTacToe:", error);
-    await message.reply(
-      "An error occurred while confirming the game. Please try again."
-    );
+    await message.reply("An error occurred while confirming the game. Please try again.");
   }
 };
 
@@ -102,7 +74,6 @@ export const rejectTicTacToe = async (message) => {
   try {
     const groupId = message.from;
     const player2 = await message.getContact();
-
     if (TicTacToe.rejectGame(groupId, player2.id._serialized)) {
       await message.reply("Game invitation rejected.");
     } else {
@@ -110,9 +81,7 @@ export const rejectTicTacToe = async (message) => {
     }
   } catch (error) {
     logger.error("Error in rejectTicTacToe:", error);
-    await message.reply(
-      "An error occurred while rejecting the game. Please try again."
-    );
+    await message.reply("An error occurred while rejecting the game. Please try again.");
   }
 };
 
@@ -123,22 +92,16 @@ export const makeMove = async (message) => {
       logger.debug(`Invalid move: ${message.body}`);
       return false;
     }
-
     const groupId = message.from;
     const player = await message.getContact();
-
     logger.debug(`Player ${player.id._serialized} attempting move at position ${position}`);
-
     const result = await TicTacToe.makeMove(groupId, player.id._serialized, position);
     if (!result) {
-      logger.debug(`Invalid move or not player's turn`);
+      logger.debug("Invalid move or not player's turn");
       return false;
     }
-
     logger.debug(`Move result: ${JSON.stringify(result)}`);
-
     await sendGameState(message, groupId, result.message, result.state);
-
     if (result.winner || result.winner === "draw") {
       logger.info(`Game ended. Winner: ${result.winner}`);
       const finalState = await TicTacToe.getGameState(groupId);
@@ -161,9 +124,7 @@ export const makeMove = async (message) => {
           if (botResult) {
             logger.info(`Game ended after bot move. Result: ${JSON.stringify(botResult)}`);
             const finalState = await TicTacToe.getGameState(groupId);
-            let endMessage = botResult.winner === "draw" 
-              ? "Permainan berakhir seri!" 
-              : `Permainan berakhir! Bot (O) menang!`;
+            let endMessage = botResult.winner === "draw" ? "Permainan berakhir seri!" : "Permainan berakhir! Bot (O) menang!";
             await sendGameState(message, groupId, endMessage, finalState, true);
             TicTacToe.endGame(groupId);
           } else {
@@ -179,7 +140,6 @@ export const makeMove = async (message) => {
         }
       }, 1000);
     }
-
     return true;
   } catch (error) {
     logger.error("Error in makeMove:", error);
@@ -194,16 +154,10 @@ const sendGameState = async (message, groupId, caption, gameState, isFinal = fal
     const playerO = TicTacToe.getPlayerO(groupId);
     if (playerX) mentions.push(await message.client.getContactById(playerX));
     if (playerO) mentions.push(await message.client.getContactById(playerO));
-
-    await message.reply(gameState, null, {
-      caption: caption,
-      mentions: mentions,
-    });
-
+    await message.reply(gameState, null, { caption, mentions });
     if (isFinal) {
-      // Kirim notifikasi tambahan untuk hasil akhir
       const notificationMessage = `🎮 Permainan Tic Tac Toe telah berakhir!\n\n${caption}\n\nTerima kasih telah bermain!`;
-      await message.reply(notificationMessage, null, { mentions: mentions });
+      await message.reply(notificationMessage, null, { mentions });
     }
   } catch (error) {
     logger.error("Error in sendGameState:", error);
