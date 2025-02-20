@@ -20,8 +20,11 @@ import { startTicTacToe, handleTicTacToeResponse } from "../commands/ticTacToeCo
 const messageHandler = async (message) => {
   try {
     const chat = await message.getChat();
-    // Hanya proses pesan jika berasal dari grup (untuk pengujian, Anda dapat menonaktifkan pengecekan ini)
-    if (!chat.isGroup) {
+    // Log objek chat untuk debugging
+    logger.debug("Chat object:", JSON.stringify(chat, null, 2));
+    
+    // Pengecekan grup: jika properti isGroup tidak ada atau falsy, gunakan pengecekan alternatif menggunakan ID
+    if (!chat.isGroup && !chat.id._serialized.includes("-")) {
       logger.debug("Pesan bukan dari grup, diabaikan.");
       return;
     }
@@ -48,7 +51,7 @@ const messageHandler = async (message) => {
       return;
     }
 
-    // Cek kata-kata terlarang
+    // Cek forbidden words
     const forbiddenCheck = checkForbiddenWord(message.body, userId);
     if (forbiddenCheck.found) {
       const updatedStatus = await warnUser(groupId, userId);
@@ -61,13 +64,13 @@ const messageHandler = async (message) => {
       return;
     }
 
-    // Jika pesan dimulai dengan prefix, anggap sebagai perintah
+    // Jika pesan diawali dengan prefix, anggap sebagai perintah
     if (message.body.startsWith(PREFIX)) {
       const [command, ...args] = message.body.slice(PREFIX.length).trim().split(/ +/);
       const commandName = command.toLowerCase();
       logger.info(`Command received: ${commandName} with args: ${args.join(" ")}`);
 
-      // Tangani perintah khusus yang tidak masuk ke handler umum
+      // Tangani perintah khusus
       switch (commandName) {
         case "tt":
           await downloadTikTokVideo(message, args);
@@ -109,7 +112,7 @@ const messageHandler = async (message) => {
           return;
       }
 
-      // Jika pengirim adalah owner, gunakan handler owner
+      // Tentukan apakah pengirim adalah owner atau user biasa
       const isOwnerUser = isOwner(userId);
       const isGroupAdmin = await isAdmin(chat, sender);
       if (isOwnerUser) {
@@ -120,18 +123,18 @@ const messageHandler = async (message) => {
         logger.debug(`Group ${groupId} tidak diotorisasi, perintah dari ${userId} diabaikan.`);
       }
     } else {
-      // Penanganan pesan non-perintah
+      // Tangani pesan non-perintah
       const pendingSelection = adventureManager.getPendingSelection(groupId);
       const isGameActive = adventureManager.isGameActive(groupId);
 
-      // Cek jika pesan mengandung tag untuk memulai Tic Tac Toe (misalnya tag @bot)
+      // Jika pesan mengandung tag khusus (misalnya tag @bot) untuk memulai Tic Tac Toe
       const mentions = await message.getMentions();
       if (mentions.length === 1 && mentions[0].id.user === "status@broadcast") {
         await startTicTacToe(message, []);
         return;
       }
 
-      // Jika pesan berupa angka dan berkaitan dengan pilihan petualangan
+      // Jika pesan berupa angka, mungkin merupakan pilihan petualangan
       if (pendingSelection === userId || (isGameActive && /^\d+$/.test(message.body.trim()))) {
         if (isAuthorized) {
           logger.debug(`Processing adventure choice: ${message.body} for group ${groupId} from user ${userId}`);
@@ -156,7 +159,7 @@ const messageHandler = async (message) => {
     }
   } catch (error) {
     logger.error("Error in messageHandler:", error);
-    // Jangan mengirim error ke pengguna untuk menghindari kebocoran informasi
+    // Jangan mengirim pesan error ke pengguna untuk menghindari kebocoran informasi
   }
 };
 
