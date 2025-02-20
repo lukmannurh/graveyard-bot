@@ -1,54 +1,22 @@
-import logger from "../utils/logger.js";
-import { isOwner } from "../utils/enhancedModerationSystem.js";
+import logger from '../utils/logger.js';
 
 const kick = async (message) => {
-  try {
-    const chat = await message.getChat();
-
-    // Dapatkan peserta grup dari beberapa fallback
-    let participants = chat.participants;
-    if (!participants || !Array.isArray(participants) || participants.length === 0) {
-      participants = chat.groupMetadata?.participants;
+    try {
+        const chat = await message.getChat();
+        const mentionedIds = await message.getMentions();
+        
+        if (mentionedIds.length > 0) {
+            for (let participant of mentionedIds) {
+                await chat.removeParticipants([participant.id._serialized]);
+            }
+            await message.reply("Pengguna yang ditandai telah dikeluarkan dari grup.");
+        } else {
+            await message.reply("Mention pengguna yang ingin dikeluarkan.");
+        }
+    } catch (error) {
+        logger.error("Error in kick command:", error);
+        await message.reply("Terjadi kesalahan saat mengeluarkan anggota. Mohon coba lagi.");
     }
-    if (!participants || !Array.isArray(participants) || participants.length === 0) {
-      participants = chat._data?.groupMetadata?.participants;
-    }
-    if (!participants || !Array.isArray(participants) || participants.length === 0) {
-      await message.reply("Daftar anggota grup tidak tersedia. Pastikan bot sudah admin dan grup aktif.");
-      return;
-    }
-
-    const mentioned = await message.getMentions();
-    if (mentioned.length === 0) {
-      await message.reply("Mohon mention pengguna yang ingin dikeluarkan.");
-      return;
-    }
-
-    // Lakukan kick untuk setiap peserta yang di-mention
-    for (const participant of mentioned) {
-      // Jangan keluarkan jika target adalah owner
-      if (isOwner(participant.id._serialized)) {
-        await message.reply(`Tidak dapat mengeluarkan owner bot: @${participant.id.user}`);
-        continue;
-      }
-      // Gunakan removeParticipants (berdasarkan kode lama) jika tersedia
-      if (typeof chat.removeParticipants === "function") {
-        await chat.removeParticipants([participant.id._serialized]);
-        logger.info(`Participant ${participant.id._serialized} dikeluarkan.`);
-      } else if (typeof chat.removeParticipant === "function") {
-        await chat.removeParticipant(participant.id._serialized);
-        logger.info(`Participant ${participant.id._serialized} dikeluarkan (menggunakan removeParticipant).`);
-      } else {
-        logger.warn("Fungsi pengeluaran anggota tidak tersedia di objek chat.");
-        await message.reply("Tidak dapat mengeluarkan anggota karena fungsi pengeluaran anggota tidak tersedia.");
-        return;
-      }
-    }
-    await message.reply("Pengguna yang ditandai telah dikeluarkan dari grup.");
-  } catch (error) {
-    logger.error("Error in kick command:", error);
-    await message.reply("Terjadi kesalahan saat mengeluarkan anggota. Mohon coba lagi.");
-  }
 };
 
 export default kick;
