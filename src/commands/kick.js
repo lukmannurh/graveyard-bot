@@ -4,19 +4,13 @@ import { isOwner } from "../utils/enhancedModerationSystem.js";
 const kick = async (message) => {
   try {
     const chat = await message.getChat();
+    const refreshedChat = await message.client.getChatById(chat.id._serialized);
 
-    // Coba dapatkan daftar peserta dari beberapa fallback:
-    let participants = chat.participants;
+    // Coba dapatkan daftar peserta dari beberapa fallback
+    let participants = refreshedChat.participants;
     if (!participants || !Array.isArray(participants) || participants.length === 0) {
-      if (typeof chat.getParticipants === "function") {
-        participants = await chat.getParticipants();
-      } else if (chat.groupMetadata && Array.isArray(chat.groupMetadata.participants)) {
-        participants = chat.groupMetadata.participants;
-      } else if (chat._data?.groupMetadata?.participants) {
-        participants = chat._data.groupMetadata.participants;
-      }
+      participants = refreshedChat.groupMetadata?.participants;
     }
-
     if (!participants || !Array.isArray(participants) || participants.length === 0) {
       await message.reply("Daftar anggota grup tidak tersedia. Pastikan bot sudah admin dan grup aktif.");
       return;
@@ -28,19 +22,20 @@ const kick = async (message) => {
       return;
     }
 
+    // Proses pengeluaran untuk setiap peserta yang di-mention
     for (const participant of mentioned) {
       // Jangan keluarkan jika target adalah owner
       if (isOwner(participant.id._serialized)) {
         await message.reply(`Tidak dapat mengeluarkan owner bot: @${participant.id.user}`);
         continue;
       }
-      // Gunakan metode removeParticipants jika ada, atau fallback ke removeParticipant
-      if (typeof chat.removeParticipants === "function") {
-        await chat.removeParticipants([participant.id._serialized]);
+      // Gunakan removeParticipants jika tersedia, atau fallback ke removeParticipant
+      if (typeof refreshedChat.removeParticipants === "function") {
+        await refreshedChat.removeParticipants([participant.id._serialized]);
         logger.info(`Participant ${participant.id._serialized} dikeluarkan.`);
-      } else if (typeof chat.removeParticipant === "function") {
-        await chat.removeParticipant(participant.id._serialized);
-        logger.info(`Participant ${participant.id._serialized} dikeluarkan (menggunakan removeParticipant).`);
+      } else if (typeof refreshedChat.removeParticipant === "function") {
+        await refreshedChat.removeParticipant(participant.id._serialized);
+        logger.info(`Participant ${participant.id._serialized} dikeluarkan (fallback).`);
       } else {
         logger.warn("Fungsi pengeluaran anggota tidak tersedia di objek chat.");
         await message.reply("Tidak dapat mengeluarkan anggota karena fungsi pengeluaran anggota tidak tersedia.");
