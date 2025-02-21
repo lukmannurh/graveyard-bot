@@ -4,24 +4,72 @@ import { isOwner } from "../utils/enhancedModerationSystem.js";
 const kick = async (message) => {
   try {
     const chat = await message.getChat();
-    const mentioned = await message.getMentions();
-    
-    if (mentioned.length > 0) {
-      for (let participant of mentioned) {
-        // Cek jika peserta merupakan owner, maka jangan dikeluarkan
-        if (isOwner(participant.id._serialized)) {
-          await message.reply(`Tidak dapat mengeluarkan owner bot: @${participant.id.user}`);
-          continue;
-        }
-        await chat.removeParticipants([participant.id._serialized]);
-      }
-      await message.reply("Pengguna yang ditandai telah dikeluarkan dari grup.");
-    } else {
-      await message.reply("Mention pengguna yang ingin dikeluarkan.");
+
+    // Ambil daftar peserta dengan pengecekan yang sama seperti di tagall
+    let participants = [];
+    if (
+      chat.participants &&
+      typeof chat.participants[Symbol.iterator] === "function" &&
+      chat.participants.length > 0
+    ) {
+      participants = chat.participants;
+    } else if (
+      chat.groupMetadata &&
+      Array.isArray(chat.groupMetadata.participants) &&
+      chat.groupMetadata.participants.length > 0
+    ) {
+      participants = chat.groupMetadata.participants;
+    } else if (
+      chat._data &&
+      chat._data.groupMetadata &&
+      Array.isArray(chat._data.groupMetadata.participants) &&
+      chat._data.groupMetadata.participants.length > 0
+    ) {
+      participants = chat._data.groupMetadata.participants;
     }
+
+    if (participants.length === 0) {
+      await message.reply(
+        "Daftar anggota grup tidak tersedia. Pastikan bot sudah admin dan grup aktif."
+      );
+      return;
+    }
+
+    const mentioned = await message.getMentions();
+    if (mentioned.length === 0) {
+      await message.reply("Mohon mention pengguna yang ingin dikeluarkan.");
+      return;
+    }
+
+    for (const participant of mentioned) {
+      // Jangan keluarkan jika target adalah owner
+      if (isOwner(participant.id._serialized)) {
+        await message.reply(`Tidak dapat mengeluarkan owner bot: @${participant.id.user}`);
+        continue;
+      }
+      // Gunakan removeParticipants jika tersedia; jika tidak, gunakan removeParticipant
+      if (typeof chat.removeParticipants === "function") {
+        await chat.removeParticipants([participant.id._serialized]);
+        logger.info(`Participant ${participant.id._serialized} dikeluarkan.`);
+      } else if (typeof chat.removeParticipant === "function") {
+        await chat.removeParticipant(participant.id._serialized);
+        logger.info(
+          `Participant ${participant.id._serialized} dikeluarkan (menggunakan removeParticipant).`
+        );
+      } else {
+        logger.warn("Fungsi pengeluaran anggota tidak tersedia di objek chat.");
+        await message.reply(
+          "Tidak dapat mengeluarkan anggota karena fungsi pengeluaran anggota tidak tersedia."
+        );
+        return;
+      }
+    }
+    await message.reply("Pengguna yang ditandai telah dikeluarkan dari grup.");
   } catch (error) {
     logger.error("Error in kick command:", error);
-    await message.reply("Terjadi kesalahan saat mengeluarkan anggota. Mohon coba lagi.");
+    await message.reply(
+      "Terjadi kesalahan saat mengeluarkan anggota. Mohon coba lagi."
+    );
   }
 };
 
