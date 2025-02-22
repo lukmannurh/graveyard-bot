@@ -7803,5 +7803,364 @@
         "win": true
       }
     }
-  }
+  },
+  {
+    "id": "epik_cinta_romance",
+    "title": "Epik Cinta: Perjalanan Hati Rezyan dan Cuwi",
+    "start": {
+      "text": "Rezyan, seorang pemuda penuh semangat, mendengar kabar tentang kecantikan misterius bernama Cuwi – sosok yang memesona namun menyimpan luka di masa lalu. Di tengah gemerlap kota, hatinya bergetar. Apakah ia akan mengikuti kata hati untuk mencari Cuwi atau mengabaikannya demi karier?",
+      "options": [
+        { "text": "Ikuti kata hati dan cari Cuwi", "next": "step1" },
+        { "text": "Abaikan cinta, fokus pada karier", "next": "ignore_career" }
+      ]
+    },
+    "nodes": {
+      "ignore_career": {
+        "text": "Rezyan memutuskan untuk mengabaikan perasaan itu dan fokus mengejar karier. Kesuksesan datang, namun ia merasa hampa dan selalu merasakan kekosongan dalam hidupnya. Penyesalan pun menghinggapi di kemudian hari.",
+        "end": true,
+        "win": false
+      },
+      "step1": {
+        "text": "Rezyan mendengar bahwa Cuwi sering terlihat di taman kota yang terkenal karena keindahannya. Dengan tekad, ia bergegas menuju taman untuk mencari sosok misterius itu.",
+        "options": [
+          { "text": "Diam-diam mengamati dari kejauhan", "next": "step2A" },
+          { "text": "Bertanya kepada warga dan penjual mengenai Cuwi", "next": "step2B" }
+        ]
+      },
+      "step2A": {
+        "text": "Di taman, Rezyan melihat Cuwi duduk di bangku dengan tatapan penuh kerinduan. Suasana sepi menyelimuti, dan ia tampak sedang merenung dalam kesendirian.",
+        "options": [
+          { "text": "Kumpulkan keberanian dan mendekatinya", "next": "step3A" },
+          { "text": "Tetap mengamati untuk mencari petunjuk lebih lanjut", "next": "step3B" }
+        ]
+      },
+      "step2B": {
+        "text": "Beberapa warga menceritakan bahwa Cuwi adalah gadis lembut yang pernah mengalami patah hati besar. Informasi ini membuat Rezyan semakin penasaran dan memutuskan untuk menuju taman.",
+        "options": [
+          { "text": "Pergi ke taman untuk melihatnya sendiri", "next": "step2A" },
+          { "text": "Cari informasi lebih lanjut melalui media sosial", "next": "step3C" }
+        ]
+      },
+      "step3A": {
+        "text": "Rezyan mendekati Cuwi dengan senyum tulus. Percakapan dimulai dengan pembicaraan ringan tentang cuaca dan taman, lalu perlahan bergeser ke topik impian dan rahasia hati.",
+        "options": [
+          { "text": "Mengajaknya minum kopi di kafe terdekat", "next": "step4A" },
+          { "text": "Bertanya secara halus tentang masa lalunya", "next": "step4B" }
+        ]
+      },
+      "step3B": {
+        "text": "Rezyan memilih untuk terus mengamati. Namun, tanpa ia sadari, Cuwi pun bangkit dan pergi, meninggalkan rasa penyesalan yang mendalam.",
+        "end": true,
+        "win": false
+      },
+      "step3C": {
+        "text": "Dari hasil riset daring, Rezyan menemukan bahwa Cuwi pernah mengalami kekecewaan besar dalam cinta. Informasi ini membuatnya ragu namun sekaligus semakin ingin menolongnya.",
+        "options": [
+          { "text": "Akhirnya, berangkat ke taman untuk menemukannya", "next": "step3A" },
+          { "text": "Ragu dan memutuskan untuk mundur", "next": "step4C" }
+        ]
+      },
+      "step4A": {
+        "text": "Di sebuah kafe yang nyaman, suasana hangat mengalir. Rezyan dan Cuwi mulai membuka diri, berbagi cerita dan tawa. Ada chemistry yang mulai tumbuh di antara mereka.",
+        "options": [
+          { "text": "Ungkapkan perasaan cintanya secara terbuka", "next": "step5A" },
+          { "text": "Dengarkan ceritanya dengan empati untuk memahami lebih dalam", "next": "step5B" }
+        ]
+      },
+      "step4B": {
+        "text": "Cuwi mulai menceritakan tentang masa lalunya yang penuh luka. Ia mengungkapkan betapa sulitnya menemukan kepercayaan lagi. Rezyan merasa tersentuh oleh kejujurannya.",
+        "options": [
+          { "text": "Tawarkan dukungan penuh dan ceritakan perjuangannya sendiri", "next": "step5A" },
+          { "text": "Merasa kewalahan dan memilih untuk mundur dari percakapan", "next": "step5C" }
+        ]
+      },
+      "step4C": {
+        "text": "Keraguan membuat Rezyan menunda pertemuan secara langsung. Kesempatan itu berlalu, dan Cuwi pun mulai memudar bayangannya dari ingatan.",
+        "end": true,
+        "win": false
+      },
+      "step5A": {
+        "text": "Keberanian dan kejujuran membawa mereka semakin dekat. Percakapan di kafe berakhir dengan janji untuk bertemu lagi. Hubungan mereka mulai berbunga.",
+        "options": [
+          { "text": "Mulai berkencan dan merencanakan perjalanan romantis", "next": "step6A" },
+          { "text": "Menghadapi bersama rintangan dari masa lalu yang menghantui Cuwi", "next": "step6B" }
+        ]
+      },
+      "step5B": {
+        "text": "Meskipun ada kehangatan, tanpa ungkapan perasaan yang jelas, jarak emosional tetap terasa. Keduanya pulang dengan perasaan yang belum terjawab.",
+        "end": true,
+        "win": false
+      },
+      "step5C": {
+        "text": "Kelelahan emosional membuat Rezyan mundur. Kesempatan untuk membuka lembaran baru pun sirna, dan ia merasa hancur karena kehilangan potensi cinta sejati.",
+        "end": true,
+        "win": false
+      },
+      "step6A": {
+        "text": "Di sebuah liburan romantis, Rezyan dan Cuwi semakin dekat. Mereka menikmati pemandangan indah, berbagi tawa, dan mulai saling percaya. Namun, bayang-bayang pihak ketiga mulai mengintai.",
+        "options": [
+          { "text": "Bersatu menghadapi semua rintangan bersama", "next": "step7A" },
+          { "text": "Biarkan konflik eksternal menjauhkan mereka", "next": "step7B" }
+        ]
+      },
+      "step6B": {
+        "text": "Konflik dari masa lalu Cuwi muncul kembali, menimbulkan ketegangan. Meskipun Rezyan berusaha sabar, perbedaan mereka mulai mengikis kehangatan hubungan.",
+        "options": [
+          { "text": "Coba perbaiki masalah bersama dengan terbuka", "next": "step7A" },
+          { "text": "Biarkan keretakan itu semakin dalam", "next": "step7C" }
+        ]
+      },
+      "step7A": {
+        "text": "Menghadapi rintangan bersama membuat cinta mereka semakin kuat. Kini, mereka berada di persimpangan besar: apakah akan melangkah ke tahap komitmen yang lebih serius?",
+        "options": [
+          { "text": "Ambil keputusan untuk berkomitmen sepenuhnya", "next": "step8A" },
+          { "text": "Ragu dan memilih untuk menunda komitmen", "next": "step8B" }
+        ]
+      },
+      "step7B": {
+        "text": "Konflik luar mulai memisahkan mereka. Rasa saling percaya terkikis, dan jarak pun semakin melebar.",
+        "end": true,
+        "win": false
+      },
+      "step7C": {
+        "text": "Ketidakmampuan mengatasi perbedaan membuat hubungan retak. Luka lama kembali terbuka, dan cinta yang pernah tumbuh pun punah.",
+        "end": true,
+        "win": false
+      },
+      "step8A": {
+        "text": "Dengan tekad bulat, Rezyan dan Cuwi memutuskan untuk berkomitmen. Mereka mulai merencanakan masa depan bersama dengan penuh harapan, termasuk rencana pernikahan.",
+        "options": [
+          { "text": "Atur acara pertunangan besar", "next": "step9A" },
+          { "text": "Buat rencana lamaran intim yang sakral", "next": "step9B" },
+          { "text": "Gabungkan tradisi dan modernitas dalam perencanaan", "next": "step9C" }
+        ]
+      },
+      "step8B": {
+        "text": "Keraguan dan ketakutan membuat mereka menunda keputusan. Rasa tidak pasti ini mulai mengikis kepercayaan diri dan menumbuhkan jarak di antara mereka.",
+        "end": true,
+        "win": false
+      },
+      "step9A": {
+        "text": "Acara pertunangan yang megah diselenggarakan dan semua pihak tampak bahagia. Namun, perbedaan pendapat antar keluarga mulai mencuat, mengancam keharmonisan acara.",
+        "options": [
+          { "text": "Atasi konflik keluarga dengan komunikasi terbuka", "next": "step10A" },
+          { "text": "Biarkan masalah tersebut mengganggu dan membayangi kebahagiaan", "next": "step10B" },
+          { "text": "Coba mediasi oleh pihak ketiga yang netral", "next": "step10C" }
+        ]
+      },
+      "step9B": {
+        "text": "Lamaran intim berlangsung di sebuah lokasi rahasia. Suasana emosional membuat Cuwi terharu, namun ada rahasia dari masa lalunya yang belum terungkap.",
+        "options": [
+          { "text": "Dorong Cuwi untuk menceritakan segalanya", "next": "step10D" },
+          { "text": "Biarkan rahasia itu tetap tersembunyi, berharap itu tidak mengganggu", "next": "step10E" },
+          { "text": "Janjikan bahwa apapun yang terjadi, kalian akan menghadapinya bersama", "next": "step10F" }
+        ]
+      },
+      "step9C": {
+        "text": "Rezyan merancang perencanaan pernikahan yang unik, memadukan elemen tradisional dan modern. Semangatnya membara, namun rencana itu memunculkan tantangan logistik dan emosional.",
+        "options": [
+          { "text": "Bekerja sama menyelesaikan setiap tantangan", "next": "step10G" },
+          { "text": "Menghadapi masalah satu per satu dengan penuh kesabaran", "next": "step10H" },
+          { "text": "Terlalu tertekan dan mulai ragu pada keputusan bersama", "next": "step10I" }
+        ]
+      },
+      "step10A": {
+        "text": "Melalui diskusi yang jujur, kedua keluarga akhirnya menemukan titik temu dan konflik pun mereda. Suasana kembali hangat dan penuh harapan.",
+        "options": [
+          { "text": "Lanjutkan dengan perencanaan pernikahan", "next": "step11A" },
+          { "text": "Ambil jeda sejenak untuk memperkuat ikatan pribadi", "next": "step11B" }
+        ]
+      },
+      "step10B": {
+        "text": "Konflik yang tidak terselesaikan mulai merusak suasana. Rasa gundah dan kecewa mulai merayap ke dalam hubungan, membuat perayaan kehilangan maknanya.",
+        "end": true,
+        "win": false
+      },
+      "step10C": {
+        "text": "Mediasi dari pihak ketiga membawa solusi sementara, namun masalah yang mendasar tetap belum terselesaikan sepenuhnya.",
+        "options": [
+          { "text": "Coba bicarakan kembali masalah tersebut secara pribadi", "next": "step11C" },
+          { "text": "Biarkan saja, meskipun dengan rasa canggung yang tersisa", "next": "step11D" }
+        ]
+      },
+      "step10D": {
+        "text": "Cuwi membuka diri dan menceritakan luka mendalam serta rahasia kelam yang pernah menghantui hidupnya. Momen itu sangat emosional dan mengubah pandangan Rezyan.",
+        "options": [
+          { "text": "Tunjukkan empati dan yakinkan bahwa kau akan selalu ada", "next": "step11E" },
+          { "text": "Bingung dengan cerita itu dan mulai meragukan kecocokan kalian", "next": "step11F" }
+        ]
+      },
+      "step10E": {
+        "text": "Rahasia yang tersimpan membuat suasana menjadi dingin. Keduanya merasa ada jarak yang tak terjelaskan, dan kesempatan untuk mendekat pun perlahan sirna.",
+        "end": true,
+        "win": false
+      },
+      "step10F": {
+        "text": "Janji untuk selalu bersama menumbuhkan kepercayaan baru. Namun, sisa keraguan masih mengintai di balik janji-janji manis itu.",
+        "options": [
+          { "text": "Cari tahu akar keraguan itu bersama-sama", "next": "step11G" },
+          { "text": "Meneruskan hubungan tanpa menyelesaikan masalah", "next": "step11H" }
+        ]
+      },
+      "step10G": {
+        "text": "Bersama-sama mereka menghadapi setiap tantangan, mengubah rintangan menjadi batu loncatan menuju cinta yang lebih dalam.",
+        "options": [
+          { "text": "Ambil langkah menuju pernikahan", "next": "step11I" },
+          { "text": "Tetap jalani proses dengan hati-hati", "next": "step11J" }
+        ]
+      },
+      "step10H": {
+        "text": "Kesabaran membawa hasil, namun proses yang panjang membuat tekanan semakin besar dan mulai menguji kekuatan cinta mereka.",
+        "options": [
+          { "text": "Rangkullah proses itu dan terus berjuang bersama", "next": "step11I" },
+          { "text": "Mulai kehilangan semangat dan kepercayaan", "next": "step11K" }
+        ]
+      },
+      "step10I": {
+        "text": "Tekanan dan keraguan menguasai hati, sehingga impian bersama pun mulai retak.",
+        "end": true,
+        "win": false
+      },
+      "step11A": {
+        "text": "Dengan hati penuh harapan, perencanaan pernikahan dimulai. Semua tampak berjalan lancar hingga ujian tak terduga datang menguji komitmen mereka.",
+        "options": [
+          { "text": "Hadapi semua ujian bersama sebagai tim", "next": "step12A" },
+          { "text": "Terbagi oleh perbedaan pendapat saat krisis", "next": "step12B" }
+        ]
+      },
+      "step11B": {
+        "text": "Mereka memutuskan untuk mengambil jeda singkat guna memperkuat ikatan pribadi. Namun, jarak sementara ini malah membuka ruang untuk keraguan.",
+        "end": true,
+        "win": false
+      },
+      "step11C": {
+        "text": "Diskusi pribadi membawa kelegaan dan kedua keluarga mulai menemukan titik temu. Hal ini memulihkan kehangatan di antara mereka.",
+        "options": [
+          { "text": "Lanjutkan perencanaan pernikahan dengan semangat baru", "next": "step12A" },
+          { "text": "Tetap waspada dan mengambil langkah perlahan", "next": "step12C" }
+        ]
+      },
+      "step11D": {
+        "text": "Rasa canggung dan masalah yang tersisa membuat perayaan kehilangan kemeriahan. Keduanya mulai merasa bahwa cinta mereka tak lagi sekuat sebelumnya.",
+        "end": true,
+        "win": false
+      },
+      "step11E": {
+        "text": "Empati dan kejujuran membawa kepercayaan baru; Cuwi merasa didengar dan dihargai. Hubungan mereka semakin kental dengan rasa saling memahami.",
+        "options": [
+          { "text": "Teruskan perjalanan cinta dengan penuh keyakinan", "next": "step12A" },
+          { "text": "Ambil jeda untuk merenung bersama", "next": "step12C" }
+        ]
+      },
+      "step11F": {
+        "text": "Keraguan mulai menguasai, dan luka lama kembali terbuka. Hubungan pun mulai terancam oleh kekecewaan yang mendalam.",
+        "end": true,
+        "win": false
+      },
+      "step11G": {
+        "text": "Mereka duduk bersama dan secara perlahan menggali akar keraguan. Percakapan panjang itu membuka jalan untuk pemahaman yang mendalam tentang masa lalu masing-masing.",
+        "options": [
+          { "text": "Bersama-sama berjanji untuk mengatasi segala hal", "next": "step12A" },
+          { "text": "Merasa terlalu lelah dan memutuskan untuk berpisah sementara", "next": "step12D" }
+        ]
+      },
+      "step11H": {
+        "text": "Mengabaikan masalah membuat luka tak kunjung sembuh. Keterasingan mulai terasa, dan keduanya terpisah oleh jarak yang makin melebar.",
+        "end": true,
+        "win": false
+      },
+      "step12A": {
+        "text": "Bersama dengan tekad yang kuat, mereka memulai persiapan menuju pernikahan. Namun, ujian terakhir masih menanti di ambang masa depan.",
+        "options": [
+          { "text": "Melangkah dengan penuh keberanian ke tahap selanjutnya", "next": "step13A" },
+          { "text": "Mengambil waktu tambahan untuk menyempurnakan hubungan", "next": "step13B" }
+        ]
+      },
+      "step12B": {
+        "text": "Krisis dan perbedaan yang tak teratasi membuat semua rencana hancur. Rasa sakit mendalam menghantui hari-harinya.",
+        "end": true,
+        "win": false
+      },
+      "step12C": {
+        "text": "Mereka memilih untuk berjalan perlahan, namun keraguan terus menghantui setiap langkah. Tekanan eksternal akhirnya mengganggu keharmonisan mereka.",
+        "end": true,
+        "win": false
+      },
+      "step12D": {
+        "text": "Jeda yang terlalu lama membuat jarak semakin terasa. Meskipun awalnya berniat menyembuhkan, perpisahan sementara berubah menjadi perpisahan yang permanen.",
+        "end": true,
+        "win": false
+      },
+      "step13A": {
+        "text": "Setelah perjalanan panjang penuh liku, mereka memasuki babak baru: persiapan pernikahan. Setiap detail direncanakan dengan seksama, dan harapan membumbung tinggi.",
+        "options": [
+          { "text": "Rencanakan upacara yang megah", "next": "step14A" },
+          { "text": "Rencanakan upacara intim bersama keluarga terdekat", "next": "step14B" }
+        ]
+      },
+      "step13B": {
+        "text": "Menunda pernikahan karena rasa ragu membuat kesempatan berlalu. Kesempatan untuk membangun masa depan bersama pun sirna.",
+        "end": true,
+        "win": false
+      },
+      "step14A": {
+        "text": "Upacara besar diselenggarakan dengan gemilang. Namun, di balik kemeriahan itu, tantangan politik dan persaingan mulai mengganggu kebahagiaan mereka.",
+        "options": [
+          { "text": "Hadapi tantangan politik bersama dengan kepercayaan diri", "next": "step15A" },
+          { "text": "Biarkan konflik luar mengganggu hingga merusak acara", "next": "step15B" }
+        ]
+      },
+      "step14B": {
+        "text": "Upacara intim berlangsung penuh kehangatan. Namun, rahasia dan konflik internal mulai muncul, menguji ketulusan cinta mereka.",
+        "options": [
+          { "text": "Buka semua rahasia dan atasi konflik bersama", "next": "step15A" },
+          { "text": "Biarkan masalah terselubung dan berharap waktu menyembuhkan", "next": "step15C" }
+        ]
+      },
+      "step15A": {
+        "text": "Menyatukan segala tantangan, mereka memutuskan untuk melangkah ke tahap terakhir dalam perjalanan cinta ini. Dengan segala pengorbanan dan perjuangan, tekad mereka semakin kuat.",
+        "options": [
+          { "text": "Terus maju menuju upacara pernikahan final", "next": "step16A" },
+          { "text": "Beristirahat sejenak untuk memastikan semua perasaan tulus", "next": "step16B" }
+        ]
+      },
+      "step15B": {
+        "text": "Konflik yang semakin hari semakin memuncak membuat semua rencana retak. Kebahagiaan sirna dan luka kembali terbuka.",
+        "end": true,
+        "win": false
+      },
+      "step15C": {
+        "text": "Menunda penyelesaian masalah membuat jarak semakin dalam. Hubungan pun mulai runtuh seiring waktu berlalu.",
+        "end": true,
+        "win": false
+      },
+      "step16A": {
+        "text": "Akhirnya, saat yang ditunggu tiba. Di tengah hujan deras dan petir yang menyambar, Rezyan mengumpulkan segala keberanian untuk melamar Cuwi di hadapan keluarga, teman, dan orang-orang yang pernah mendukung perjalanan cinta mereka. Semua konflik, luka, dan pengorbanan mengalir menjadi satu momen epik.",
+        "options": [
+          { "text": "Terima lamaran dengan penuh air mata bahagia", "next": "true_ending" },
+          { "text": "Ragu pada momen itu dan meminta waktu lagi", "next": "step17A" }
+        ]
+      },
+      "step16B": {
+        "text": "Istirahat sejenak membuat mereka semakin yakin, namun menunda terlalu lama memicu kecemasan dari pihak keluarga dan teman. Tekanan eksternal semakin menguatkan keraguan.",
+        "end": true,
+        "win": false
+      },
+      "step17A": {
+        "text": "Permintaan waktu tambahan membuat suasana menjadi dingin. Keraguan muncul, dan meski banyak yang mencoba meyakinkan, kesempatan itu perlahan menguap.",
+        "end": true,
+        "win": false
+      },
+      "true_ending": {
+        "text": "Di tengah badai dan gemuruh alam, Rezyan dengan sepenuh hati melamar Cuwi. Dengan air mata kebahagiaan dan keyakinan yang tak tergoyahkan, Cuwi menerima lamaran itu. Di antara segala rintangan dan pengorbanan, cinta mereka bersinar sebagai bukti bahwa cinta sejati mampu mengatasi segalanya. Rezyan dan Cuwi menikah dan hidup bahagia selamanya, menjadi inspirasi bagi semua bahwa keberanian untuk mencintai adalah kunci menuju kehidupan yang penuh makna.",
+        "end": true,
+        "win": true
+      }
+    },
+    "metadata": {
+      "genre": "Romance",
+      "author": "Your Name",
+      "notes": "Petualangan ini memiliki banyak cabang dan false ending, namun hanya satu true ending di mana Rezyan dan Cuwi bersatu dalam pernikahan yang penuh kebahagiaan."
+    }
+  }  
 ]

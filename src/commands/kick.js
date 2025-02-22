@@ -6,15 +6,18 @@ const kick = async (message) => {
     const chat = await message.getChat();
     let participants = [];
 
-    // Prioritaskan fetchParticipants() jika tersedia
+    // Ambil daftar peserta dengan berbagai fallback
     if (typeof chat.fetchParticipants === "function") {
       participants = await chat.fetchParticipants();
-    } else if (chat.participants && Array.isArray(chat.participants) && chat.participants.length > 0) {
-      participants = chat.participants;
-    } else if (chat.groupMetadata && Array.isArray(chat.groupMetadata.participants) && chat.groupMetadata.participants.length > 0) {
+    } else if (chat.groupMetadata && Array.isArray(chat.groupMetadata.participants)) {
       participants = chat.groupMetadata.participants;
+    } else if (chat.participants && Array.isArray(chat.participants)) {
+      participants = chat.participants;
     } else if (chat._data && chat._data.groupMetadata && Array.isArray(chat._data.groupMetadata.participants)) {
       participants = chat._data.groupMetadata.participants;
+    } else {
+      await message.reply("Daftar peserta grup tidak tersedia. Pastikan bot sudah admin dan grup aktif.");
+      return;
     }
 
     if (participants.length === 0) {
@@ -29,6 +32,7 @@ const kick = async (message) => {
     }
 
     for (const participant of mentioned) {
+      // Cek agar tidak mengeluarkan owner bot
       if (isOwner(participant.id._serialized)) {
         await message.reply(`Tidak dapat mengeluarkan owner bot: @${participant.id.user}`);
         continue;

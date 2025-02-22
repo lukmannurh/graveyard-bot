@@ -5,15 +5,17 @@ const tagall = async (message) => {
     const chat = await message.getChat();
     let participants = [];
 
-    // Prioritaskan fetchParticipants() jika tersedia
+    // Coba ambil peserta dari berbagai sumber
     if (typeof chat.fetchParticipants === "function") {
       participants = await chat.fetchParticipants();
-    } else if (chat.participants && Array.isArray(chat.participants) && chat.participants.length > 0) {
-      participants = chat.participants;
-    } else if (chat.groupMetadata && Array.isArray(chat.groupMetadata.participants) && chat.groupMetadata.participants.length > 0) {
+    } else if (chat.groupMetadata && Array.isArray(chat.groupMetadata.participants)) {
       participants = chat.groupMetadata.participants;
+    } else if (chat.participants && Array.isArray(chat.participants)) {
+      participants = chat.participants;
     } else if (chat._data && chat._data.groupMetadata && Array.isArray(chat._data.groupMetadata.participants)) {
       participants = chat._data.groupMetadata.participants;
+    } else {
+      throw new Error("Daftar peserta tidak tersedia");
     }
 
     if (participants.length === 0) {
@@ -23,13 +25,18 @@ const tagall = async (message) => {
 
     let text = "";
     let mentions = [];
-    for (const participant of participants) {
-      // Jika participant memiliki properti id.user, format sebagai: @<nomor> (tanpa '+')
-      const id = participant.id && participant.id.user
-        ? `${participant.id.user}@c.us`
-        : participant;
-      text += `@${id.replace("@c.us", "")} `;
-      mentions.push(id);
+    for (let participant of participants) {
+      let id;
+      // Jika peserta berupa objek dengan properti id.user
+      if (participant.id && participant.id.user) {
+        id = participant.id._serialized;
+        text += `@${participant.id.user} `;
+      } else if (typeof participant === "string") {
+        // Jika peserta berupa string ID
+        id = participant;
+        text += `@${participant.replace("@c.us", "")} `;
+      }
+      if (id) mentions.push(id);
     }
 
     await chat.sendMessage(text, { mentions });
